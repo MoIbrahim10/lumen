@@ -180,23 +180,23 @@ export function ChatHome({
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
             {cfg.micro}
           </p>
-          <h1
-            className={`mt-7 max-w-2xl text-center text-5xl leading-[1.1] tracking-tight md:text-[56px] ${cfg.headline ?? ""}`}
-          >
-            What's on your mind,{" "}
-            <span className="text-muted-foreground">Emma?</span>
-          </h1>
 
-          <div className="mt-12 w-full max-w-[680px]">
-            {/* Composer */}
+          <div className="mt-6 w-full max-w-[820px]">
+            {/* Composer card — headline lives inside */}
             <div
-              className={`relative ${cfg.btnClass} px-5 pt-4 pb-3`}
+              className={`relative ${cfg.btnClass} px-7 pt-7 pb-4`}
               style={{ borderRadius: variant === "framed" ? 0 : undefined }}
             >
+              <h1
+                className={`text-left text-[40px] leading-[1.05] tracking-tight md:text-[44px] ${cfg.headline ?? ""}`}
+              >
+                What's on your mind,{" "}
+                <span className="uppercase">Emma?</span>
+              </h1>
               <textarea
-                rows={2}
-                placeholder="Ask anything, or paste a thought…"
-                className="block w-full resize-none bg-transparent text-[16px] leading-relaxed placeholder:opacity-50 focus:outline-none"
+                rows={3}
+                placeholder="type something …"
+                className="mt-5 block w-full resize-none bg-transparent text-[16px] leading-relaxed placeholder:opacity-40 focus:outline-none"
                 style={{ color: "inherit" }}
               />
               <div className="mt-3 flex items-center justify-between gap-2">
@@ -211,13 +211,6 @@ export function ChatHome({
                       <Mic className="h-4 w-4" />
                     </IconKey>
                   </Hint>
-                  <Hint label="Tools & connectors" keys={SHORTCUTS.tools}>
-                    <IconKey variant={variant} cfg={cfg}>
-                      <Wrench className="h-4 w-4" />
-                    </IconKey>
-                  </Hint>
-
-                  {/* Model selector */}
                   <Selector
                     cfg={cfg}
                     open={modelOpen}
@@ -228,23 +221,32 @@ export function ChatHome({
                     label="Model"
                   />
                 </div>
-                <Hint label="Send" keys={SHORTCUTS.send}>
-                  <button
-                    className={`${cfg.sendClass} flex h-9 w-9 items-center justify-center`}
-                  >
-                    {variant === "framed" ? (
-                      <span><ArrowUp className="h-4 w-4" /></span>
-                    ) : (
-                      <ArrowUp className="h-4 w-4" />
-                    )}
-                  </button>
-                </Hint>
+                <div className="flex items-center gap-2">
+                  <Hint label="Tools & connectors" keys={SHORTCUTS.tools}>
+                    <IconKey variant={variant} cfg={cfg}>
+                      <Wrench className="h-4 w-4" />
+                    </IconKey>
+                  </Hint>
+                  <Hint label="Send" keys={SHORTCUTS.send}>
+                    <button
+                      className={`${cfg.sendClass} flex h-9 w-9 items-center justify-center`}
+                    >
+                      {variant === "framed" ? (
+                        <span><ArrowUp className="h-4 w-4" /></span>
+                      ) : (
+                        <ArrowUp className="h-4 w-4" />
+                      )}
+                    </button>
+                  </Hint>
+                </div>
               </div>
             </div>
 
-            {/* Style + length + depth + toggles */}
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-              {/* Style as dropdown */}
+            {/* Controls strip — style selector left, toggles right */}
+            <div
+              className={`mt-3 flex items-center justify-between gap-2 ${cfg.btnClass} px-3 py-2`}
+              style={{ borderRadius: variant === "framed" ? 0 : undefined }}
+            >
               <Selector
                 cfg={cfg}
                 open={styleOpen}
@@ -269,31 +271,53 @@ export function ChatHome({
                   </button>
                 }
               />
-              <Selector
-                cfg={cfg}
-                value={length}
-                setValue={setLength}
-                options={[...LENGTHS]}
-                label="Length"
-              />
-              <Selector
-                cfg={cfg}
-                value={depth}
-                setValue={setDepth}
-                options={[...DEPTHS]}
-                label="Depth"
-              />
-              <Toggle cfg={cfg} on={web} setOn={setWeb} label="Web" />
-              <Toggle cfg={cfg} on={memory} setOn={setMemory} label="Memory" />
-              <Toggle cfg={cfg} on={temp} setOn={setTemp} label="Temporary" />
+              <div className="flex items-center gap-1.5">
+                <Hint label={`Length · ${length}`}>
+                  <IconKey variant={variant} cfg={cfg}>
+                    <Ruler className="h-4 w-4" />
+                  </IconKey>
+                </Hint>
+                <Hint label={`Depth · ${depth}`}>
+                  <IconKey variant={variant} cfg={cfg}>
+                    <Gauge className="h-4 w-4" />
+                  </IconKey>
+                </Hint>
+                <Hint label={`Web · ${web ? "on" : "off"}`}>
+                  <button
+                    onClick={() => setWeb(!web)}
+                    className={`${cfg.btnClass} flex h-9 w-9 items-center justify-center ${!web ? "opacity-40" : ""}`}
+                  >
+                    {variant === "framed" ? <span><Globe className="h-4 w-4" /></span> : <Globe className="h-4 w-4" />}
+                  </button>
+                </Hint>
+                <Hint label={`Memory · ${memory ? "on" : "off"}`}>
+                  <button
+                    onClick={() => setMemory(!memory)}
+                    className={`${cfg.btnClass} flex h-9 w-9 items-center justify-center ${!memory ? "opacity-40" : ""}`}
+                  >
+                    {variant === "framed" ? <span><Brain className="h-4 w-4" /></span> : <Brain className="h-4 w-4" />}
+                  </button>
+                </Hint>
+                <Hint label={`Temporary · ${temp ? "on" : "off"}`}>
+                  <button
+                    onClick={() => setTemp(!temp)}
+                    className={`${cfg.btnClass} flex h-9 w-9 items-center justify-center ${!temp ? "opacity-40" : ""}`}
+                  >
+                    {variant === "framed" ? <span><EyeOff className="h-4 w-4" /></span> : <EyeOff className="h-4 w-4" />}
+                  </button>
+                </Hint>
+              </div>
             </div>
 
-            {/* Quick actions */}
-            <div className="mt-7 flex flex-wrap justify-center gap-2">
+            {/* Divider */}
+            <div className="mx-auto mt-8 h-px w-40 bg-border" />
+
+            {/* Quick actions — two rows, centered */}
+            <div className="mt-5 flex flex-wrap justify-center gap-2">
               {QUICK_ACTIONS.map((a) => (
                 <button
                   key={a.label}
-                  className={`${cfg.chipClass} flex items-center gap-1.5 px-3 py-1.5 text-[12px]`}
+                  className={`${cfg.chipClass} flex items-center gap-1.5 px-4 py-2 text-[12px]`}
                 >
                   {variant === "framed" ? (
                     <span>
