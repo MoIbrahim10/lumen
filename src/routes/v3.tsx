@@ -1,101 +1,135 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { Paperclip, Mic, Wrench, ArrowUp, Plus, ChevronDown, Globe, Brain, Zap } from "lucide-react";
+import { Hint, STYLES, LENGTHS, DEPTHS, QUICK_ACTIONS, SHORTCUTS } from "@/components/chat-kit";
 
 export const Route = createFileRoute("/v3")({ component: V3 });
 
-function Tile({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-border bg-card p-6 ${className}`}>{children}</div>;
-}
-
 function V3() {
-  return (
-    <div className="min-h-screen" style={{ background: "oklch(0.97 0.005 80)" }}>
-      <div className="mx-auto max-w-[1200px] px-8 py-10 text-foreground">
-        <header className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-6 w-6 rounded-md bg-foreground" />
-            <span className="text-sm tracking-tight">Lumen Studio</span>
-          </div>
-          <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-            <span>Workspace · Emma</span>
-            <span className="flex h-7 w-7 items-center justify-center rounded-md border border-border bg-card text-[10px]">EM</span>
-          </div>
-        </header>
+  const [style, setStyle] = useState("Auto");
+  const [styles, setStyles] = useState<string[]>([...STYLES]);
+  const [length, setLength] = useState("Balanced");
+  const [depth, setDepth] = useState("Standard");
+  const [web, setWeb] = useState(true);
+  const [memory, setMemory] = useState(true);
+  const [temp, setTemp] = useState(false);
 
-        <div className="mt-10 grid grid-cols-6 grid-rows-[auto_auto_auto] gap-4">
-          {/* Hero composer */}
-          <Tile className="col-span-4 row-span-2 flex flex-col">
+  return (
+    <div className="min-h-screen text-foreground" style={{ backgroundColor: "oklch(0.97 0 0)" }}>
+      <nav className="mx-auto flex max-w-[1240px] items-center justify-between px-10 pt-7">
+        <div className="flex items-center gap-2">
+          <div className="h-2.5 w-2.5 rounded-sm bg-foreground" />
+          <span className="text-sm tracking-tight">Lumen Studio</span>
+        </div>
+        <div className="flex items-center gap-7 text-sm text-muted-foreground">
+          <span>Threads</span><span>Library</span><span>Agents</span><span>Settings</span>
+        </div>
+      </nav>
+
+      <main className="mx-auto max-w-[1240px] px-10 pt-12 pb-16">
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Tuesday · soft hours</p>
+        <h1 className="mt-3 text-4xl font-light tracking-tight md:text-5xl">Hi Emma. <span className="text-muted-foreground">What are we making?</span></h1>
+
+        <div className="mt-10 grid grid-cols-12 gap-4">
+          {/* Composer hero tile */}
+          <section className="col-span-12 rounded-3xl border border-border bg-card p-6 lg:col-span-8">
             <div className="flex items-center justify-between">
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">New thread</p>
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">No. 0184</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Compose</p>
+              <Hint label="Switch model" keys={SHORTCUTS.model}>
+                <button className="flex items-center gap-1 rounded-full border border-border bg-background px-3 py-1 text-xs hover:bg-muted">
+                  Lumen 4 · Sonnet <ChevronDown className="h-3 w-3 opacity-60" />
+                </button>
+              </Hint>
             </div>
-            <h1 className="mt-10 text-4xl leading-tight tracking-tight">
-              What are we<br />working on, Emma?
-            </h1>
             <textarea
               rows={4}
-              placeholder="Type a question, paste a doc, or drag a file…"
-              className="mt-8 w-full flex-1 resize-none bg-transparent text-lg placeholder:text-muted-foreground focus:outline-none"
+              placeholder="Ask, plan, draft, or paste anything…"
+              className="mt-4 block w-full resize-none bg-transparent text-[17px] leading-relaxed placeholder:text-muted-foreground focus:outline-none"
             />
-            <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
-              <div className="flex gap-2">
-                <button className="rounded-md border border-border px-3 py-1.5 text-xs">Lumen 4</button>
-                <button className="rounded-md border border-border px-3 py-1.5 text-xs">Considered</button>
-                <button className="rounded-md border border-border px-3 py-1.5 text-xs">+ Memory</button>
+            <div className="mt-4 flex items-center justify-between">
+              <div className="flex items-center gap-1">
+                <Hint label="Attach" keys={SHORTCUTS.attach}><button className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"><Paperclip className="h-4 w-4" /></button></Hint>
+                <Hint label="Dictate" keys={SHORTCUTS.voice}><button className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"><Mic className="h-4 w-4" /></button></Hint>
+                <Hint label="Tools & connectors" keys={SHORTCUTS.tools}><button className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"><Wrench className="h-4 w-4" /></button></Hint>
               </div>
-              <button className="rounded-md bg-foreground px-4 py-1.5 text-xs text-background">Send ↵</button>
+              <Hint label="Send" keys={SHORTCUTS.send}>
+                <button className="flex h-10 w-10 items-center justify-center rounded-full bg-foreground text-background hover:opacity-90"><ArrowUp className="h-4 w-4" /></button>
+              </Hint>
             </div>
-          </Tile>
+          </section>
 
-          {/* Memory */}
-          <Tile className="col-span-2">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Memory</p>
-            <p className="mt-3 text-sm leading-snug">
-              Remembers your tone, your projects, and the people you write to.
-            </p>
-            <div className="mt-5 space-y-1.5 font-mono text-[11px] text-muted-foreground">
-              <div>· Tone — quiet, exact</div>
-              <div>· Projects — 4 active</div>
-              <div>· People — 12 known</div>
+          {/* Style tile */}
+          <section className="col-span-12 rounded-3xl border border-border bg-card p-6 lg:col-span-4">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Response style</p>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {styles.map((s) => (
+                <button key={s} onClick={() => setStyle(s)}
+                  className={`rounded-full px-3 py-1 text-[11px] transition-colors ${
+                    style === s ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"
+                  }`}>{s}</button>
+              ))}
+              <Hint label="Create style" keys={SHORTCUTS.newStyle}>
+                <button onClick={() => { const n = prompt("Name your style"); if (n) { setStyles([...styles, n]); setStyle(n);} }}
+                  className="flex items-center gap-1 rounded-full border border-dashed border-border px-2.5 py-1 text-[11px] text-muted-foreground hover:text-foreground">
+                  <Plus className="h-3 w-3" /> New
+                </button>
+              </Hint>
             </div>
-          </Tile>
+          </section>
 
-          {/* Agents */}
-          <Tile className="col-span-2">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Agents</p>
-            <div className="mt-4 space-y-3 text-sm">
-              <div className="flex items-center justify-between border-b border-border pb-2"><span>Reader</span><span className="font-mono text-[10px] text-muted-foreground">idle</span></div>
-              <div className="flex items-center justify-between border-b border-border pb-2"><span>Researcher</span><span className="font-mono text-[10px] text-muted-foreground">idle</span></div>
-              <div className="flex items-center justify-between"><span>Editor</span><span className="font-mono text-[10px] text-muted-foreground">on</span></div>
+          {/* Behaviour tile */}
+          <section className="col-span-12 rounded-3xl border border-border bg-card p-6 lg:col-span-5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Behaviour</p>
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <Knob label="Length" value={length} setValue={setLength} options={[...LENGTHS]} />
+              <Knob label="Depth" value={depth} setValue={setDepth} options={[...DEPTHS]} />
             </div>
-          </Tile>
-
-          {/* Recent */}
-          <Tile className="col-span-3">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Recent threads</p>
-            <ul className="mt-4 divide-y divide-border text-sm">
-              <li className="flex justify-between py-2"><span>Letter to Hannah, third draft</span><span className="font-mono text-[10px] text-muted-foreground">2h</span></li>
-              <li className="flex justify-between py-2"><span>Lisbon, three days, quiet pace</span><span className="font-mono text-[10px] text-muted-foreground">yesterday</span></li>
-              <li className="flex justify-between py-2"><span>Stripe Q1 — paraphrase</span><span className="font-mono text-[10px] text-muted-foreground">Mon</span></li>
-              <li className="flex justify-between py-2"><span>Reading list, May</span><span className="font-mono text-[10px] text-muted-foreground">Sun</span></li>
-            </ul>
-          </Tile>
-
-          {/* Suggestions */}
-          <Tile className="col-span-3">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Try</p>
-            <div className="mt-4 grid grid-cols-1 gap-2 text-sm">
-              <button className="rounded-lg border border-border px-3 py-2 text-left hover:bg-muted">"Summarize the week, in five lines."</button>
-              <button className="rounded-lg border border-border px-3 py-2 text-left hover:bg-muted">"Help me decide between the two offers."</button>
-              <button className="rounded-lg border border-border px-3 py-2 text-left hover:bg-muted">"Read this PDF and pull the three quiet claims."</button>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              <Toggle icon={Globe} label="Web" on={web} setOn={setWeb} />
+              <Toggle icon={Brain} label="Memory" on={memory} setOn={setMemory} />
+              <Toggle icon={Zap} label="Temporary" on={temp} setOn={setTemp} />
             </div>
-          </Tile>
+          </section>
+
+          {/* Quick actions tile */}
+          <section className="col-span-12 rounded-3xl border border-border bg-card p-6 lg:col-span-7">
+            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Quick actions</p>
+            <div className="mt-3 grid grid-cols-2 gap-1.5 sm:grid-cols-3">
+              {QUICK_ACTIONS.map((a) => (
+                <button key={a.label} className="flex items-center gap-2 rounded-xl bg-muted px-3 py-2.5 text-left text-[13px] hover:bg-accent">
+                  <a.icon className="h-4 w-4 text-muted-foreground" /> {a.label}
+                </button>
+              ))}
+            </div>
+          </section>
         </div>
+      </main>
 
-        <footer className="mt-10 flex justify-between font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-          <span>v3 · Bento Studio</span>
-          <Link to="/" className="hover:text-foreground">← Index</Link>
-        </footer>
-      </div>
+      <footer className="mx-auto flex max-w-[1240px] justify-between px-10 pb-7 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+        <span>v3 · Bento Studio</span>
+        <Link to="/" className="hover:text-foreground">← Index</Link>
+      </footer>
     </div>
+  );
+}
+
+function Knob({ label, value, setValue, options }: any) {
+  const i = options.indexOf(value);
+  return (
+    <button onClick={() => setValue(options[(i + 1) % options.length])}
+      className="rounded-xl bg-muted px-3 py-2.5 text-left hover:bg-accent">
+      <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
+      <p className="mt-0.5 text-[13px]">{value}</p>
+    </button>
+  );
+}
+function Toggle({ icon: Icon, label, on, setOn }: any) {
+  return (
+    <button onClick={() => setOn(!on)}
+      className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] transition-colors ${
+        on ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:text-foreground"
+      }`}>
+      <Icon className="h-3.5 w-3.5" /> {label}
+    </button>
   );
 }
