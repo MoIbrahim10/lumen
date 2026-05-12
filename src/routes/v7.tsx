@@ -1,77 +1,110 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { Hint, STYLES, LENGTHS, DEPTHS, QUICK_ACTIONS, SHORTCUTS } from "@/components/chat-kit";
 
 export const Route = createFileRoute("/v7")({ component: V7 });
 
 function V7() {
+  const [style, setStyle] = useState("Auto");
+  const [styles, setStyles] = useState<string[]>([...STYLES]);
+  const [length, setLength] = useState("Balanced");
+  const [depth, setDepth] = useState("Standard");
+  const [web, setWeb] = useState(true);
+  const [memory, setMemory] = useState(true);
+  const [temp, setTemp] = useState(false);
+
   return (
-    <div className="dark">
-      <div className="min-h-screen bg-background font-mono text-foreground" style={{ backgroundColor: "#141414" }}>
-        <div className="mx-auto max-w-4xl px-10 py-10">
-          <header className="flex items-center justify-between border-b border-border pb-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-            <span>lumen :: session 0184</span>
-            <span>emma@local · ready</span>
-          </header>
+    <div className="dark font-mono">
+      <div className="min-h-screen text-foreground" style={{ backgroundColor: "#0F0F0F" }}>
+        <header className="border-b border-border px-8 py-3 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+          <div className="mx-auto flex max-w-[920px] justify-between">
+            <span>lumen :: shell — tuesday 18:42</span><span>emma@lumen ~ %</span>
+          </div>
+        </header>
 
-          <section className="pt-16">
-            <pre className="text-[11px] leading-relaxed text-muted-foreground">
-{`──────────────────────────────────────────────────────────────
-  L U M E N           a quiet machine for thinking
-──────────────────────────────────────────────────────────────`}
-            </pre>
+        <main className="mx-auto max-w-[920px] px-8 pt-16">
+          <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">— evening, emma —</p>
+          <h1 className="mt-4 font-sans text-5xl font-light leading-tight tracking-tight">A quiet shell for thinking.</h1>
+          <p className="mt-3 max-w-md font-sans text-[15px] text-muted-foreground">
+            Type a thought. Pipe it through tools. Keep what matters.
+          </p>
 
-            <h1 className="mt-12 text-3xl leading-snug tracking-tight">
-              <span className="text-muted-foreground">&gt;</span> what would you like to think about,<br />
-              &nbsp;&nbsp;tonight?
-            </h1>
+          <pre className="mt-10 select-none text-[10px] leading-tight text-muted-foreground">
+{`────────────────────────────────────────────────────────────────────────`}
+          </pre>
 
-            <div className="mt-12 border-t border-b border-border py-4">
-              <div className="flex items-start gap-3">
-                <span className="select-none text-muted-foreground">▍</span>
-                <textarea
-                  rows={3}
-                  placeholder="type a thought, or paste a passage…"
-                  className="w-full resize-none bg-transparent text-base leading-relaxed placeholder:text-muted-foreground focus:outline-none"
-                />
+          {/* Composer — terminal */}
+          <div className="mt-3 rounded-md border border-border" style={{ backgroundColor: "#141414" }}>
+            <div className="flex items-start gap-3 px-4 pt-3">
+              <span className="select-none text-[15px] text-muted-foreground">$</span>
+              <textarea
+                rows={3}
+                placeholder="ask 'what changed in the q1 letter?' --read stripe-q1.pdf"
+                className="block w-full resize-none bg-transparent text-[14px] leading-relaxed placeholder:text-muted-foreground focus:outline-none"
+              />
+            </div>
+            <div className="mt-1 flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              <div className="flex flex-wrap gap-3">
+                <Hint label="Attach file" keys={SHORTCUTS.attach}><button className="hover:text-foreground">--attach</button></Hint>
+                <Hint label="Dictate" keys={SHORTCUTS.voice}><button className="hover:text-foreground">--voice</button></Hint>
+                <Hint label="Tools" keys={SHORTCUTS.tools}><button className="hover:text-foreground">--tools</button></Hint>
+                <Hint label="Model" keys={SHORTCUTS.model}><button className="hover:text-foreground">--model lumen-4</button></Hint>
+                <button onClick={() => setWeb(!web)} className={web ? "text-foreground" : "hover:text-foreground"}>--web {web ? "on" : "off"}</button>
+                <button onClick={() => setMemory(!memory)} className={memory ? "text-foreground" : "hover:text-foreground"}>--memory {memory ? "on" : "off"}</button>
+                <button onClick={() => setTemp(!temp)} className={temp ? "text-foreground" : "hover:text-foreground"}>--temp {temp ? "on" : "off"}</button>
               </div>
+              <Hint label="Send" keys={SHORTCUTS.send}>
+                <button className="border border-foreground px-2 py-0.5 text-foreground hover:bg-foreground hover:text-background">RUN ⏎</button>
+              </Hint>
             </div>
+          </div>
 
-            <div className="mt-4 grid grid-cols-4 gap-4 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-              <div><span className="opacity-50">model </span>lumen-4</div>
-              <div><span className="opacity-50">tone </span>plain</div>
-              <div><span className="opacity-50">length </span>auto</div>
-              <div className="text-right"><button className="text-foreground">[ send ⏎ ]</button></div>
+          {/* Style + length + depth */}
+          <pre className="mt-10 select-none text-[10px] leading-tight text-muted-foreground">{`# response.config`}</pre>
+          <div className="mt-2 grid grid-cols-12 gap-x-6 gap-y-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            <div className="col-span-12 flex flex-wrap items-center gap-2">
+              <span className="opacity-60">style →</span>
+              {styles.map((s) => (
+                <button key={s} onClick={() => setStyle(s)} className={style === s ? "text-foreground underline" : "hover:text-foreground"}>{s}</button>
+              ))}
+              <Hint label="Create" keys={SHORTCUTS.newStyle}>
+                <button onClick={() => { const n = prompt("Name your style"); if (n) { setStyles([...styles, n]); setStyle(n); } }}
+                  className="border border-dashed border-border px-1.5 hover:text-foreground">+ new</button>
+              </Hint>
             </div>
+            <Cycle label="length" value={length} setValue={setLength} options={[...LENGTHS]} />
+            <Cycle label="depth" value={depth} setValue={setDepth} options={[...DEPTHS]} />
+          </div>
 
-            <pre className="mt-16 text-[11px] leading-relaxed text-muted-foreground">
-{`── suggestions ──────────────────────────────────────────────`}
-            </pre>
+          {/* Quick actions */}
+          <pre className="mt-12 select-none text-[10px] leading-tight text-muted-foreground">{`# quick.actions`}</pre>
+          <ul className="mt-3 grid grid-cols-2 gap-x-8 gap-y-1 font-sans text-[13px]">
+            {QUICK_ACTIONS.map((a, i) => (
+              <li key={a.label} className="flex items-baseline gap-2">
+                <span className="font-mono text-[10px] text-muted-foreground">[{(i + 1).toString().padStart(2, "0")}]</span>
+                <button className="text-left text-muted-foreground hover:text-foreground hover:underline">{a.label}</button>
+              </li>
+            ))}
+          </ul>
 
-            <ul className="mt-4 space-y-2 text-sm">
-              <li><span className="text-muted-foreground">01 ·</span> read me the q1 letter, slowly</li>
-              <li><span className="text-muted-foreground">02 ·</span> draft a reply to hannah, kind but firm</li>
-              <li><span className="text-muted-foreground">03 ·</span> plan three quiet days in lisbon</li>
-              <li><span className="text-muted-foreground">04 ·</span> what did i think about this on monday?</li>
-            </ul>
+          <pre className="mt-14 select-none text-[10px] leading-tight text-muted-foreground">{`────────────────────────────────────────────────────────────────────────`}</pre>
 
-            <pre className="mt-16 text-[11px] leading-relaxed text-muted-foreground">
-{`── recent ───────────────────────────────────────────────────`}
-            </pre>
-
-            <ul className="mt-3 grid grid-cols-2 gap-x-8 text-[12px]">
-              <li className="flex justify-between border-b border-border py-2"><span>letter-to-hannah.md</span><span className="text-muted-foreground">2h</span></li>
-              <li className="flex justify-between border-b border-border py-2"><span>stripe-q1.notes</span><span className="text-muted-foreground">mon</span></li>
-              <li className="flex justify-between border-b border-border py-2"><span>lisbon.itinerary</span><span className="text-muted-foreground">sun</span></li>
-              <li className="flex justify-between border-b border-border py-2"><span>reading.may</span><span className="text-muted-foreground">sat</span></li>
-            </ul>
-          </section>
-
-          <footer className="mt-20 flex items-center justify-between text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+          <footer className="mt-3 flex justify-between pb-10 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
             <span>v7 · terminal editorial</span>
-            <span>battery 88% · network ok · memory 12 entries</span>
             <Link to="/" className="hover:text-foreground">← index</Link>
           </footer>
-        </div>
+        </main>
       </div>
+    </div>
+  );
+}
+function Cycle({ label, value, setValue, options }: any) {
+  const i = options.indexOf(value);
+  return (
+    <div className="col-span-6 flex items-center gap-2">
+      <span className="opacity-60">{label} →</span>
+      <button onClick={() => setValue(options[(i + 1) % options.length])} className="text-foreground hover:underline">{value}</button>
+      <span className="opacity-40">[{options.join(" · ")}]</span>
     </div>
   );
 }
