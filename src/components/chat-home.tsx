@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ReactNode, useState } from "react";
-import { Paperclip, Mic, Wrench, ArrowUp, Plus, ChevronDown, Check } from "lucide-react";
+import { Paperclip, Mic, Wrench, ArrowUp, Plus, ChevronDown, Check, Globe, Brain, EyeOff, Gauge, Ruler } from "lucide-react";
 import { Hint, STYLES, LENGTHS, DEPTHS, QUICK_ACTIONS, SHORTCUTS } from "@/components/chat-kit";
 
 export type Variant =
