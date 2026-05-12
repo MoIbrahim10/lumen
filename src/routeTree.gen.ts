@@ -9,8 +9,68 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as V9RouteImport } from './routes/v9'
+import { Route as V8RouteImport } from './routes/v8'
+import { Route as V7RouteImport } from './routes/v7'
+import { Route as V6RouteImport } from './routes/v6'
+import { Route as V5RouteImport } from './routes/v5'
+import { Route as V4RouteImport } from './routes/v4'
+import { Route as V3RouteImport } from './routes/v3'
+import { Route as V2RouteImport } from './routes/v2'
+import { Route as V10RouteImport } from './routes/v10'
+import { Route as V1RouteImport } from './routes/v1'
 import { Route as IndexRouteImport } from './routes/index'
 
+const V9Route = V9RouteImport.update({
+  id: '/v9',
+  path: '/v9',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const V8Route = V8RouteImport.update({
+  id: '/v8',
+  path: '/v8',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const V7Route = V7RouteImport.update({
+  id: '/v7',
+  path: '/v7',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const V6Route = V6RouteImport.update({
+  id: '/v6',
+  path: '/v6',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const V5Route = V5RouteImport.update({
+  id: '/v5',
+  path: '/v5',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const V4Route = V4RouteImport.update({
+  id: '/v4',
+  path: '/v4',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const V3Route = V3RouteImport.update({
+  id: '/v3',
+  path: '/v3',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const V2Route = V2RouteImport.update({
+  id: '/v2',
+  path: '/v2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const V10Route = V10RouteImport.update({
+  id: '/v10',
+  path: '/v10',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const V1Route = V1RouteImport.update({
+  id: '/v1',
+  path: '/v1',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +79,172 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/v1': typeof V1Route
+  '/v10': typeof V10Route
+  '/v2': typeof V2Route
+  '/v3': typeof V3Route
+  '/v4': typeof V4Route
+  '/v5': typeof V5Route
+  '/v6': typeof V6Route
+  '/v7': typeof V7Route
+  '/v8': typeof V8Route
+  '/v9': typeof V9Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/v1': typeof V1Route
+  '/v10': typeof V10Route
+  '/v2': typeof V2Route
+  '/v3': typeof V3Route
+  '/v4': typeof V4Route
+  '/v5': typeof V5Route
+  '/v6': typeof V6Route
+  '/v7': typeof V7Route
+  '/v8': typeof V8Route
+  '/v9': typeof V9Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/v1': typeof V1Route
+  '/v10': typeof V10Route
+  '/v2': typeof V2Route
+  '/v3': typeof V3Route
+  '/v4': typeof V4Route
+  '/v5': typeof V5Route
+  '/v6': typeof V6Route
+  '/v7': typeof V7Route
+  '/v8': typeof V8Route
+  '/v9': typeof V9Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/v1'
+    | '/v10'
+    | '/v2'
+    | '/v3'
+    | '/v4'
+    | '/v5'
+    | '/v6'
+    | '/v7'
+    | '/v8'
+    | '/v9'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/v1'
+    | '/v10'
+    | '/v2'
+    | '/v3'
+    | '/v4'
+    | '/v5'
+    | '/v6'
+    | '/v7'
+    | '/v8'
+    | '/v9'
+  id:
+    | '__root__'
+    | '/'
+    | '/v1'
+    | '/v10'
+    | '/v2'
+    | '/v3'
+    | '/v4'
+    | '/v5'
+    | '/v6'
+    | '/v7'
+    | '/v8'
+    | '/v9'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  V1Route: typeof V1Route
+  V10Route: typeof V10Route
+  V2Route: typeof V2Route
+  V3Route: typeof V3Route
+  V4Route: typeof V4Route
+  V5Route: typeof V5Route
+  V6Route: typeof V6Route
+  V7Route: typeof V7Route
+  V8Route: typeof V8Route
+  V9Route: typeof V9Route
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/v9': {
+      id: '/v9'
+      path: '/v9'
+      fullPath: '/v9'
+      preLoaderRoute: typeof V9RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v8': {
+      id: '/v8'
+      path: '/v8'
+      fullPath: '/v8'
+      preLoaderRoute: typeof V8RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v7': {
+      id: '/v7'
+      path: '/v7'
+      fullPath: '/v7'
+      preLoaderRoute: typeof V7RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v6': {
+      id: '/v6'
+      path: '/v6'
+      fullPath: '/v6'
+      preLoaderRoute: typeof V6RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v5': {
+      id: '/v5'
+      path: '/v5'
+      fullPath: '/v5'
+      preLoaderRoute: typeof V5RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v4': {
+      id: '/v4'
+      path: '/v4'
+      fullPath: '/v4'
+      preLoaderRoute: typeof V4RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v3': {
+      id: '/v3'
+      path: '/v3'
+      fullPath: '/v3'
+      preLoaderRoute: typeof V3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v2': {
+      id: '/v2'
+      path: '/v2'
+      fullPath: '/v2'
+      preLoaderRoute: typeof V2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v10': {
+      id: '/v10'
+      path: '/v10'
+      fullPath: '/v10'
+      preLoaderRoute: typeof V10RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v1': {
+      id: '/v1'
+      path: '/v1'
+      fullPath: '/v1'
+      preLoaderRoute: typeof V1RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +257,16 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  V1Route: V1Route,
+  V10Route: V10Route,
+  V2Route: V2Route,
+  V3Route: V3Route,
+  V4Route: V4Route,
+  V5Route: V5Route,
+  V6Route: V6Route,
+  V7Route: V7Route,
+  V8Route: V8Route,
+  V9Route: V9Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
