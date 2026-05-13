@@ -241,82 +241,7 @@
 .btn-stack:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #fff, 6px 6px 0 1px #111, 10px 10px 0 #fff, 10px 10px 0 1px #111; }
 
 /* ============ Geometric exploration buttons ============
-   All use inner: true (children wrapped in <span>) when noted.        */
-
-/* HEXAGON — beehive cell, hexagonal clip-path. inner: true */
-.btn-hex {
-  background: #111;
-  color: #111;
-  border: 0;
-  padding: 2px;
-  border-radius: 0;
-  clip-path: polygon(14% 0%, 86% 0%, 100% 50%, 86% 100%, 14% 100%, 0% 50%);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition: background 0.18s;
-}
-.btn-hex > span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  height: 100%;
-  background: #f5f3ee;
-  clip-path: polygon(14% 0%, 86% 0%, 100% 50%, 86% 100%, 14% 100%, 0% 50%);
-  padding: 0 22px;
-}
-.btn-hex:hover { background: #d4a017; }
-
-/* ISO — 30° isometric extruded cube */
-.btn-iso {
-  background: #fafaf7;
-  color: #111;
-  border: 1.5px solid #111;
-  border-radius: 0;
-  box-shadow: 5px -5px 0 -1.5px #fafaf7, 5px -5px 0 0 #111;
-  transition: all 0.12s;
-}
-.btn-iso:hover { transform: translate(-2px, 2px); box-shadow: 7px -7px 0 -1.5px #fafaf7, 7px -7px 0 0 #111; }
-.btn-iso:active { transform: translate(5px, -5px); box-shadow: 0 0 0 #111; }
-
-/* PHI — golden ratio split, 1:1.618 inner band. inner: true */
-.btn-phi {
-  background: #f7f4ed;
-  color: #111;
-  border: 1px solid #111;
-  border-radius: 0;
-  position: relative;
-  overflow: hidden;
-  padding: 0 18px;
-  transition: color 0.3s;
-}
-.btn-phi::before {
-  content: "";
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 38.2%;
-  background: #111;
-  transition: width 0.4s cubic-bezier(.2,.8,.2,1);
-  z-index: 0;
-}
-.btn-phi:hover::before { width: 61.8%; }
-.btn-phi > span { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 6px; mix-blend-mode: difference; color: #fff; }
-
-/* TRUCHET — diagonal bicolor split tile */
-.btn-truchet {
-  background: linear-gradient(135deg, #fafafa 0%, #fafafa 49.5%, #111 50%, #111 100%);
-  color: #111;
-  border: 1px solid #111;
-  border-radius: 0;
-  mix-blend-mode: normal;
-  position: relative;
-  transition: background 0.25s;
-}
-.btn-truchet > * { mix-blend-mode: difference; color: #fff; }
-.btn-truchet:hover { background: linear-gradient(135deg, #111 0%, #111 49.5%, #fafafa 50%, #fafafa 100%); }
+   Some use inner: true (children wrapped in <span>).                  */
 
 /* PENROSE — rhombic skew. inner: true */
 .btn-penrose {
@@ -332,56 +257,148 @@
 .btn-penrose > span { display: inline-flex; align-items: center; gap: 6px; transform: skewX(18deg); }
 .btn-penrose:hover { background: #ffd86b; transform: skewX(-18deg) translate(-1px,-1px); box-shadow: 4px 4px 0 #111; }
 
-/* CONCENTRIC — radial ring pattern. inner: true */
-.btn-rings {
-  background:
-    repeating-radial-gradient(circle at center, #111 0 1px, transparent 1px 6px),
-    #fafaf7;
-  color: #111;
-  border: 1px solid #111;
-  border-radius: 999px;
-  padding: 2px;
-  transition: all 0.2s;
-}
-.btn-rings > span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #fafaf7;
-  padding: 0 16px;
-  height: 100%;
-  border-radius: 999px;
-  border-left: 1px solid #111;
-  border-right: 1px solid #111;
-}
-.btn-rings:hover { background: repeating-radial-gradient(circle at center, #d4a017 0 1px, transparent 1px 6px), #fafaf7; }
-
-/* NOTCH — brutalist cut corners. inner: true */
+/* NOTCH — circular notches cut from opposite corners (mask-based) */
 .btn-notch {
+  --c: 14px;
   background: #111;
-  color: #111;
+  color: #fff;
   border: 0;
-  padding: 1.5px;
-  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  padding: 0 22px;
   border-radius: 0;
   font-family: var(--font-mono);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   font-size: 11px;
+  -webkit-mask:
+    radial-gradient(var(--c) at 0 100%, #0000 98%, #000 100%) 0 0/100% 100%,
+    radial-gradient(var(--c) at 100% 0, #0000 98%, #000 100%) 0 0/100% 100%;
+          mask:
+    radial-gradient(var(--c) at 0 100%, #0000 98%, #000 100%) 0 0/100% 100%,
+    radial-gradient(var(--c) at 100% 0, #0000 98%, #000 100%) 0 0/100% 100%;
+  -webkit-mask-composite: source-in;
+          mask-composite: intersect;
   transition: background 0.18s;
 }
-.btn-notch > span {
-  display: flex;
+.btn-notch:hover { background: #d4a017; color: #111; }
+
+/* TICKET — perforated stub with semi-circle bites on left + right midline */
+.btn-ticket {
+  --c: 7px;
+  background:
+    radial-gradient(#111 0.6px, transparent 1.2px) center/2px 100% repeat-y,
+    #fafaf7;
+  background-position: center;
+  background-size: 1px calc(100% - 18px);
+  background-repeat: no-repeat;
+  background-color: #fafaf7;
+  color: #111;
+  border: 1px solid #111;
+  padding: 0 28px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  -webkit-mask:
+    radial-gradient(var(--c) at 0 50%, #0000 98%, #000 100%) 0 0/100% 100%,
+    radial-gradient(var(--c) at 100% 50%, #0000 98%, #000 100%) 0 0/100% 100%;
+          mask:
+    radial-gradient(var(--c) at 0 50%, #0000 98%, #000 100%) 0 0/100% 100%,
+    radial-gradient(var(--c) at 100% 50%, #0000 98%, #000 100%) 0 0/100% 100%;
+  -webkit-mask-composite: source-in;
+          mask-composite: intersect;
+  transition: background-color 0.18s;
+}
+.btn-ticket:hover { background-color: #ffd86b; }
+
+/* DOGEAR — folded-corner card, top-right peeled triangle */
+.btn-dogear {
+  position: relative;
+  background: #fafaf6;
+  color: #111;
+  border: 1px solid #111;
+  padding: 0 18px;
+  border-radius: 0;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+  transition: all 0.18s;
+}
+.btn-dogear::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0;
+  width: 14px; height: 14px;
+  background:
+    linear-gradient(225deg, #e6e3da 0 50%, transparent 50%);
+  border-left: 1px solid #111;
+  border-bottom: 1px solid #111;
+  transform-origin: top right;
+}
+.btn-dogear:hover { background: #ffd86b; }
+
+/* STITCH — fabric patch with dashed embroidery border */
+.btn-stitch {
+  background: #f6f3ec;
+  color: #111;
+  border: 1px solid #111;
+  border-radius: 6px;
+  padding: 0 18px;
+  position: relative;
+  outline: 1px dashed #111;
+  outline-offset: -5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 1px 0 #d4d0c4;
+  transition: all 0.15s;
+}
+.btn-stitch:hover { background: #efe9d8; transform: translateY(-1px); box-shadow: 0 3px 0 #d4d0c4; }
+
+/* TAPE — magnetic-tape diagonal stripe, cassette window */
+.btn-tape {
+  background:
+    repeating-linear-gradient(135deg, #1a1a1a 0 6px, #2a2a2a 6px 12px);
+  color: #fafaf7;
+  border: 1px solid #000;
+  border-radius: 2px;
+  padding: 0 18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  position: relative;
+  box-shadow: inset 0 0 0 3px #fafaf7, inset 0 0 0 4px #000;
+  transition: all 0.18s;
+}
+.btn-tape:hover { background: repeating-linear-gradient(135deg, #d4a017 0 6px, #b8870f 6px 12px); }
+
+/* SQUIRCLE — iOS-style superellipse with iridescent chrome shimmer. inner: true */
+.btn-squircle {
+  background:
+    conic-gradient(from 210deg at 50% 50%,
+      #f0f0f0 0deg, #cfd6df 60deg, #f8f5ee 120deg,
+      #d9cfc2 200deg, #efeae0 280deg, #f0f0f0 360deg);
+  color: #111;
+  border: 0;
+  padding: 1.5px;
+  border-radius: 14px / 18px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -1px 0 rgba(0,0,0,0.15),
+    0 6px 16px -6px rgba(0,0,0,0.25);
+  transition: all 0.25s cubic-bezier(.2,.8,.2,1);
+}
+.btn-squircle > span {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  width: 100%;
   height: 100%;
-  background: #ededea;
-  clip-path: polygon(11px 0, 100% 0, 100% calc(100% - 11px), calc(100% - 11px) 100%, 0 100%, 0 11px);
+  width: 100%;
   padding: 0 18px;
+  background: linear-gradient(180deg, #fafaf7 0%, #e9e5dc 100%);
+  border-radius: 13px / 17px;
 }
-.btn-notch:hover { background: #d4a017; }
+.btn-squircle:hover { transform: translateY(-1px); filter: hue-rotate(15deg); }
 
 
 /* Index-page giant piano keys */
