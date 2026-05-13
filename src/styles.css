@@ -240,33 +240,34 @@
 }
 .btn-stack:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #fff, 6px 6px 0 1px #111, 10px 10px 0 #fff, 10px 10px 0 1px #111; }
 
-/* ============ Geometric exploration buttons ============ */
+/* ============ Geometric exploration buttons ============
+   All use inner: true (children wrapped in <span>) when noted.        */
 
-/* HEXAGON — beehive cell, clip-path */
+/* HEXAGON — beehive cell, hexagonal clip-path. inner: true */
 .btn-hex {
-  background: #f5f3ee;
+  background: #111;
   color: #111;
   border: 0;
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-  padding-left: 22px;
-  padding-right: 22px;
+  padding: 2px;
+  border-radius: 0;
+  clip-path: polygon(14% 0%, 86% 0%, 100% 50%, 86% 100%, 14% 100%, 0% 50%);
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  position: relative;
-  transition: all 0.15s;
+  transition: background 0.18s;
 }
-.btn-hex::before {
-  content: "";
-  position: absolute;
-  inset: 2px;
+.btn-hex > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
   background: #f5f3ee;
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-  z-index: -1;
+  clip-path: polygon(14% 0%, 86% 0%, 100% 50%, 86% 100%, 14% 100%, 0% 50%);
+  padding: 0 22px;
 }
-.btn-hex { background: #111; padding: 0; }
-.btn-hex > span, .btn-hex { display: inline-flex; align-items: center; justify-content: center; }
 .btn-hex:hover { background: #d4a017; }
 
 /* ISO — 30° isometric extruded cube */
@@ -275,35 +276,34 @@
   color: #111;
   border: 1.5px solid #111;
   border-radius: 0;
-  box-shadow: 4px -4px 0 -1.5px #fafaf7, 4px -4px 0 0 #111, 6px -2px 0 -1.5px #fafaf7;
-  position: relative;
+  box-shadow: 5px -5px 0 -1.5px #fafaf7, 5px -5px 0 0 #111;
   transition: all 0.12s;
 }
-.btn-iso:hover { transform: translate(-2px, 2px); box-shadow: 6px -6px 0 -1.5px #fafaf7, 6px -6px 0 0 #111; }
-.btn-iso:active { transform: translate(4px, -4px); box-shadow: 0 0 0 #111; }
+.btn-iso:hover { transform: translate(-2px, 2px); box-shadow: 7px -7px 0 -1.5px #fafaf7, 7px -7px 0 0 #111; }
+.btn-iso:active { transform: translate(5px, -5px); box-shadow: 0 0 0 #111; }
 
-/* PHI — golden ratio split, 1:1.618 inner band */
+/* PHI — golden ratio split, 1:1.618 inner band. inner: true */
 .btn-phi {
   background: #f7f4ed;
   color: #111;
   border: 1px solid #111;
   border-radius: 0;
   position: relative;
-  padding-left: 18px;
-  padding-right: 18px;
   overflow: hidden;
-  transition: all 0.15s;
+  padding: 0 18px;
+  transition: color 0.3s;
 }
 .btn-phi::before {
   content: "";
   position: absolute;
   left: 0; top: 0; bottom: 0;
-  width: 38.2%; /* 1 - 1/φ */
+  width: 38.2%;
   background: #111;
-  transition: width 0.3s cubic-bezier(.2,.8,.2,1);
+  transition: width 0.4s cubic-bezier(.2,.8,.2,1);
+  z-index: 0;
 }
 .btn-phi:hover::before { width: 61.8%; }
-.btn-phi > * { position: relative; z-index: 1; mix-blend-mode: difference; color: #fff; }
+.btn-phi > span { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 6px; mix-blend-mode: difference; color: #fff; }
 
 /* TRUCHET — diagonal bicolor split tile */
 .btn-truchet {
@@ -311,66 +311,78 @@
   color: #111;
   border: 1px solid #111;
   border-radius: 0;
+  mix-blend-mode: normal;
   position: relative;
-  transition: all 0.2s;
+  transition: background 0.25s;
 }
-.btn-truchet:hover { background: linear-gradient(135deg, #111 0%, #111 49.5%, #fafafa 50%, #fafafa 100%); color: #fafafa; }
-.btn-truchet > *, .btn-truchet { mix-blend-mode: difference; }
+.btn-truchet > * { mix-blend-mode: difference; color: #fff; }
+.btn-truchet:hover { background: linear-gradient(135deg, #111 0%, #111 49.5%, #fafafa 50%, #fafafa 100%); }
 
-/* PENROSE — 72° rhombic skew */
+/* PENROSE — rhombic skew. inner: true */
 .btn-penrose {
   background: #fafaf6;
   color: #111;
   border: 1px solid #111;
   border-radius: 0;
   transform: skewX(-18deg);
-  padding-left: 22px;
-  padding-right: 22px;
+  padding: 0 22px;
   transition: all 0.15s;
   box-shadow: 3px 3px 0 #111;
 }
-.btn-penrose > * { display: inline-flex; align-items: center; gap: 6px; transform: skewX(18deg); }
+.btn-penrose > span { display: inline-flex; align-items: center; gap: 6px; transform: skewX(18deg); }
 .btn-penrose:hover { background: #ffd86b; transform: skewX(-18deg) translate(-1px,-1px); box-shadow: 4px 4px 0 #111; }
 
-/* CONCENTRIC — radial ring pattern */
+/* CONCENTRIC — radial ring pattern. inner: true */
 .btn-rings {
   background:
-    radial-gradient(circle at center, transparent 0, transparent 8px, #111 8px, #111 9px, transparent 9px, transparent 14px, #111 14px, #111 15px, transparent 15px, transparent 22px, #111 22px, #111 23px, transparent 23px),
+    repeating-radial-gradient(circle at center, #111 0 1px, transparent 1px 6px),
     #fafaf7;
   color: #111;
   border: 1px solid #111;
   border-radius: 999px;
-  position: relative;
+  padding: 2px;
   transition: all 0.2s;
 }
-.btn-rings > * { position: relative; background: #fafaf7; padding: 0 12px; border-left: 1px solid #111; border-right: 1px solid #111; }
-.btn-rings:hover { filter: invert(1); }
+.btn-rings > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fafaf7;
+  padding: 0 16px;
+  height: 100%;
+  border-radius: 999px;
+  border-left: 1px solid #111;
+  border-right: 1px solid #111;
+}
+.btn-rings:hover { background: repeating-radial-gradient(circle at center, #d4a017 0 1px, transparent 1px 6px), #fafaf7; }
 
-/* NOTCH — brutalist cut corners */
+/* NOTCH — brutalist cut corners. inner: true */
 .btn-notch {
-  background: #ededea;
+  background: #111;
   color: #111;
   border: 0;
+  padding: 1.5px;
   clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
   border-radius: 0;
   font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   font-size: 11px;
-  position: relative;
-  transition: all 0.12s;
+  transition: background 0.18s;
 }
-.btn-notch::after {
-  content: "";
-  position: absolute;
-  inset: 1.5px;
+.btn-notch > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
   background: #ededea;
   clip-path: polygon(11px 0, 100% 0, 100% calc(100% - 11px), calc(100% - 11px) 100%, 0 100%, 0 11px);
-  z-index: 0;
+  padding: 0 18px;
 }
-.btn-notch { background: #111; }
-.btn-notch > * { position: relative; z-index: 1; }
 .btn-notch:hover { background: #d4a017; }
+
 
 /* Index-page giant piano keys */
 .piano-key {
