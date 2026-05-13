@@ -134,7 +134,8 @@ function Btn({
 }
 
 function IconBtn({ s, children }: { s: Style; children: React.ReactNode }) {
-  const cls = `${s.btn} h-10 w-10 inline-flex items-center justify-center`;
+  const sizing = s.inner ? "h-10 min-w-10" : "h-10 w-10";
+  const cls = `${s.btn} ${sizing} inline-flex items-center justify-center`;
   if (s.inner) return <button className={cls}><span>{children}</span></button>;
   return <button className={cls}>{children}</button>;
 }
