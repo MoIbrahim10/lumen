@@ -427,7 +427,7 @@
     linear-gradient(160deg, #f3f6fb 0%, #d9dee7 55%, #c4cad6 100%);
   color: #1b2230;
   border: 1px solid rgba(255,255,255,0.7);
-  border-radius: 22px;
+  border-radius: 8px;
   padding: 2px;
   box-shadow:
     /* outer rim light */
