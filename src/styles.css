@@ -414,33 +414,42 @@
     0 4px 8px -4px rgba(0,0,0,0.3);
 }
 
-/* GUMMY — puffy glossy bite, asymmetric organic notch, claymorph 3D. inner: true */
-.btn-gummy {
-  --c: 16px;
+/* LIQUID GLASS — glossy 3D acrylic, full rounded silhouette,
+   decorative molded ripple accents on top-right + bottom-left corners only.
+   inner: true */
+.btn-liquid {
   position: relative;
+  isolation: isolate;
   background:
-    radial-gradient(ellipse 80% 60% at 30% 18%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 55%),
-    linear-gradient(180deg, #f4f1ea 0%, #d8d2c4 100%);
-  color: #2a2a2a;
-  border: 0;
-  padding: 3px;
-  border-radius: 28px 28px 26px 26px / 24px 24px 22px 22px;
+    /* top sheen */
+    linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 45%),
+    /* base acrylic tint */
+    linear-gradient(160deg, #f3f6fb 0%, #d9dee7 55%, #c4cad6 100%);
+  color: #1b2230;
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 22px;
+  padding: 2px;
   box-shadow:
-    inset 0 2px 0 rgba(255,255,255,0.95),
-    inset 0 -3px 0 rgba(0,0,0,0.06),
-    0 8px 0 -2px #c2bdb0,
-    0 16px 28px -10px rgba(0,0,0,0.35);
-  -webkit-mask:
-    radial-gradient(circle var(--c) at 100% 0, #0000 98%, #000 100%) 0 0/100% 100%,
-    radial-gradient(circle var(--c) at 0 100%, #0000 98%, #000 100%) 0 0/100% 100%;
-          mask:
-    radial-gradient(circle var(--c) at 100% 0, #0000 98%, #000 100%) 0 0/100% 100%,
-    radial-gradient(circle var(--c) at 0 100%, #0000 98%, #000 100%) 0 0/100% 100%;
-  -webkit-mask-composite: source-in;
-          mask-composite: intersect;
-  transition: all 0.18s cubic-bezier(.2,.8,.2,1);
+    /* outer rim light */
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    /* bottom inner shadow giving depth */
+    inset 0 -2px 6px rgba(40,55,80,0.18),
+    /* faint side rim */
+    inset 1px 0 0 rgba(255,255,255,0.3),
+    inset -1px 0 0 rgba(40,55,80,0.08),
+    /* raised stack */
+    0 4px 0 -2px #b6bdcb,
+    /* soft cast shadow */
+    0 16px 26px -10px rgba(20,30,50,0.35),
+    0 28px 40px -20px rgba(20,30,50,0.25);
+  transition: all 0.25s cubic-bezier(.2,.8,.2,1);
+  overflow: hidden;
 }
-.btn-gummy > span {
+
+/* Inner glass face with gloss */
+.btn-liquid > span {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -448,15 +457,91 @@
   height: 100%;
   width: 100%;
   padding: 0 22px;
+  border-radius: 20px;
   background:
-    radial-gradient(ellipse 70% 50% at 35% 25%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 60%),
-    linear-gradient(180deg, #fbfaf6 0%, #e2dccf 100%);
-  border-radius: 26px 26px 24px 24px / 22px 22px 20px 20px;
+    /* top glossy reflection */
+    linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.05) 38%, rgba(255,255,255,0) 50%),
+    /* bottom subtle reflection */
+    linear-gradient(0deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 30%),
+    linear-gradient(160deg, #fafbfd 0%, #e3e7ee 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    inset 0 -1px 0 rgba(40,55,80,0.1);
   font-weight: 600;
   text-shadow: 0 1px 0 rgba(255,255,255,0.7);
 }
-.btn-gummy:hover { transform: translateY(-2px); }
-.btn-gummy:active { transform: translateY(4px); }
+
+/* Top-right molded ripple — concentric wavy rings */
+.btn-liquid::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 35%,
+      rgba(255,255,255,0.85) 0%,
+      rgba(255,255,255,0.4) 18%,
+      rgba(255,255,255,0) 28%,
+      rgba(255,255,255,0.55) 38%,
+      rgba(255,255,255,0) 48%,
+      rgba(255,255,255,0.4) 58%,
+      rgba(255,255,255,0) 70%);
+  box-shadow:
+    inset 1px 1px 2px rgba(255,255,255,0.9),
+    inset -1px -1px 3px rgba(40,55,80,0.15);
+  pointer-events: none;
+  z-index: 2;
+  filter: blur(0.3px);
+}
+
+/* Bottom-left molded ripple */
+.btn-liquid::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: -6px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 65% 65%,
+      rgba(255,255,255,0.7) 0%,
+      rgba(255,255,255,0.3) 18%,
+      rgba(255,255,255,0) 28%,
+      rgba(255,255,255,0.45) 38%,
+      rgba(255,255,255,0) 48%,
+      rgba(255,255,255,0.35) 58%,
+      rgba(255,255,255,0) 70%);
+  box-shadow:
+    inset -1px -1px 2px rgba(255,255,255,0.7),
+    inset 1px 1px 3px rgba(40,55,80,0.18);
+  pointer-events: none;
+  z-index: 2;
+  filter: blur(0.3px);
+}
+
+.btn-liquid:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    inset 0 -2px 6px rgba(40,55,80,0.18),
+    inset 1px 0 0 rgba(255,255,255,0.3),
+    inset -1px 0 0 rgba(40,55,80,0.08),
+    0 6px 0 -2px #b6bdcb,
+    0 22px 32px -10px rgba(20,30,50,0.4),
+    0 36px 48px -20px rgba(20,30,50,0.3);
+}
+.btn-liquid:active {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    inset 0 -2px 6px rgba(40,55,80,0.18),
+    0 1px 0 -2px #b6bdcb,
+    0 6px 12px -6px rgba(20,30,50,0.35);
+}
 
 /* PEBBLE — organic asymmetric blob, polished river-stone */
 .btn-pebble {
