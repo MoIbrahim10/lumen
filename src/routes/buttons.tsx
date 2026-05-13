@@ -65,6 +65,35 @@ const STYLES: Style[] = [
     inner: true,
     bg: "bg-[#e8e5dc]",
   },
+  {
+    id: "gummy",
+    name: "Gummy Bite",
+    tagline: "Squishy claymorph",
+    mood: "Glossy puffy · asymmetric notch · candy plastic",
+    mode: "light",
+    btn: "btn-gummy", send: "btn-gummy", chip: "btn-gummy",
+    inner: true,
+    bg: "bg-[#ece8df]",
+  },
+  {
+    id: "pebble",
+    name: "River Pebble",
+    tagline: "Polished organic blob",
+    mood: "Asymmetric radii · zen stone · morphing on hover",
+    mode: "light",
+    btn: "btn-pebble", send: "btn-pebble", chip: "btn-pebble",
+    bg: "bg-[#e8e4db]",
+  },
+  {
+    id: "inflated",
+    name: "Inflated Vinyl",
+    tagline: "Pillow stack",
+    mood: "Glossy bubble · tall depth stack · Y2K toy",
+    mode: "light",
+    btn: "btn-inflated", send: "btn-inflated", chip: "btn-inflated",
+    inner: true,
+    bg: "bg-[#ebe7dc]",
+  },
 ];
 
 function Btn({
