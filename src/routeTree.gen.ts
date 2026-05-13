@@ -19,6 +19,7 @@ import { Route as V3RouteImport } from './routes/v3'
 import { Route as V2RouteImport } from './routes/v2'
 import { Route as V10RouteImport } from './routes/v10'
 import { Route as V1RouteImport } from './routes/v1'
+import { Route as ButtonsRouteImport } from './routes/buttons'
 import { Route as IndexRouteImport } from './routes/index'
 
 const V9Route = V9RouteImport.update({
@@ -71,6 +72,11 @@ const V1Route = V1RouteImport.update({
   path: '/v1',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ButtonsRoute = ButtonsRouteImport.update({
+  id: '/buttons',
+  path: '/buttons',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -79,6 +85,7 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/buttons': typeof ButtonsRoute
   '/v1': typeof V1Route
   '/v10': typeof V10Route
   '/v2': typeof V2Route
@@ -92,6 +99,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/buttons': typeof ButtonsRoute
   '/v1': typeof V1Route
   '/v10': typeof V10Route
   '/v2': typeof V2Route
@@ -106,6 +114,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/buttons': typeof ButtonsRoute
   '/v1': typeof V1Route
   '/v10': typeof V10Route
   '/v2': typeof V2Route
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/buttons'
     | '/v1'
     | '/v10'
     | '/v2'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/buttons'
     | '/v1'
     | '/v10'
     | '/v2'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/buttons'
     | '/v1'
     | '/v10'
     | '/v2'
@@ -161,6 +173,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ButtonsRoute: typeof ButtonsRoute
   V1Route: typeof V1Route
   V10Route: typeof V10Route
   V2Route: typeof V2Route
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof V1RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buttons': {
+      id: '/buttons'
+      path: '/buttons'
+      fullPath: '/buttons'
+      preLoaderRoute: typeof ButtonsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -257,6 +277,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ButtonsRoute: ButtonsRoute,
   V1Route: V1Route,
   V10Route: V10Route,
   V2Route: V2Route,
