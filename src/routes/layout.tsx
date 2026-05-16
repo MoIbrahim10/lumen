@@ -13,7 +13,9 @@ export const Route = createFileRoute("/layout")({ component: LayoutGallery });
 
 type Ctx = {
   light: boolean;
-  btn: string; // base button class for this mode
+  btn: string;
+  panel: string;
+  panelInner: string;
 };
 
 const QUICK = [
