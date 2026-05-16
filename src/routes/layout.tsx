@@ -335,32 +335,51 @@ function TopBar({
 
   return (
     <div className="flex h-14 items-center justify-between gap-3 px-4">
-      {/* left cluster — sidebar toggle + search, grouped */}
-      <div className={`${ctx.panel} flex items-center gap-1 p-1`}>
+      {/* left cluster — sidebar toggle + search */}
+      <div className="flex items-center bg-white border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] rounded-lg p-1">
         {onSide && (
-          <IconBtn ctx={ctx} onClick={onSide} size={8} tip={sideOpen ? "Close menu" : "Open menu"} keys="⌘B">
-            <motion.span
-              animate={{ scaleX: sideOpen ? -1 : 1, x: sideOpen ? -1 : 0 }}
-              transition={{ type: "spring", stiffness: 560, damping: 32 }}
-              className="flex"
+          <>
+            <button
+              onClick={onSide}
+              aria-label={sideOpen ? "Close menu" : "Open menu"}
+              className="p-2 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer"
             >
-              <PanelLeft className="h-3.5 w-3.5" />
-            </motion.span>
-          </IconBtn>
+              <motion.span
+                animate={{ scaleX: sideOpen ? -1 : 1, x: sideOpen ? -1 : 0 }}
+                transition={{ type: "spring", stiffness: 560, damping: 32 }}
+                className="flex"
+              >
+                <PanelLeft className="h-[18px] w-[18px]" strokeWidth={2} />
+              </motion.span>
+            </button>
+            <span className="w-px h-4 bg-zinc-200/60 mx-1" aria-hidden />
+          </>
         )}
-        <IconBtn ctx={ctx} onClick={() => setSearchOpen(true)} size={8} tip="Search" keys="⌘K">
-          <Search className="h-3.5 w-3.5" />
-        </IconBtn>
+        <button
+          onClick={() => setSearchOpen(true)}
+          aria-label="Search"
+          className="p-2 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer"
+        >
+          <Search className="h-[18px] w-[18px]" strokeWidth={2} />
+        </button>
       </div>
 
-      {/* right cluster — temp + preferences + profile, grouped */}
-      <div className={`${ctx.panel} flex items-center gap-1 p-1`}>
-        <IconBtn ctx={ctx} onClick={onTemp} dim={!temp} size={8} tip={temp ? "Temporary chat on" : "Temporary chat"} keys="⌘⇧T">
-          <EyeOff className="h-3.5 w-3.5" />
-        </IconBtn>
-        <IconBtn ctx={ctx} size={8} tip="Preferences" keys="⌘,">
-          <SlidersHorizontal className="h-3.5 w-3.5" />
-        </IconBtn>
+      {/* right cluster — temp + preferences + profile */}
+      <div className="flex items-center bg-white border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] rounded-lg p-1 gap-0.5">
+        <button
+          onClick={onTemp}
+          aria-label={temp ? "Temporary chat on" : "Temporary chat"}
+          className={`p-2 hover:bg-zinc-50 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer ${temp ? "text-zinc-900" : "text-zinc-400"}`}
+        >
+          <EyeOff className="h-[18px] w-[18px]" strokeWidth={2} />
+        </button>
+        <button
+          aria-label="Preferences"
+          className="p-2 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer"
+        >
+          <SlidersHorizontal className="h-[18px] w-[18px]" strokeWidth={2} />
+        </button>
+        <span className="w-px h-4 bg-zinc-200/60 mx-1" aria-hidden />
         {right ?? <Profile ctx={ctx} />}
       </div>
 
