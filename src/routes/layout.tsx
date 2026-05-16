@@ -5,7 +5,7 @@ import {
   Paperclip, Mic, Wrench, ArrowUp, Globe, Brain, ChevronDown, Sun, Moon,
   SlidersHorizontal, Menu, EyeOff, FileText, Mail, Code2, Search,
   ScanSearch, Lightbulb, Presentation, Image as ImageIcon,
-  ChevronsLeft, Plus, History, Library, FolderClosed, Cpu, Plug,
+  Plus, History, Library, FolderClosed, Cpu, Plug,
   Settings, User, ChevronRight, PanelLeft, X,
 } from "lucide-react";
 import {
@@ -167,8 +167,8 @@ const NAV_ITEMS = [
   { label: "History", icon: History, keys: "⌘H" },
 ];
 
-function SideMenu({ ctx, open, onToggle, placement = "left" }: {
-  ctx: Ctx; open: boolean; onToggle: () => void; placement?: "left" | "right";
+function SideMenu({ ctx, open, placement = "left" }: {
+  ctx: Ctx; open: boolean; placement?: "left" | "right";
 }) {
   void placement;
   return (
@@ -181,11 +181,8 @@ function SideMenu({ ctx, open, onToggle, placement = "left" }: {
           transition={{ type: "spring", stiffness: 360, damping: 36, mass: 0.7 }}
           className="flex shrink-0 flex-col gap-2 overflow-hidden border-r border-border bg-background/40"
         >
-          <div className="flex w-[240px] items-center justify-between px-3 py-3">
+          <div className="flex w-[240px] items-center px-3 py-3">
             <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">Menu</span>
-            <IconBtn ctx={ctx} onClick={onToggle} size={8} tip="Close menu" keys="⌘B">
-              <ChevronsLeft className="h-3.5 w-3.5" />
-            </IconBtn>
           </div>
           <nav className="flex w-[240px] flex-col gap-1.5 px-2">
             {NAV_ITEMS.map((i, idx) => (
