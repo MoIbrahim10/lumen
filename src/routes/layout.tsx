@@ -885,54 +885,22 @@ function LayoutGallery() {
   const wrap = light ? "" : "dark";
   const current = LAYOUTS[active];
 
+  const v12 = LAYOUTS.find((l) => l.id === "12") ?? LAYOUTS[0];
+  void active; void setActive;
+
   return (
     <div className={wrap}>
-      <div className="min-h-screen text-foreground" style={{ background: bg, color: fg }}>
-        {/* gallery header */}
-        <header className="flex items-center justify-between border-b border-border px-6 py-4">
-          <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.3em] opacity-60">Style 02 · Mechanical Keycap</p>
-            <h2 className="mt-1 font-mono text-sm uppercase tracking-[0.2em]">Layout Gallery — 10 directions</h2>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setLight(!light)}
-              className={`${ctx.btn} flex items-center gap-2 px-3 py-1.5 text-[11px]`}
-            >
-              {light ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-              {light ? "Light" : "Dark"}
-            </button>
-            <Link to="/" className={`${ctx.btn} px-3 py-1.5 text-[11px]`}>← Home</Link>
-          </div>
-        </header>
+      <div className="relative min-h-screen text-foreground" style={{ background: bg, color: fg }}>
+        {v12.render(ctx)}
 
-        {/* tabs */}
-        <div className="flex flex-wrap gap-1.5 border-b border-border px-6 py-3">
-          {LAYOUTS.map((l, i) => (
-            <button
-              key={l.id}
-              onClick={() => setActive(i)}
-              className={`${ctx.btn} px-3 py-1.5 text-[11px] ${active === i ? "" : "opacity-60"}`}
-            >
-              {l.id} · {l.name}
-            </button>
-          ))}
-        </div>
-
-        {/* meta */}
-        <div className="px-6 pt-4 font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">
-          {current.id} — {current.tagline}
-        </div>
-
-        {/* stage */}
-        <div className="p-6">
-          <div
-            className="overflow-hidden rounded-lg border border-border"
-            style={{ background: bg, height: "calc(100vh - 220px)", minHeight: 640 }}
-          >
-            {current.render(ctx)}
-          </div>
-        </div>
+        {/* floating theme toggle */}
+        <button
+          onClick={() => setLight(!light)}
+          className={`${ctx.btn} fixed bottom-5 right-5 z-50 flex h-9 w-9 items-center justify-center`}
+          aria-label="Toggle theme"
+        >
+          {light ? <Moon className="h-3.5 w-3.5" /> : <Sun className="h-3.5 w-3.5" />}
+        </button>
       </div>
     </div>
   );
