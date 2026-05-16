@@ -361,7 +361,7 @@ function TopBar({
 }) {
   const [searchOpen, setSearchOpen] = useState(false);
 
-  // ⌘K opens search palette
+  // ⌘K opens search palette + listen to in-menu search button
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -369,39 +369,29 @@ function TopBar({
         setSearchOpen((s) => !s);
       }
     };
+    const onOpen = () => setSearchOpen(true);
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("layout:open-search", onOpen as EventListener);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("layout:open-search", onOpen as EventListener);
+    };
   }, []);
 
   return (
     <div className="flex h-14 items-center justify-between gap-3 px-4">
-      {/* left cluster — sidebar toggle + search */}
-      <div className="flex items-center bg-white border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] rounded-lg p-1">
-        {onSide && (
-          <>
-            <button
-              onClick={onSide}
-              aria-label={sideOpen ? "Close menu" : "Open menu"}
-              className="p-2 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer"
-            >
-              <motion.span
-                animate={{ scaleX: sideOpen ? -1 : 1, x: sideOpen ? -1 : 0 }}
-                transition={{ type: "spring", stiffness: 560, damping: 32 }}
-                className="flex"
-              >
-                <PanelLeft className="h-[18px] w-[18px]" strokeWidth={2} />
-              </motion.span>
-            </button>
-            <span className="w-px h-4 bg-zinc-200/60 mx-1" aria-hidden />
-          </>
-        )}
-        <button
-          onClick={() => setSearchOpen(true)}
-          aria-label="Search"
-          className="p-2 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer"
-        >
-          <Search className="h-[18px] w-[18px]" strokeWidth={2} />
-        </button>
+      {/* left cluster — hidden when side menu is open (morphs into menu header) */}
+      <div className="flex items-center">
+        <AnimatePresence initial={false}>
+          {!sideOpen && (
+            <LeftPill
+              key="pill"
+              sideOpen={false}
+              onSide={onSide}
+              onSearch={() => setSearchOpen(true)}
+            />
+          )}
+        </AnimatePresence>
       </div>
 
       {/* right cluster — temp + preferences + profile */}
