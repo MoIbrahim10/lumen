@@ -20,6 +20,7 @@ import { Route as V2RouteImport } from './routes/v2'
 import { Route as V10RouteImport } from './routes/v10'
 import { Route as V1RouteImport } from './routes/v1'
 import { Route as LayoutRouteImport } from './routes/layout'
+import { Route as ColorsRouteImport } from './routes/colors'
 import { Route as ButtonsRouteImport } from './routes/buttons'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -78,6 +79,11 @@ const LayoutRoute = LayoutRouteImport.update({
   path: '/layout',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ColorsRoute = ColorsRouteImport.update({
+  id: '/colors',
+  path: '/colors',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ButtonsRoute = ButtonsRouteImport.update({
   id: '/buttons',
   path: '/buttons',
@@ -92,6 +98,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/buttons': typeof ButtonsRoute
+  '/colors': typeof ColorsRoute
   '/layout': typeof LayoutRoute
   '/v1': typeof V1Route
   '/v10': typeof V10Route
@@ -107,6 +114,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/buttons': typeof ButtonsRoute
+  '/colors': typeof ColorsRoute
   '/layout': typeof LayoutRoute
   '/v1': typeof V1Route
   '/v10': typeof V10Route
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/buttons': typeof ButtonsRoute
+  '/colors': typeof ColorsRoute
   '/layout': typeof LayoutRoute
   '/v1': typeof V1Route
   '/v10': typeof V10Route
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/buttons'
+    | '/colors'
     | '/layout'
     | '/v1'
     | '/v10'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/buttons'
+    | '/colors'
     | '/layout'
     | '/v1'
     | '/v10'
@@ -170,6 +181,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/buttons'
+    | '/colors'
     | '/layout'
     | '/v1'
     | '/v10'
@@ -186,6 +198,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ButtonsRoute: typeof ButtonsRoute
+  ColorsRoute: typeof ColorsRoute
   LayoutRoute: typeof LayoutRoute
   V1Route: typeof V1Route
   V10Route: typeof V10Route
@@ -278,6 +291,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/colors': {
+      id: '/colors'
+      path: '/colors'
+      fullPath: '/colors'
+      preLoaderRoute: typeof ColorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/buttons': {
       id: '/buttons'
       path: '/buttons'
@@ -298,6 +318,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ButtonsRoute: ButtonsRoute,
+  ColorsRoute: ColorsRoute,
   LayoutRoute: LayoutRoute,
   V1Route: V1Route,
   V10Route: V10Route,
