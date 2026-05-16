@@ -337,29 +337,29 @@ function TopBar({
   }, []);
 
   return (
-    <div className="flex h-14 items-center justify-between gap-3 border-b border-border px-4">
-      <div className="flex items-center gap-3">
+    <div className="flex h-14 items-center justify-between gap-3 px-4">
+      {/* left cluster — sidebar toggle + search, grouped */}
+      <div className={`${ctx.panel} flex items-center gap-1 p-1`}>
         {onSide && (
           <IconBtn ctx={ctx} onClick={onSide} size={8} tip={sideOpen ? "Close menu" : "Open menu"} keys="⌘B">
             <motion.span
               key={sideOpen ? "open" : "closed"}
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 480, damping: 28 }}
+              initial={{ opacity: 0, scale: 0.6 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: "spring", stiffness: 520, damping: 28 }}
               className="flex"
             >
-              {sideOpen ? <ChevronsLeft className="h-3.5 w-3.5" /> : <Menu className="h-3.5 w-3.5" />}
+              {sideOpen ? <ChevronsLeft className="h-3.5 w-3.5" /> : <PanelLeft className="h-3.5 w-3.5" />}
             </motion.span>
           </IconBtn>
         )}
-        <span className="font-mono text-[12px] uppercase tracking-[0.22em]">Lumen</span>
-      </div>
-
-      {/* grouped right cluster — single mech "row" */}
-      <div className={`${ctx.panel} flex items-center gap-1 p-1`}>
         <IconBtn ctx={ctx} onClick={() => setSearchOpen(true)} size={8} tip="Search" keys="⌘K">
           <Search className="h-3.5 w-3.5" />
         </IconBtn>
+      </div>
+
+      {/* right cluster — temp + preferences + profile, grouped */}
+      <div className={`${ctx.panel} flex items-center gap-1 p-1`}>
         <IconBtn ctx={ctx} onClick={onTemp} dim={!temp} size={8} tip={temp ? "Temporary chat on" : "Temporary chat"} keys="⌘⇧T">
           <EyeOff className="h-3.5 w-3.5" />
         </IconBtn>
