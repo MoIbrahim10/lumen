@@ -13,7 +13,9 @@ export const Route = createFileRoute("/layout")({ component: LayoutGallery });
 
 type Ctx = {
   light: boolean;
-  btn: string; // base button class for this mode
+  btn: string;
+  panel: string;
+  panelInner: string;
 };
 
 const QUICK = [
@@ -91,16 +93,16 @@ function Profile({ ctx, align = "right" }: { ctx: Ctx; align?: "left" | "right" 
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className={`${ctx.btn} flex h-9 items-center gap-2 px-2 text-[11px]`}
+        className={`${ctx.btn} flex h-9 w-9 items-center justify-center p-0`}
+        aria-label="Profile"
       >
         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-[10px] text-background">EM</span>
-        <span>Emma</span>
-        <ChevronDown className="h-3 w-3 opacity-60" />
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div className={`absolute top-full z-50 mt-1 min-w-[180px] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg ${align === "right" ? "right-0" : "left-0"}`}>
+            <div className="border-b border-border px-3 py-2 text-[11px] opacity-60">Emma · emma@lumen.app</div>
             {["Account", "Billing", "Workspace", "Sign out"].map((o) => (
               <div key={o} className="block px-3 py-2 text-xs hover:bg-muted cursor-pointer">{o}</div>
             ))}
@@ -227,9 +229,9 @@ function TopBar({
         <span className="font-mono text-[12px] uppercase tracking-[0.22em]">Lumen</span>
       </div>
       <div className="flex items-center gap-2">
-        <Pill ctx={ctx} onClick={onTemp}>
-          <EyeOff className="h-3.5 w-3.5" /> {temp ? "Temporary on" : "Temporary"}
-        </Pill>
+        <IconBtn ctx={ctx} onClick={onTemp} dim={!temp} size={8}>
+          <EyeOff className="h-3.5 w-3.5" />
+        </IconBtn>
         <IconBtn ctx={ctx} size={8}><Settings className="h-3.5 w-3.5" /></IconBtn>
         {right ?? <Profile ctx={ctx} />}
       </div>
@@ -292,6 +294,21 @@ const LAYOUTS: { id: string; name: string; tagline: string; render: LayoutFn }[]
     tagline: "Bare composer · controls collapse to icons",
     render: (ctx) => <MinimalConsole ctx={ctx} />,
   },
+  {
+    id: "11", name: "Nested Tile",
+    tagline: "Outer wrapper · inner prompt tile + control tile",
+    render: (ctx) => <NestedTile ctx={ctx} />,
+  },
+  {
+    id: "12", name: "Framed Console",
+    tagline: "Parent frame · divided sections inside",
+    render: (ctx) => <FramedConsole ctx={ctx} />,
+  },
+  {
+    id: "13", name: "Tray + Strip",
+    tagline: "Outer tray · prompt tile · controls strip",
+    render: (ctx) => <TrayStrip ctx={ctx} />,
+  },
 ];
 
 /* 01 */
@@ -306,11 +323,11 @@ function Centered({ ctx }: { ctx: Ctx }) {
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
           <div className="w-full max-w-[760px]">
             <Greeting className="text-center" />
-            <div className={`${ctx.btn} mt-6 p-5`}>
+            <div className={`${ctx.panel} mt-6 p-5`}>
               <InputBlock ctx={ctx} />
               <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
             </div>
-            <div className={`${ctx.btn} mt-3 px-3 py-2`}>
+            <div className={`${ctx.panel} mt-3 px-3 py-2`}>
               <SecondaryRow ctx={ctx} />
             </div>
             <div className="mt-6 flex justify-center"><QuickChips ctx={ctx} /></div>
@@ -615,6 +632,106 @@ function MinimalConsole({ ctx }: { ctx: Ctx }) {
   );
 }
 
+/* 11 — Nested Tile: outer panel hosts inner prompt tile + inner controls tile */
+function NestedTile({ ctx }: { ctx: Ctx }) {
+  const [side, setSide] = useState(false);
+  const [temp, setTemp] = useState(false);
+  return (
+    <div className="flex h-full">
+      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <div className="flex flex-1 flex-col">
+        <TopBar ctx={ctx} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
+          <div className="w-full max-w-[760px]">
+            <Greeting className="text-center" />
+            <div className={`${ctx.panel} mt-6 p-3`}>
+              <div className={`${ctx.panelInner} p-4`}>
+                <InputBlock ctx={ctx} />
+                <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
+              </div>
+              <div className={`${ctx.panelInner} mt-3 px-3 py-2`}>
+                <SecondaryRow ctx={ctx} />
+              </div>
+            </div>
+            <div className="mt-6 flex justify-center"><QuickChips ctx={ctx} limit={6} /></div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+/* 12 — Framed Console: single outer wrapper, divider between prompt + controls */
+function FramedConsole({ ctx }: { ctx: Ctx }) {
+  const [side, setSide] = useState(false);
+  const [temp, setTemp] = useState(false);
+  return (
+    <div className="flex h-full">
+      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <div className="flex flex-1 flex-col">
+        <TopBar ctx={ctx} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
+          <div className="w-full max-w-[780px]">
+            <Greeting className="text-center" />
+            <div className={`${ctx.panel} mt-6 p-4`}>
+              <div className="flex items-center justify-between px-2 pb-3">
+                <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">Compose</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-40">Lumen 4 · ready</span>
+              </div>
+              <div className={`${ctx.panelInner} p-4`}>
+                <InputBlock ctx={ctx} rows={4} />
+                <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
+              </div>
+              <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5">
+                <SecondaryRow ctx={ctx} />
+              </div>
+            </div>
+            <div className="mt-6 flex justify-center"><QuickChips ctx={ctx} limit={5} /></div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+/* 13 — Tray + Strip: outer tray wraps prompt tile on top + horizontal controls strip below */
+function TrayStrip({ ctx }: { ctx: Ctx }) {
+  const [side, setSide] = useState(false);
+  const [temp, setTemp] = useState(false);
+  return (
+    <div className="flex h-full">
+      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <div className="flex flex-1 flex-col">
+        <TopBar ctx={ctx} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
+          <div className="w-full max-w-[760px]">
+            <Greeting className="text-center" />
+            <div className={`${ctx.panel} mt-6 p-3`}>
+              <div className={`${ctx.panelInner} p-4`}>
+                <InputBlock ctx={ctx} rows={3} />
+              </div>
+              <div className="mt-3 flex items-center justify-between gap-2 px-2">
+                <div className="flex items-center gap-1.5">
+                  <IconBtn ctx={ctx} size={8}><Paperclip className="h-3.5 w-3.5" /></IconBtn>
+                  <IconBtn ctx={ctx} size={8}><Wrench className="h-3.5 w-3.5" /></IconBtn>
+                  <IconBtn ctx={ctx} size={8}><Mic className="h-3.5 w-3.5" /></IconBtn>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Pill ctx={ctx}><Brain className="h-3.5 w-3.5" /> Memory</Pill>
+                  <Pill ctx={ctx}><Globe className="h-3.5 w-3.5" /> Web</Pill>
+                  <IconBtn ctx={ctx} size={8}><ArrowUp className="h-3.5 w-3.5" /></IconBtn>
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 flex justify-center"><SecondaryRow ctx={ctx} /></div>
+            <div className="mt-6 flex justify-center"><QuickChips ctx={ctx} limit={6} /></div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
 /* ───────────────────────── gallery shell ───────────────────────── */
 
 function LayoutGallery() {
@@ -624,6 +741,8 @@ function LayoutGallery() {
   const ctx: Ctx = {
     light,
     btn: light ? "btn-mech-light" : "btn-mech",
+    panel: light ? "panel-mech-light" : "panel-mech",
+    panelInner: light ? "panel-inner-mech-light" : "panel-inner-mech",
   };
 
   const bg = light ? "#ededeb" : "#0a0a0a";
