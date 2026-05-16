@@ -322,23 +322,54 @@ function TopBar({
   ctx: Ctx; sideOpen?: boolean; onSide?: () => void; onTemp: () => void; temp: boolean;
   right?: ReactNode;
 }) {
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // ⌘K opens search palette
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen((s) => !s);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   return (
     <div className="flex h-14 items-center justify-between gap-3 border-b border-border px-4">
       <div className="flex items-center gap-3">
         {onSide && (
-          <IconBtn ctx={ctx} onClick={onSide} size={8}>
-            <Menu className="h-3.5 w-3.5" />
+          <IconBtn ctx={ctx} onClick={onSide} size={8} tip={sideOpen ? "Close menu" : "Open menu"} keys="⌘B">
+            <motion.span
+              key={sideOpen ? "open" : "closed"}
+              initial={{ rotate: -90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 480, damping: 28 }}
+              className="flex"
+            >
+              {sideOpen ? <ChevronsLeft className="h-3.5 w-3.5" /> : <Menu className="h-3.5 w-3.5" />}
+            </motion.span>
           </IconBtn>
         )}
         <span className="font-mono text-[12px] uppercase tracking-[0.22em]">Lumen</span>
       </div>
-      <div className="flex items-center gap-2">
-        <IconBtn ctx={ctx} onClick={onTemp} dim={!temp} size={8}>
+
+      {/* grouped right cluster — single mech "row" */}
+      <div className={`${ctx.panel} flex items-center gap-1 p-1`}>
+        <IconBtn ctx={ctx} onClick={() => setSearchOpen(true)} size={8} tip="Search" keys="⌘K">
+          <Search className="h-3.5 w-3.5" />
+        </IconBtn>
+        <IconBtn ctx={ctx} onClick={onTemp} dim={!temp} size={8} tip={temp ? "Temporary chat on" : "Temporary chat"} keys="⌘⇧T">
           <EyeOff className="h-3.5 w-3.5" />
         </IconBtn>
-        <IconBtn ctx={ctx} size={8}><Settings className="h-3.5 w-3.5" /></IconBtn>
+        <IconBtn ctx={ctx} size={8} tip="Preferences" keys="⌘,">
+          <SlidersHorizontal className="h-3.5 w-3.5" />
+        </IconBtn>
         {right ?? <Profile ctx={ctx} />}
       </div>
+
+      <SearchPalette open={searchOpen} onClose={() => setSearchOpen(false)} />
     </div>
   );
 }
