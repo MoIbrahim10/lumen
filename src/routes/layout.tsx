@@ -269,13 +269,13 @@ function PrimaryRow({ ctx }: { ctx: Ctx }) {
   return (
     <div className="flex items-center justify-between gap-2">
       <div className="flex items-center gap-1.5">
-        <IconBtn ctx={ctx}><Paperclip className="h-4 w-4" /></IconBtn>
-        <IconBtn ctx={ctx}><Wrench className="h-4 w-4" /></IconBtn>
+        <IconBtn ctx={ctx} tip="Attach file" keys="⌘U"><Paperclip className="h-4 w-4" /></IconBtn>
+        <IconBtn ctx={ctx} tip="Tools & connectors" keys="⌘T"><Wrench className="h-4 w-4" /></IconBtn>
         <Dropdown ctx={ctx} value={model} onChange={setModel} options={["Lumen 4", "Lumen 4 Mini", "Lumen 4 Pro"]} label="Model" />
       </div>
       <div className="flex items-center gap-1.5">
-        <IconBtn ctx={ctx}><Mic className="h-4 w-4" /></IconBtn>
-        <IconBtn ctx={ctx}><ArrowUp className="h-4 w-4" /></IconBtn>
+        <IconBtn ctx={ctx} tip="Dictate" keys="⌘⇧V"><Mic className="h-4 w-4" /></IconBtn>
+        <IconBtn ctx={ctx} tip="Send" keys="↵"><ArrowUp className="h-4 w-4" /></IconBtn>
       </div>
     </div>
   );
