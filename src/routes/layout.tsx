@@ -229,9 +229,9 @@ function TopBar({
         <span className="font-mono text-[12px] uppercase tracking-[0.22em]">Lumen</span>
       </div>
       <div className="flex items-center gap-2">
-        <Pill ctx={ctx} onClick={onTemp}>
-          <EyeOff className="h-3.5 w-3.5" /> {temp ? "Temporary on" : "Temporary"}
-        </Pill>
+        <IconBtn ctx={ctx} onClick={onTemp} dim={!temp} size={8}>
+          <EyeOff className="h-3.5 w-3.5" />
+        </IconBtn>
         <IconBtn ctx={ctx} size={8}><Settings className="h-3.5 w-3.5" /></IconBtn>
         {right ?? <Profile ctx={ctx} />}
       </div>
