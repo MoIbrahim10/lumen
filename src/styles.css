@@ -587,3 +587,23 @@
   z-index: 2;
   margin: 0 -10px;
 }
+
+/* MECH — light variant: machined aluminum keycap */
+.btn-mech-light {
+  background:
+    radial-gradient(ellipse at 50% 0%, #ffffff 0%, #ececec 60%, #dcdcdc 100%);
+  color: #111;
+  font-family: var(--font-mono);
+  border: 1px solid #b8b8b8;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -2px 0 rgba(0,0,0,0.08),
+    0 4px 0 #b8b8b8,
+    0 6px 12px rgba(0,0,0,0.18);
+  transition: all 0.07s;
+}
+.btn-mech-light:active {
+  transform: translateY(3px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 0 #b8b8b8;
+}
