@@ -157,29 +157,89 @@ function Profile({ ctx, align = "right" }: { ctx: Ctx; align?: "left" | "right" 
   );
 }
 
+const NAV_ITEMS = [
+  { label: "New chat", icon: Plus, keys: "⌘N" },
+  { label: "Library", icon: Library, keys: "⌘L" },
+  { label: "Projects", icon: FolderClosed, keys: "⌘P" },
+  { label: "Memory", icon: Brain, keys: "⌘⇧M" },
+  { label: "Connectors", icon: Plug, keys: "⌘⇧C" },
+  { label: "Models", icon: Cpu, keys: "⌘M" },
+  { label: "History", icon: History, keys: "⌘H" },
+];
+
 function SideMenu({ ctx, open, onToggle, placement = "left" }: {
   ctx: Ctx; open: boolean; onToggle: () => void; placement?: "left" | "right";
 }) {
-  const items = ["New chat", "Library", "Projects", "Memory", "Connectors", "Models", "History"];
+  void placement;
   return (
-    <aside
-      className={`flex shrink-0 flex-col gap-2 border-${placement === "left" ? "r" : "l"} border-border bg-background/40 transition-all`}
-      style={{ width: open ? 220 : 56 }}
-    >
-      <div className={`flex items-center ${open ? "justify-between" : "justify-center"} px-2 py-3`}>
-        {open && <span className="font-mono text-[10px] uppercase tracking-[0.2em] opacity-60">Menu</span>}
-        <IconBtn ctx={ctx} onClick={onToggle} size={8}>
-          {open ? <X className="h-3.5 w-3.5" /> : <PanelLeft className="h-3.5 w-3.5" />}
-        </IconBtn>
-      </div>
-      <nav className="flex flex-col gap-1 px-2">
-        {items.map((i) => (
-          <button key={i} className={`${ctx.btn} flex h-9 items-center ${open ? "justify-start px-3" : "justify-center"} text-[11px]`}>
-            {open ? i : i[0]}
-          </button>
-        ))}
-      </nav>
-    </aside>
+    <AnimatePresence initial={false}>
+      {open && (
+        <motion.aside
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ width: 240, opacity: 1 }}
+          exit={{ width: 0, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 360, damping: 36, mass: 0.7 }}
+          className="flex shrink-0 flex-col gap-2 overflow-hidden border-r border-border bg-background/40"
+        >
+          <div className="flex w-[240px] items-center justify-between px-3 py-3">
+            <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">Menu</span>
+            <IconBtn ctx={ctx} onClick={onToggle} size={8} tip="Close menu" keys="⌘B">
+              <ChevronsLeft className="h-3.5 w-3.5" />
+            </IconBtn>
+          </div>
+          <nav className="flex w-[240px] flex-col gap-1.5 px-2">
+            {NAV_ITEMS.map((i, idx) => (
+              <motion.button
+                key={i.label}
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.06 + idx * 0.035, type: "spring", stiffness: 400, damping: 30 }}
+                className={`${ctx.btn} flex h-10 items-center justify-between gap-2 px-3 text-[11px]`}
+              >
+                <span className="flex items-center gap-2.5">
+                  <i.icon className="h-3.5 w-3.5 opacity-70" />
+                  {i.label}
+                </span>
+                <kbd className="font-mono text-[9px] tracking-[0.1em] opacity-40">{i.keys}</kbd>
+              </motion.button>
+            ))}
+          </nav>
+        </motion.aside>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function SearchPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="overflow-hidden p-0 sm:max-w-[560px]">
+        <Command className="[&_[cmdk-input]]:h-12">
+          <CommandInput placeholder="Type a command or search your threads…" />
+          <CommandList>
+            <CommandEmpty>No results.</CommandEmpty>
+            <CommandGroup>
+              <CommandItem><Plus className="h-4 w-4" /> New chat <CommandShortcut>⌘N</CommandShortcut></CommandItem>
+            </CommandGroup>
+            <CommandSeparator />
+            <CommandGroup heading="Chat">
+              <CommandItem><History className="h-4 w-4" /> Manage chat history</CommandItem>
+              <CommandItem><Cpu className="h-4 w-4" /> View all available models</CommandItem>
+              <CommandItem><Paperclip className="h-4 w-4" /> View all uploaded attachments</CommandItem>
+            </CommandGroup>
+            <CommandSeparator />
+            <CommandGroup heading="Profiles">
+              <CommandItem>✓ Default</CommandItem>
+              <CommandItem><Plus className="h-4 w-4" /> Create new profile</CommandItem>
+            </CommandGroup>
+          </CommandList>
+          <div className="flex items-center justify-end gap-2 border-t border-border px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            <kbd className="rounded border border-border bg-muted/40 px-1.5 py-[1px] font-mono">↵</kbd>
+            <span>type to search or start a new chat</span>
+          </div>
+        </Command>
+      </DialogContent>
+    </Dialog>
   );
 }
 
