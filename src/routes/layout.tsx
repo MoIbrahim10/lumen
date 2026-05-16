@@ -36,18 +36,55 @@ const QUICK = [
   { icon: ImageIcon, label: "Create image" },
 ];
 
-function IconBtn({ ctx, children, onClick, dim = false, size = 9 }: {
-  ctx: Ctx; children: ReactNode; onClick?: () => void; dim?: boolean; size?: number;
+function HoverTip({ label, keys, children, side = "bottom" }: {
+  label: string; keys?: string; children: ReactNode; side?: "top" | "bottom";
 }) {
+  const [hover, setHover] = useState(false);
+  const pos = side === "top" ? "bottom-[calc(100%+8px)]" : "top-[calc(100%+8px)]";
   return (
+    <span
+      className="relative inline-flex"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
+      {children}
+      <AnimatePresence>
+        {hover && (
+          <motion.span
+            initial={{ opacity: 0, y: side === "top" ? 4 : -4, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: side === "top" ? 4 : -4, scale: 0.92 }}
+            transition={{ type: "spring", stiffness: 520, damping: 32, mass: 0.5 }}
+            className={`pointer-events-none absolute left-1/2 z-[60] -translate-x-1/2 ${pos} flex items-center gap-2 whitespace-nowrap rounded-md border border-border bg-popover px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-popover-foreground shadow-lg`}
+          >
+            <span className="opacity-80">{label}</span>
+            {keys && (
+              <kbd className="rounded-sm border border-border bg-muted/40 px-1.5 py-[1px] text-[9px] tracking-[0.1em]">
+                {keys}
+              </kbd>
+            )}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </span>
+  );
+}
+
+function IconBtn({ ctx, children, onClick, dim = false, size = 9, tip, keys, "aria-label": ariaLabel }: {
+  ctx: Ctx; children: ReactNode; onClick?: () => void; dim?: boolean; size?: number;
+  tip?: string; keys?: string; "aria-label"?: string;
+}) {
+  const btn = (
     <button
       onClick={onClick}
+      aria-label={ariaLabel || tip}
       className={`${ctx.btn} flex items-center justify-center ${dim ? "opacity-40" : ""}`}
       style={{ width: size * 4, height: size * 4 }}
     >
       {children}
     </button>
   );
+  return tip ? <HoverTip label={tip} keys={keys}>{btn}</HoverTip> : btn;
 }
 
 function Pill({ ctx, children, onClick }: { ctx: Ctx; children: ReactNode; onClick?: () => void }) {
