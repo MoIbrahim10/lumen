@@ -167,71 +167,70 @@ const NAV_ITEMS = [
   { label: "History", icon: History, keys: "⌘H" },
 ];
 
-function LeftPill({ sideOpen, onSide, onSearch }: {
-  sideOpen: boolean; onSide?: () => void; onSearch: () => void;
+function LeftPill({ ctx, sideOpen, onSide, onSearch }: {
+  ctx: Ctx; sideOpen: boolean; onSide?: () => void; onSearch: () => void;
 }) {
   return (
-    <div className="fixed top-3 left-4 z-40 flex items-center bg-white border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] rounded-lg p-1">
-      {onSide && (
-        <>
-          <button
-            onClick={onSide}
-            aria-label={sideOpen ? "Close menu" : "Open menu"}
-            className="p-2 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer"
-          >
-            <motion.span
-              animate={{ scaleX: sideOpen ? -1 : 1, x: sideOpen ? -1 : 0 }}
-              transition={{ type: "spring", stiffness: 560, damping: 32 }}
-              className="flex"
+    <motion.div
+      layout
+      initial={false}
+      animate={{
+        width: sideOpen ? 260 : "auto",
+        height: sideOpen ? "calc(100vh - 24px)" : 40,
+      }}
+      transition={{ type: "spring", stiffness: 260, damping: 32, mass: 0.9 }}
+      className="fixed top-3 left-4 z-40 flex flex-col overflow-hidden bg-[#f1f1ef] border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] rounded-lg"
+    >
+      {/* icon row — stays put as the panel grows around it */}
+      <motion.div layout="position" className="flex items-center p-1 shrink-0">
+        {onSide && (
+          <>
+            <button
+              onClick={onSide}
+              aria-label={sideOpen ? "Close menu" : "Open menu"}
+              className="p-2 hover:bg-black/[0.04] text-zinc-500 hover:text-zinc-900 rounded-md transition-colors duration-200 cursor-pointer"
             >
-              <PanelLeft className="h-[18px] w-[18px]" strokeWidth={2} />
-            </motion.span>
-          </button>
-          <span className="w-px h-4 bg-zinc-200/60 mx-1" aria-hidden />
-        </>
-      )}
-      <button
-        onClick={onSearch}
-        aria-label="Search"
-        className="p-2 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer"
-      >
-        <Search className="h-[18px] w-[18px]" strokeWidth={2} />
-      </button>
-    </div>
-  );
-}
-
-function SideMenu({ ctx, open, placement = "left" }: {
-  ctx: Ctx; open: boolean; onToggle?: () => void; placement?: "left" | "right";
-}) {
-  void placement;
-  return (
-    <AnimatePresence initial={false}>
-      {open && (
-        <motion.aside
-          initial={{ width: 0 }}
-          animate={{ width: 260 }}
-          exit={{ width: 0 }}
-          transition={{ type: "spring", stiffness: 280, damping: 34, mass: 0.9 }}
-          className="relative flex shrink-0 flex-col overflow-hidden border-r border-border bg-background/40"
+              <motion.span
+                animate={{ scaleX: sideOpen ? -1 : 1 }}
+                transition={{ type: "spring", stiffness: 560, damping: 32 }}
+                className="flex"
+              >
+                <PanelLeft className="h-[18px] w-[18px]" strokeWidth={2} />
+              </motion.span>
+            </button>
+            <span className="w-px h-4 bg-zinc-300/60 mx-1" aria-hidden />
+          </>
+        )}
+        <button
+          onClick={onSearch}
+          aria-label="Search"
+          className="p-2 hover:bg-black/[0.04] text-zinc-500 hover:text-zinc-900 rounded-md transition-colors duration-200 cursor-pointer"
         >
+          <Search className="h-[18px] w-[18px]" strokeWidth={2} />
+        </button>
+      </motion.div>
+
+      {/* nav reveals once panel has expanded */}
+      <AnimatePresence>
+        {sideOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2, delay: 0.18 }}
-            className="flex w-[260px] flex-col pt-[68px]"
+            transition={{ duration: 0.18, delay: 0.12 }}
+            className="flex flex-col flex-1 min-h-0 px-2 pt-2 pb-3"
           >
-            <div className="px-4 pb-2">
-              <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">Menu</span>
+            <div className="px-2 pb-2 pt-1">
+              <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-50">Menu</span>
             </div>
-            <nav className="flex flex-col gap-1.5 px-2 pt-2">
+            <nav className="flex flex-col gap-1.5 overflow-y-auto">
               {NAV_ITEMS.map((i, idx) => (
                 <motion.button
                   key={i.label}
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.22 + idx * 0.03, type: "spring", stiffness: 400, damping: 30 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ delay: 0.16 + idx * 0.025, type: "spring", stiffness: 420, damping: 30 }}
                   className={`${ctx.btn} flex h-10 items-center justify-between gap-2 px-3 text-[11px]`}
                 >
                   <span className="flex items-center gap-2.5">
@@ -243,10 +242,16 @@ function SideMenu({ ctx, open, placement = "left" }: {
               ))}
             </nav>
           </motion.div>
-        </motion.aside>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
+}
+
+function SideMenu(_: { ctx: Ctx; open: boolean; onToggle?: () => void; placement?: "left" | "right" }) {
+  // visual panel is rendered by LeftPill (fixed, expanding). This stub keeps
+  // existing layout call-sites working without pushing page content.
+  return null;
 }
 
 function SearchPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -383,7 +388,7 @@ function TopBar({
   return (
     <div className="flex h-14 items-center justify-between gap-3 px-4">
       {/* fixed pill stays in same place; menu bg expands from behind it */}
-      <LeftPill sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
+      <LeftPill ctx={ctx} sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
       <div />
 
 
