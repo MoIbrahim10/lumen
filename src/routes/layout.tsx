@@ -93,16 +93,16 @@ function Profile({ ctx, align = "right" }: { ctx: Ctx; align?: "left" | "right" 
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className={`${ctx.btn} flex h-9 items-center gap-2 px-2 text-[11px]`}
+        className={`${ctx.btn} flex h-9 w-9 items-center justify-center p-0`}
+        aria-label="Profile"
       >
         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-[10px] text-background">EM</span>
-        <span>Emma</span>
-        <ChevronDown className="h-3 w-3 opacity-60" />
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div className={`absolute top-full z-50 mt-1 min-w-[180px] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg ${align === "right" ? "right-0" : "left-0"}`}>
+            <div className="border-b border-border px-3 py-2 text-[11px] opacity-60">Emma · emma@lumen.app</div>
             {["Account", "Billing", "Workspace", "Sign out"].map((o) => (
               <div key={o} className="block px-3 py-2 text-xs hover:bg-muted cursor-pointer">{o}</div>
             ))}
