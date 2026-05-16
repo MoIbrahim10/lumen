@@ -19,6 +19,7 @@ import { Route as V3RouteImport } from './routes/v3'
 import { Route as V2RouteImport } from './routes/v2'
 import { Route as V10RouteImport } from './routes/v10'
 import { Route as V1RouteImport } from './routes/v1'
+import { Route as StudioRouteImport } from './routes/studio'
 import { Route as LayoutRouteImport } from './routes/layout'
 import { Route as ColorsRouteImport } from './routes/colors'
 import { Route as ButtonsRouteImport } from './routes/buttons'
@@ -74,6 +75,11 @@ const V1Route = V1RouteImport.update({
   path: '/v1',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudioRoute = StudioRouteImport.update({
+  id: '/studio',
+  path: '/studio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LayoutRoute = LayoutRouteImport.update({
   id: '/layout',
   path: '/layout',
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/buttons': typeof ButtonsRoute
   '/colors': typeof ColorsRoute
   '/layout': typeof LayoutRoute
+  '/studio': typeof StudioRoute
   '/v1': typeof V1Route
   '/v10': typeof V10Route
   '/v2': typeof V2Route
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/buttons': typeof ButtonsRoute
   '/colors': typeof ColorsRoute
   '/layout': typeof LayoutRoute
+  '/studio': typeof StudioRoute
   '/v1': typeof V1Route
   '/v10': typeof V10Route
   '/v2': typeof V2Route
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/buttons': typeof ButtonsRoute
   '/colors': typeof ColorsRoute
   '/layout': typeof LayoutRoute
+  '/studio': typeof StudioRoute
   '/v1': typeof V1Route
   '/v10': typeof V10Route
   '/v2': typeof V2Route
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
     | '/buttons'
     | '/colors'
     | '/layout'
+    | '/studio'
     | '/v1'
     | '/v10'
     | '/v2'
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/buttons'
     | '/colors'
     | '/layout'
+    | '/studio'
     | '/v1'
     | '/v10'
     | '/v2'
@@ -183,6 +194,7 @@ export interface FileRouteTypes {
     | '/buttons'
     | '/colors'
     | '/layout'
+    | '/studio'
     | '/v1'
     | '/v10'
     | '/v2'
@@ -200,6 +212,7 @@ export interface RootRouteChildren {
   ButtonsRoute: typeof ButtonsRoute
   ColorsRoute: typeof ColorsRoute
   LayoutRoute: typeof LayoutRoute
+  StudioRoute: typeof StudioRoute
   V1Route: typeof V1Route
   V10Route: typeof V10Route
   V2Route: typeof V2Route
@@ -284,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof V1RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/studio': {
+      id: '/studio'
+      path: '/studio'
+      fullPath: '/studio'
+      preLoaderRoute: typeof StudioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/layout': {
       id: '/layout'
       path: '/layout'
@@ -320,6 +340,7 @@ const rootRouteChildren: RootRouteChildren = {
   ButtonsRoute: ButtonsRoute,
   ColorsRoute: ColorsRoute,
   LayoutRoute: LayoutRoute,
+  StudioRoute: StudioRoute,
   V1Route: V1Route,
   V10Route: V10Route,
   V2Route: V2Route,
@@ -334,3 +355,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
