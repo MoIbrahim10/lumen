@@ -167,24 +167,64 @@ const NAV_ITEMS = [
   { label: "History", icon: History, keys: "⌘H" },
 ];
 
-function SideMenu({ ctx, open, onToggle: _onToggle, placement = "left" }: {
+function LeftPill({ sideOpen, onSide, onSearch }: {
+  sideOpen: boolean; onSide?: () => void; onSearch: () => void;
+}) {
+  return (
+    <motion.div
+      layoutId="left-pill"
+      transition={{ type: "spring", stiffness: 380, damping: 34, mass: 0.7 }}
+      className="flex items-center bg-white border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] rounded-lg p-1"
+    >
+      {onSide && (
+        <>
+          <button
+            onClick={onSide}
+            aria-label={sideOpen ? "Close menu" : "Open menu"}
+            className="p-2 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer"
+          >
+            <motion.span
+              animate={{ scaleX: sideOpen ? -1 : 1, x: sideOpen ? -1 : 0 }}
+              transition={{ type: "spring", stiffness: 560, damping: 32 }}
+              className="flex"
+            >
+              <PanelLeft className="h-[18px] w-[18px]" strokeWidth={2} />
+            </motion.span>
+          </button>
+          <span className="w-px h-4 bg-zinc-200/60 mx-1" aria-hidden />
+        </>
+      )}
+      <button
+        onClick={onSearch}
+        aria-label="Search"
+        className="p-2 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer"
+      >
+        <Search className="h-[18px] w-[18px]" strokeWidth={2} />
+      </button>
+    </motion.div>
+  );
+}
+
+function SideMenu({ ctx, open, onToggle, placement = "left" }: {
   ctx: Ctx; open: boolean; onToggle?: () => void; placement?: "left" | "right";
 }) {
   void placement;
+  const openSearch = () => window.dispatchEvent(new CustomEvent("layout:open-search"));
   return (
     <AnimatePresence initial={false}>
       {open && (
         <motion.aside
           initial={{ width: 0, opacity: 0 }}
-          animate={{ width: 240, opacity: 1 }}
+          animate={{ width: 260, opacity: 1 }}
           exit={{ width: 0, opacity: 0 }}
           transition={{ type: "spring", stiffness: 360, damping: 36, mass: 0.7 }}
           className="flex shrink-0 flex-col gap-2 overflow-hidden border-r border-border bg-background/40"
         >
-          <div className="flex w-[240px] items-center px-3 py-3">
+          <div className="flex w-[260px] items-center justify-between px-4 pt-4 pb-2">
             <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">Menu</span>
+            <LeftPill sideOpen={open} onSide={onToggle} onSearch={openSearch} />
           </div>
-          <nav className="flex w-[240px] flex-col gap-1.5 px-2">
+          <nav className="flex w-[260px] flex-col gap-1.5 px-2 pt-2">
             {NAV_ITEMS.map((i, idx) => (
               <motion.button
                 key={i.label}
@@ -321,7 +361,7 @@ function TopBar({
 }) {
   const [searchOpen, setSearchOpen] = useState(false);
 
-  // ⌘K opens search palette
+  // ⌘K opens search palette + listen to in-menu search button
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -329,39 +369,29 @@ function TopBar({
         setSearchOpen((s) => !s);
       }
     };
+    const onOpen = () => setSearchOpen(true);
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("layout:open-search", onOpen as EventListener);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("layout:open-search", onOpen as EventListener);
+    };
   }, []);
 
   return (
     <div className="flex h-14 items-center justify-between gap-3 px-4">
-      {/* left cluster — sidebar toggle + search */}
-      <div className="flex items-center bg-white border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] rounded-lg p-1">
-        {onSide && (
-          <>
-            <button
-              onClick={onSide}
-              aria-label={sideOpen ? "Close menu" : "Open menu"}
-              className="p-2 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer"
-            >
-              <motion.span
-                animate={{ scaleX: sideOpen ? -1 : 1, x: sideOpen ? -1 : 0 }}
-                transition={{ type: "spring", stiffness: 560, damping: 32 }}
-                className="flex"
-              >
-                <PanelLeft className="h-[18px] w-[18px]" strokeWidth={2} />
-              </motion.span>
-            </button>
-            <span className="w-px h-4 bg-zinc-200/60 mx-1" aria-hidden />
-          </>
-        )}
-        <button
-          onClick={() => setSearchOpen(true)}
-          aria-label="Search"
-          className="p-2 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer"
-        >
-          <Search className="h-[18px] w-[18px]" strokeWidth={2} />
-        </button>
+      {/* left cluster — hidden when side menu is open (morphs into menu header) */}
+      <div className="flex items-center">
+        <AnimatePresence initial={false}>
+          {!sideOpen && (
+            <LeftPill
+              key="pill"
+              sideOpen={false}
+              onSide={onSide}
+              onSearch={() => setSearchOpen(true)}
+            />
+          )}
+        </AnimatePresence>
       </div>
 
       {/* right cluster — temp + preferences + profile */}
