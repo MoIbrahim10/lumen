@@ -454,7 +454,7 @@ function Centered({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
       <div className="flex flex-1 flex-col">
-        <TopBar ctx={ctx} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
           <div className="w-full max-w-[760px]">
             <Greeting className="text-center" />
@@ -504,7 +504,7 @@ function SplitGreeting({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
       <div className="flex flex-1 flex-col">
-        <TopBar ctx={ctx} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="grid flex-1 grid-cols-1 md:grid-cols-2">
           <div className="flex flex-col justify-center gap-6 border-r border-border px-10 py-12">
             <p className="font-mono text-[10px] uppercase tracking-[0.3em] opacity-50">Composer · 03</p>
@@ -533,7 +533,7 @@ function BottomDock({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
       <div className="flex flex-1 flex-col">
-        <TopBar ctx={ctx} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6">
           <Greeting className="text-center" />
           <div className="mt-6 max-w-2xl text-center text-sm opacity-60">
@@ -563,7 +563,7 @@ function FloatingIsland({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
       <div className="flex flex-1 flex-col">
-        <TopBar ctx={ctx} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 items-center justify-center p-6">
           <div className={`${ctx.btn} w-full max-w-[680px] p-6`}>
             <Greeting className="text-center" />
@@ -634,7 +634,7 @@ function RightToolRail({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
       <div className="flex flex-1 flex-col">
-        <TopBar ctx={ctx} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1">
           <div className="flex flex-1 flex-col justify-center px-10">
             <Greeting />
@@ -662,7 +662,7 @@ function StackedCards({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
       <div className="flex flex-1 flex-col">
-        <TopBar ctx={ctx} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center gap-3 overflow-y-auto px-6 py-8">
           <div className="w-full max-w-[720px] space-y-3">
             <div className={`${ctx.btn} p-5`}><Greeting /></div>
@@ -697,7 +697,7 @@ function ChipsAside({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
       <div className="flex flex-1 flex-col">
-        <TopBar ctx={ctx} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="grid flex-1 grid-cols-1 gap-6 px-8 py-10 md:grid-cols-[1fr_260px]">
           <div className="flex flex-col">
             <Greeting />
@@ -775,7 +775,7 @@ function NestedTile({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
       <div className="flex flex-1 flex-col">
-        <TopBar ctx={ctx} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
           <div className="w-full max-w-[760px]">
             <Greeting className="text-center" />
@@ -804,7 +804,7 @@ function FramedConsole({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
       <div className="flex flex-1 flex-col">
-        <TopBar ctx={ctx} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
           <div className="w-full max-w-[780px]">
             <Greeting className="text-center" />
@@ -837,7 +837,7 @@ function TrayStrip({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
       <div className="flex flex-1 flex-col">
-        <TopBar ctx={ctx} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
           <div className="w-full max-w-[760px]">
             <Greeting className="text-center" />
