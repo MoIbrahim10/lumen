@@ -382,19 +382,10 @@ function TopBar({
 
   return (
     <div className="flex h-14 items-center justify-between gap-3 px-4">
-      {/* left cluster — hidden when side menu is open (morphs into menu header) */}
-      <div className="flex items-center">
-        <AnimatePresence initial={false}>
-          {!sideOpen && (
-            <LeftPill
-              key="pill"
-              sideOpen={false}
-              onSide={onSide}
-              onSearch={() => setSearchOpen(true)}
-            />
-          )}
-        </AnimatePresence>
-      </div>
+      {/* fixed pill stays in same place; menu bg expands from behind it */}
+      <LeftPill sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
+      <div />
+
 
       {/* right cluster — temp + preferences + profile */}
       <div className="flex items-center bg-white border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] rounded-lg p-1 gap-0.5">
