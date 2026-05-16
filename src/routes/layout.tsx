@@ -308,11 +308,11 @@ function Centered({ ctx }: { ctx: Ctx }) {
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
           <div className="w-full max-w-[760px]">
             <Greeting className="text-center" />
-            <div className={`${ctx.btn} mt-6 p-5`}>
+            <div className={`${ctx.panel} mt-6 p-5`}>
               <InputBlock ctx={ctx} />
               <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
             </div>
-            <div className={`${ctx.btn} mt-3 px-3 py-2`}>
+            <div className={`${ctx.panel} mt-3 px-3 py-2`}>
               <SecondaryRow ctx={ctx} />
             </div>
             <div className="mt-6 flex justify-center"><QuickChips ctx={ctx} /></div>
