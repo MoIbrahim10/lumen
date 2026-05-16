@@ -171,11 +171,7 @@ function LeftPill({ sideOpen, onSide, onSearch }: {
   sideOpen: boolean; onSide?: () => void; onSearch: () => void;
 }) {
   return (
-    <motion.div
-      layoutId="left-pill"
-      transition={{ type: "spring", stiffness: 380, damping: 34, mass: 0.7 }}
-      className="flex items-center bg-white border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] rounded-lg p-1"
-    >
+    <div className="fixed top-3 left-4 z-40 flex items-center bg-white border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] rounded-lg p-1">
       {onSide && (
         <>
           <button
@@ -201,46 +197,52 @@ function LeftPill({ sideOpen, onSide, onSearch }: {
       >
         <Search className="h-[18px] w-[18px]" strokeWidth={2} />
       </button>
-    </motion.div>
+    </div>
   );
 }
 
-function SideMenu({ ctx, open, onToggle, placement = "left" }: {
+function SideMenu({ ctx, open, placement = "left" }: {
   ctx: Ctx; open: boolean; onToggle?: () => void; placement?: "left" | "right";
 }) {
   void placement;
-  const openSearch = () => window.dispatchEvent(new CustomEvent("layout:open-search"));
   return (
     <AnimatePresence initial={false}>
       {open && (
         <motion.aside
-          initial={{ width: 0, opacity: 0 }}
-          animate={{ width: 260, opacity: 1 }}
-          exit={{ width: 0, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 360, damping: 36, mass: 0.7 }}
-          className="flex shrink-0 flex-col gap-2 overflow-hidden border-r border-border bg-background/40"
+          initial={{ width: 0 }}
+          animate={{ width: 260 }}
+          exit={{ width: 0 }}
+          transition={{ type: "spring", stiffness: 280, damping: 34, mass: 0.9 }}
+          className="relative flex shrink-0 flex-col overflow-hidden border-r border-border bg-background/40"
         >
-          <div className="flex w-[260px] items-center justify-between px-4 pt-4 pb-2">
-            <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">Menu</span>
-            <LeftPill sideOpen={open} onSide={onToggle} onSearch={openSearch} />
-          </div>
-          <nav className="flex w-[260px] flex-col gap-1.5 px-2 pt-2">
-            {NAV_ITEMS.map((i, idx) => (
-              <motion.button
-                key={i.label}
-                initial={{ opacity: 0, x: -12 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.06 + idx * 0.035, type: "spring", stiffness: 400, damping: 30 }}
-                className={`${ctx.btn} flex h-10 items-center justify-between gap-2 px-3 text-[11px]`}
-              >
-                <span className="flex items-center gap-2.5">
-                  <i.icon className="h-3.5 w-3.5 opacity-70" />
-                  {i.label}
-                </span>
-                <kbd className="font-mono text-[9px] tracking-[0.1em] opacity-40">{i.keys}</kbd>
-              </motion.button>
-            ))}
-          </nav>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, delay: 0.18 }}
+            className="flex w-[260px] flex-col pt-[68px]"
+          >
+            <div className="px-4 pb-2">
+              <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">Menu</span>
+            </div>
+            <nav className="flex flex-col gap-1.5 px-2 pt-2">
+              {NAV_ITEMS.map((i, idx) => (
+                <motion.button
+                  key={i.label}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.22 + idx * 0.03, type: "spring", stiffness: 400, damping: 30 }}
+                  className={`${ctx.btn} flex h-10 items-center justify-between gap-2 px-3 text-[11px]`}
+                >
+                  <span className="flex items-center gap-2.5">
+                    <i.icon className="h-3.5 w-3.5 opacity-70" />
+                    {i.label}
+                  </span>
+                  <kbd className="font-mono text-[9px] tracking-[0.1em] opacity-40">{i.keys}</kbd>
+                </motion.button>
+              ))}
+            </nav>
+          </motion.div>
         </motion.aside>
       )}
     </AnimatePresence>
@@ -380,19 +382,10 @@ function TopBar({
 
   return (
     <div className="flex h-14 items-center justify-between gap-3 px-4">
-      {/* left cluster — hidden when side menu is open (morphs into menu header) */}
-      <div className="flex items-center">
-        <AnimatePresence initial={false}>
-          {!sideOpen && (
-            <LeftPill
-              key="pill"
-              sideOpen={false}
-              onSide={onSide}
-              onSearch={() => setSearchOpen(true)}
-            />
-          )}
-        </AnimatePresence>
-      </div>
+      {/* fixed pill stays in same place; menu bg expands from behind it */}
+      <LeftPill sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
+      <div />
+
 
       {/* right cluster — temp + preferences + profile */}
       <div className="flex items-center bg-white border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] rounded-lg p-1 gap-0.5">
