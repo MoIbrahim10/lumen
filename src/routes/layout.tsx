@@ -294,6 +294,21 @@ const LAYOUTS: { id: string; name: string; tagline: string; render: LayoutFn }[]
     tagline: "Bare composer · controls collapse to icons",
     render: (ctx) => <MinimalConsole ctx={ctx} />,
   },
+  {
+    id: "11", name: "Nested Tile",
+    tagline: "Outer wrapper · inner prompt tile + control tile",
+    render: (ctx) => <NestedTile ctx={ctx} />,
+  },
+  {
+    id: "12", name: "Framed Console",
+    tagline: "Parent frame · divided sections inside",
+    render: (ctx) => <FramedConsole ctx={ctx} />,
+  },
+  {
+    id: "13", name: "Tray + Strip",
+    tagline: "Outer tray · prompt tile · controls strip",
+    render: (ctx) => <TrayStrip ctx={ctx} />,
+  },
 ];
 
 /* 01 */
