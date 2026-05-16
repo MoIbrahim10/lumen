@@ -1,11 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Paperclip, Mic, Wrench, ArrowUp, Globe, Brain, ChevronDown, Sun, Moon,
-  Settings, User, Menu, EyeOff, Gauge, Ruler, FileText, Mail, Code2,
-  ScanSearch, Lightbulb, Presentation, Image as ImageIcon, ChevronRight,
-  PanelLeft, X,
+  SlidersHorizontal, Menu, EyeOff, FileText, Mail, Code2, Search,
+  ScanSearch, Lightbulb, Presentation, Image as ImageIcon,
+  ChevronsLeft, Plus, History, Library, FolderClosed, Cpu, Plug,
 } from "lucide-react";
+import {
+  Command, CommandInput, CommandList, CommandEmpty, CommandGroup,
+  CommandItem, CommandSeparator, CommandShortcut,
+} from "@/components/ui/command";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/layout")({ component: LayoutGallery });
 
