@@ -607,3 +607,39 @@
   transform: translateY(3px);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 0 #b8b8b8;
 }
+
+/* MECH PANELS — static wrappers (no press animation) */
+.panel-mech {
+  background: radial-gradient(ellipse at 50% 0%, #232323 0%, #161616 70%, #0d0d0d 100%);
+  color: #f0f0f0;
+  border: 1px solid #000;
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -2px 0 rgba(0,0,0,0.6),
+    0 6px 0 #000,
+    0 10px 22px rgba(0,0,0,0.55);
+}
+.panel-mech-light {
+  background: radial-gradient(ellipse at 50% 0%, #fafafa 0%, #ececec 70%, #dcdcdc 100%);
+  color: #111;
+  border: 1px solid #c2c2c2;
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -2px 0 rgba(0,0,0,0.06),
+    0 6px 0 #c2c2c2,
+    0 10px 22px rgba(0,0,0,0.16);
+}
+.panel-inner-mech {
+  background: #0e0e0e;
+  border: 1px solid #000;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.6);
+}
+.panel-inner-mech-light {
+  background: #f5f5f3;
+  border: 1px solid #cfcfcf;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.04);
+}
