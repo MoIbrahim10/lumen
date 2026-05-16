@@ -626,6 +626,8 @@ function LayoutGallery() {
   const ctx: Ctx = {
     light,
     btn: light ? "btn-mech-light" : "btn-mech",
+    panel: light ? "panel-mech-light" : "panel-mech",
+    panelInner: light ? "panel-inner-mech-light" : "panel-inner-mech",
   };
 
   const bg = light ? "#ededeb" : "#0a0a0a";
