@@ -378,7 +378,7 @@ function TopBar({
   return (
     <div className="flex h-14 items-center justify-between gap-3 px-4">
       {/* fixed pill stays in same place; menu bg expands from behind it */}
-      <LeftPill ctx={ctx} sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
+      <LeftPill sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
       <div />
 
 
