@@ -484,7 +484,7 @@ function Centered({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
@@ -534,7 +534,7 @@ function SplitGreeting({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="grid flex-1 grid-cols-1 md:grid-cols-2">
@@ -563,7 +563,7 @@ function BottomDock({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6">
@@ -593,7 +593,7 @@ function FloatingIsland({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 items-center justify-center p-6">
@@ -620,7 +620,7 @@ function MegaHeader({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <div className="border-b border-border px-8 pb-10 pt-6">
           <div className="flex items-center justify-between">
@@ -664,7 +664,7 @@ function RightToolRail({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1">
@@ -692,7 +692,7 @@ function StackedCards({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center gap-3 overflow-y-auto px-6 py-8">
@@ -727,7 +727,7 @@ function ChipsAside({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="grid flex-1 grid-cols-1 gap-6 px-8 py-10 md:grid-cols-[1fr_260px]">
@@ -763,7 +763,7 @@ function MinimalConsole({ ctx }: { ctx: Ctx }) {
   const [showOpts, setShowOpts] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <div className="flex items-center justify-between px-6 py-3">
           <div className="flex items-center gap-2">
@@ -805,7 +805,7 @@ function NestedTile({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
@@ -834,7 +834,7 @@ function FramedConsole({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
@@ -867,7 +867,7 @@ function TrayStrip({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
