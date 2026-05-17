@@ -19,6 +19,7 @@ import { Route as V3RouteImport } from './routes/v3'
 import { Route as V2RouteImport } from './routes/v2'
 import { Route as V10RouteImport } from './routes/v10'
 import { Route as V1RouteImport } from './routes/v1'
+import { Route as StylePillsRouteImport } from './routes/style-pills'
 import { Route as StudioRouteImport } from './routes/studio'
 import { Route as LayoutRouteImport } from './routes/layout'
 import { Route as InteractionsRouteImport } from './routes/interactions'
@@ -76,6 +77,11 @@ const V1Route = V1RouteImport.update({
   path: '/v1',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StylePillsRoute = StylePillsRouteImport.update({
+  id: '/style-pills',
+  path: '/style-pills',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudioRoute = StudioRouteImport.update({
   id: '/studio',
   path: '/studio',
@@ -114,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/interactions': typeof InteractionsRoute
   '/layout': typeof LayoutRoute
   '/studio': typeof StudioRoute
+  '/style-pills': typeof StylePillsRoute
   '/v1': typeof V1Route
   '/v10': typeof V10Route
   '/v2': typeof V2Route
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/interactions': typeof InteractionsRoute
   '/layout': typeof LayoutRoute
   '/studio': typeof StudioRoute
+  '/style-pills': typeof StylePillsRoute
   '/v1': typeof V1Route
   '/v10': typeof V10Route
   '/v2': typeof V2Route
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/interactions': typeof InteractionsRoute
   '/layout': typeof LayoutRoute
   '/studio': typeof StudioRoute
+  '/style-pills': typeof StylePillsRoute
   '/v1': typeof V1Route
   '/v10': typeof V10Route
   '/v2': typeof V2Route
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/interactions'
     | '/layout'
     | '/studio'
+    | '/style-pills'
     | '/v1'
     | '/v10'
     | '/v2'
@@ -189,6 +199,7 @@ export interface FileRouteTypes {
     | '/interactions'
     | '/layout'
     | '/studio'
+    | '/style-pills'
     | '/v1'
     | '/v10'
     | '/v2'
@@ -207,6 +218,7 @@ export interface FileRouteTypes {
     | '/interactions'
     | '/layout'
     | '/studio'
+    | '/style-pills'
     | '/v1'
     | '/v10'
     | '/v2'
@@ -226,6 +238,7 @@ export interface RootRouteChildren {
   InteractionsRoute: typeof InteractionsRoute
   LayoutRoute: typeof LayoutRoute
   StudioRoute: typeof StudioRoute
+  StylePillsRoute: typeof StylePillsRoute
   V1Route: typeof V1Route
   V10Route: typeof V10Route
   V2Route: typeof V2Route
@@ -310,6 +323,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof V1RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/style-pills': {
+      id: '/style-pills'
+      path: '/style-pills'
+      fullPath: '/style-pills'
+      preLoaderRoute: typeof StylePillsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/studio': {
       id: '/studio'
       path: '/studio'
@@ -362,6 +382,7 @@ const rootRouteChildren: RootRouteChildren = {
   InteractionsRoute: InteractionsRoute,
   LayoutRoute: LayoutRoute,
   StudioRoute: StudioRoute,
+  StylePillsRoute: StylePillsRoute,
   V1Route: V1Route,
   V10Route: V10Route,
   V2Route: V2Route,
