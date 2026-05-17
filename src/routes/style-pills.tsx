@@ -118,7 +118,7 @@ function VariantSpotlight() {
         return (
           <button
             key={s.id}
-            ref={(el) => (refs.current[s.id] = el)}
+            ref={(el) => { refs.current[s.id] = el; }}
             onMouseEnter={() => setHover(s.id)}
             onClick={() => setActive(s.id)}
             className="relative z-10 flex items-center gap-1.5 px-4 py-2 text-[12px] font-medium transition-colors duration-200"
