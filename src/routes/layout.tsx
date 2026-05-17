@@ -172,7 +172,7 @@ function LeftPill({ sideOpen, onSide, onSearch }: {
 }) {
   return (
     <div
-      className="absolute top-3 left-4 z-40 flex items-center p-1 bg-[#f1f1ef] border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] rounded-lg"
+      className="fixed top-3 left-4 z-40 flex items-center p-1 bg-[#f1f1ef] border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] rounded-lg"
       style={{ height: 40 }}
     >
       {onSide && (
