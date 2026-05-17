@@ -167,91 +167,81 @@ const NAV_ITEMS = [
   { label: "History", icon: History, keys: "⌘H" },
 ];
 
-function LeftPill({ ctx, sideOpen, onSide, onSearch }: {
-  ctx: Ctx; sideOpen: boolean; onSide?: () => void; onSearch: () => void;
+function LeftPill({ sideOpen, onSide, onSearch }: {
+  sideOpen: boolean; onSide?: () => void; onSearch: () => void;
 }) {
   return (
-    <motion.div
-      layout
-      initial={false}
-      animate={{
-        width: sideOpen ? 260 : "auto",
-        height: sideOpen ? "calc(100vh - 24px)" : 40,
-      }}
-      transition={{ type: "spring", stiffness: 260, damping: 32, mass: 0.9 }}
-      className="fixed top-3 left-4 z-40 flex flex-col overflow-hidden bg-[#f1f1ef] border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] rounded-lg"
+    <div
+      className="fixed top-3 left-4 z-40 flex items-center p-1 bg-[#f1f1ef] border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] rounded-lg"
+      style={{ height: 40 }}
     >
-      {/* icon row — stays put as the panel grows around it */}
-      <motion.div layout="position" className="flex items-center p-1 shrink-0">
-        {onSide && (
-          <>
-            <button
-              onClick={onSide}
-              aria-label={sideOpen ? "Close menu" : "Open menu"}
-              className="p-2 hover:bg-black/[0.04] text-zinc-500 hover:text-zinc-900 rounded-md transition-colors duration-200 cursor-pointer"
-            >
-              <motion.span
-                animate={{ scaleX: sideOpen ? -1 : 1 }}
-                transition={{ type: "spring", stiffness: 560, damping: 32 }}
-                className="flex"
-              >
-                <PanelLeft className="h-[18px] w-[18px]" strokeWidth={2} />
-              </motion.span>
-            </button>
-            <span className="w-px h-4 bg-zinc-300/60 mx-1" aria-hidden />
-          </>
-        )}
-        <button
-          onClick={onSearch}
-          aria-label="Search"
-          className="p-2 hover:bg-black/[0.04] text-zinc-500 hover:text-zinc-900 rounded-md transition-colors duration-200 cursor-pointer"
-        >
-          <Search className="h-[18px] w-[18px]" strokeWidth={2} />
-        </button>
-      </motion.div>
-
-      {/* nav reveals once panel has expanded */}
-      <AnimatePresence>
-        {sideOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.18, delay: 0.12 }}
-            className="flex flex-col flex-1 min-h-0 px-2 pt-2 pb-3"
+      {onSide && (
+        <>
+          <button
+            onClick={onSide}
+            aria-label={sideOpen ? "Close menu" : "Open menu"}
+            className="p-2 hover:bg-black/[0.04] text-zinc-500 hover:text-zinc-900 rounded-md transition-colors duration-150 cursor-pointer"
           >
-            <div className="px-2 pb-2 pt-1">
-              <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-50">Menu</span>
-            </div>
-            <nav className="flex flex-col gap-1.5 overflow-y-auto">
-              {NAV_ITEMS.map((i, idx) => (
-                <motion.button
-                  key={i.label}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ delay: 0.16 + idx * 0.025, type: "spring", stiffness: 420, damping: 30 }}
-                  className={`${ctx.btn} flex h-10 items-center justify-between gap-2 px-3 text-[11px]`}
-                >
-                  <span className="flex items-center gap-2.5">
-                    <i.icon className="h-3.5 w-3.5 opacity-70" />
-                    {i.label}
-                  </span>
-                  <kbd className="font-mono text-[9px] tracking-[0.1em] opacity-40">{i.keys}</kbd>
-                </motion.button>
-              ))}
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+            <PanelLeft
+              className="h-[18px] w-[18px] transition-transform duration-300 ease-out"
+              strokeWidth={2}
+              style={{ transform: sideOpen ? "scaleX(-1)" : "scaleX(1)" }}
+            />
+          </button>
+          <span className="w-px h-4 bg-zinc-300/60 mx-1" aria-hidden />
+        </>
+      )}
+      <button
+        onClick={onSearch}
+        aria-label="Search"
+        className="p-2 hover:bg-black/[0.04] text-zinc-500 hover:text-zinc-900 rounded-md transition-colors duration-150 cursor-pointer"
+      >
+        <Search className="h-[18px] w-[18px]" strokeWidth={2} />
+      </button>
+    </div>
   );
 }
 
-function SideMenu(_: { ctx: Ctx; open: boolean; onToggle?: () => void; placement?: "left" | "right" }) {
-  // visual panel is rendered by LeftPill (fixed, expanding). This stub keeps
-  // existing layout call-sites working without pushing page content.
-  return null;
+function SideMenu({ ctx, open }: { ctx: Ctx; open: boolean; onToggle?: () => void; placement?: "left" | "right" }) {
+  return (
+    <aside
+      aria-hidden={!open}
+      className="relative shrink-0 overflow-hidden bg-[#f1f1ef] border-r border-zinc-200/60"
+      style={{
+        width: open ? 260 : 0,
+        transition: "width 360ms cubic-bezier(0.32, 0.72, 0, 1)",
+        willChange: "width",
+      }}
+    >
+      <div
+        className="flex h-full flex-col pt-[60px] px-2 pb-3"
+        style={{
+          width: 260,
+          opacity: open ? 1 : 0,
+          transition: "opacity 200ms ease-out",
+          transitionDelay: open ? "180ms" : "0ms",
+        }}
+      >
+        <div className="px-2 pb-2 pt-1">
+          <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-50">Menu</span>
+        </div>
+        <nav className="flex flex-col gap-1.5 overflow-y-auto">
+          {NAV_ITEMS.map((i) => (
+            <button
+              key={i.label}
+              className={`${ctx.btn} flex h-10 items-center justify-between gap-2 px-3 text-[11px]`}
+            >
+              <span className="flex items-center gap-2.5">
+                <i.icon className="h-3.5 w-3.5 opacity-70" />
+                {i.label}
+              </span>
+              <kbd className="font-mono text-[9px] tracking-[0.1em] opacity-40">{i.keys}</kbd>
+            </button>
+          ))}
+        </nav>
+      </div>
+    </aside>
+  );
 }
 
 function SearchPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -388,7 +378,7 @@ function TopBar({
   return (
     <div className="flex h-14 items-center justify-between gap-3 px-4">
       {/* fixed pill stays in same place; menu bg expands from behind it */}
-      <LeftPill ctx={ctx} sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
+      <LeftPill sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
       <div />
 
 
@@ -494,7 +484,7 @@ function Centered({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
@@ -544,7 +534,7 @@ function SplitGreeting({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="grid flex-1 grid-cols-1 md:grid-cols-2">
@@ -573,7 +563,7 @@ function BottomDock({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6">
@@ -603,7 +593,7 @@ function FloatingIsland({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 items-center justify-center p-6">
@@ -630,7 +620,7 @@ function MegaHeader({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <div className="border-b border-border px-8 pb-10 pt-6">
           <div className="flex items-center justify-between">
@@ -674,7 +664,7 @@ function RightToolRail({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1">
@@ -702,7 +692,7 @@ function StackedCards({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center gap-3 overflow-y-auto px-6 py-8">
@@ -737,7 +727,7 @@ function ChipsAside({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="grid flex-1 grid-cols-1 gap-6 px-8 py-10 md:grid-cols-[1fr_260px]">
@@ -773,7 +763,7 @@ function MinimalConsole({ ctx }: { ctx: Ctx }) {
   const [showOpts, setShowOpts] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <div className="flex items-center justify-between px-6 py-3">
           <div className="flex items-center gap-2">
@@ -815,7 +805,7 @@ function NestedTile({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
@@ -844,7 +834,7 @@ function FramedConsole({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
@@ -877,7 +867,7 @@ function TrayStrip({ ctx }: { ctx: Ctx }) {
   const [temp, setTemp] = useState(false);
   return (
     <div className="flex h-full">
-      {side && <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />}
+      <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
