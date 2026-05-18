@@ -146,73 +146,61 @@ function StylePicker({ ctx, value, onChange }: {
   ctx: Ctx; value: string; onChange: (v: string) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const spring = { type: "spring" as const, stiffness: 500, damping: 28, mass: 0.55 };
 
   return (
-    <motion.div layout transition={spring} className="relative flex items-center">
-      <AnimatePresence mode="wait" initial={false}>
-        {!open ? (
-          <motion.button
-            key="collapsed"
-            layout
-            onClick={() => setOpen(true)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.12 }}
-            className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px]`}
-          >
-            <span className="opacity-60">Style</span>
-            <span>{value}</span>
-            <ChevronDown className="h-3 w-3 opacity-60" />
-          </motion.button>
-        ) : (
-          <motion.div
-            key="expanded"
-            layout
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.18 }}
-            className="flex flex-wrap items-center gap-1.5"
-          >
-            {STYLE_OPTIONS.map((s) => {
-              const on = value === s.id;
-              return (
-                <motion.button
-                  key={s.id}
-                  onClick={() => { onChange(s.id); setOpen(false); }}
-                  whileTap={{ scale: 0.88, rotate: -2 }}
-                  animate={{
-                    scale: on ? 1.04 : 1,
-                    rotate: on ? -1.5 : 0,
-                    y: on ? -1 : 0,
-                  }}
-                  transition={{ type: "spring", stiffness: 500, damping: 22 }}
-                  className={`flex items-center gap-1.5 rounded-md border-2 px-3 py-1 text-[10px] font-mono uppercase tracking-wider transition-colors ${
-                    on
-                      ? "border-zinc-900 bg-zinc-900 text-white shadow-[3px_3px_0_0_rgba(0,0,0,1)]"
-                      : "border-zinc-300 bg-white text-zinc-600 hover:border-zinc-900 hover:text-zinc-900"
-                  }`}
-                >
-                  <s.icon className="h-3 w-3" />
-                  {s.id}
-                </motion.button>
-              );
-            })}
-            <button
-              onClick={() => setOpen(false)}
-              aria-label="Collapse"
-              className="ml-1 flex h-6 w-6 items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-100 hover:text-zinc-900"
+    <div className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px]`}
+      >
+        <span className="opacity-60">Style</span>
+        <span>{value}</span>
+        <ChevronDown className="h-3 w-3 opacity-60" />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: -4, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -4, scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 520, damping: 32, mass: 0.5 }}
+              className="absolute left-0 top-full z-50 mt-2 flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white p-2 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.12)]"
             >
-              <X className="h-3 w-3" />
-            </button>
-          </motion.div>
+              {STYLE_OPTIONS.map((s) => {
+                const on = value === s.id;
+                return (
+                  <motion.button
+                    key={s.id}
+                    onClick={() => { onChange(s.id); setOpen(false); }}
+                    whileTap={{ scale: 0.88, rotate: -2 }}
+                    animate={{
+                      scale: on ? 1.04 : 1,
+                      rotate: on ? -1.5 : 0,
+                      y: on ? -1 : 0,
+                    }}
+                    transition={{ type: "spring", stiffness: 500, damping: 22 }}
+                    className={`flex items-center gap-1.5 rounded-md border-2 px-3 py-1 text-[10px] font-mono uppercase tracking-wider transition-colors ${
+                      on
+                        ? "border-zinc-900 bg-zinc-900 text-white shadow-[3px_3px_0_0_rgba(0,0,0,1)]"
+                        : "border-zinc-300 bg-white text-zinc-600 hover:border-zinc-900 hover:text-zinc-900"
+                    }`}
+                  >
+                    <s.icon className="h-3 w-3" />
+                    {s.id}
+                  </motion.button>
+                );
+              })}
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 }
+
 
 function Profile({ ctx, align = "right" }: { ctx: Ctx; align?: "left" | "right" }) {
   const [open, setOpen] = useState(false);
