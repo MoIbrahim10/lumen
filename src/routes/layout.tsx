@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ReactNode, useEffect, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, LayoutGroup } from "motion/react";
 import {
   Paperclip, Mic, Wrench, ArrowUp, Globe, Brain, ChevronDown, Sun, Moon,
   SlidersHorizontal, Menu, EyeOff, FileText, Mail, Code2, Search,
@@ -146,6 +146,9 @@ function StylePicker({ ctx, value, onChange }: {
   ctx: Ctx; value: string; onChange: (v: string) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [hover, setHover] = useState<string | null>(null);
+  const longest = STYLE_OPTIONS.reduce((a, b) => (a.id.length >= b.id.length ? a : b)).id;
+  const indicatorId = hover ?? value;
 
   return (
     <div className="relative">
@@ -154,7 +157,11 @@ function StylePicker({ ctx, value, onChange }: {
         className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px]`}
       >
         <span className="opacity-60">Style</span>
-        <span>{value}</span>
+        {/* fixed width based on longest label — prevents layout shift */}
+        <span className="relative inline-block text-left">
+          <span className="invisible">{longest}</span>
+          <span className="absolute inset-0">{value}</span>
+        </span>
         <ChevronDown className="h-3 w-3 opacity-60" />
       </button>
 
@@ -167,32 +174,39 @@ function StylePicker({ ctx, value, onChange }: {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -4, scale: 0.98 }}
               transition={{ type: "spring", stiffness: 520, damping: 32, mass: 0.5 }}
-              className="absolute left-0 top-full z-50 mt-2 flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white p-2 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.12)]"
+              onMouseLeave={() => setHover(null)}
+              className="absolute left-0 top-full z-50 mt-2 flex items-center gap-1 rounded-lg border border-zinc-200 bg-white p-2 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.12)]"
             >
-              {STYLE_OPTIONS.map((s) => {
-                const on = value === s.id;
-                return (
-                  <motion.button
-                    key={s.id}
-                    onClick={() => { onChange(s.id); setOpen(false); }}
-                    whileTap={{ scale: 0.88, rotate: -2 }}
-                    animate={{
-                      scale: on ? 1.04 : 1,
-                      rotate: on ? -1.5 : 0,
-                      y: on ? -1 : 0,
-                    }}
-                    transition={{ type: "spring", stiffness: 500, damping: 22 }}
-                    className={`flex items-center gap-1.5 rounded-md border-2 px-3 py-1 text-[10px] font-mono uppercase tracking-wider transition-colors ${
-                      on
-                        ? "border-zinc-900 bg-zinc-900 text-white shadow-[3px_3px_0_0_rgba(0,0,0,1)]"
-                        : "border-zinc-300 bg-white text-zinc-600 hover:border-zinc-900 hover:text-zinc-900"
-                    }`}
-                  >
-                    <s.icon className="h-3 w-3" />
-                    {s.id}
-                  </motion.button>
-                );
-              })}
+              <LayoutGroup id="style-picker">
+                {STYLE_OPTIONS.map((s) => {
+                  const lit = indicatorId === s.id;
+                  const selected = value === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      onClick={() => { onChange(s.id); setOpen(false); }}
+                      onMouseEnter={() => setHover(s.id)}
+                      className="relative flex items-center gap-1.5 rounded-md px-3 py-1 text-[10px] font-mono uppercase tracking-wider"
+                    >
+                      {lit && (
+                        <motion.span
+                          layoutId="style-indicator"
+                          transition={{ type: "spring", stiffness: 500, damping: 34, mass: 0.6 }}
+                          className="absolute inset-0 rounded-md border-2 border-zinc-900 bg-zinc-900 shadow-[3px_3px_0_0_rgba(0,0,0,1)]"
+                        />
+                      )}
+                      <span
+                        className={`relative z-10 flex items-center gap-1.5 transition-colors ${
+                          lit ? "text-white" : selected ? "text-zinc-900" : "text-zinc-500"
+                        }`}
+                      >
+                        <s.icon className="h-3 w-3" />
+                        {s.id}
+                      </span>
+                    </button>
+                  );
+                })}
+              </LayoutGroup>
             </motion.div>
           </>
         )}
