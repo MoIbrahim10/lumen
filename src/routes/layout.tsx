@@ -212,6 +212,7 @@ function StylePicker({ ctx, value, onChange }: {
       </AnimatePresence>
     </motion.div>
   );
+}
 
 function Profile({ ctx, align = "right" }: { ctx: Ctx; align?: "left" | "right" }) {
   const [open, setOpen] = useState(false);
