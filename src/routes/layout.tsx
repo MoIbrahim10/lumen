@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ReactNode, useEffect, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, LayoutGroup } from "motion/react";
 import {
   Paperclip, Mic, Wrench, ArrowUp, Globe, Brain, ChevronDown, Sun, Moon,
   SlidersHorizontal, Menu, EyeOff, FileText, Mail, Code2, Search,
