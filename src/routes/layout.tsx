@@ -406,7 +406,7 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
   const [memory, setMemory] = useState(true);
   return (
     <div className={`flex ${vertical ? "flex-col items-stretch" : "flex-wrap items-center"} gap-1.5`}>
-      <Dropdown ctx={ctx} value={style} onChange={setStyle} options={["Auto", "Formal", "Friendly", "Concise", "Creative"]} label="Style" />
+      <StylePicker ctx={ctx} value={style} onChange={setStyle} />
       <Dropdown ctx={ctx} value={length} onChange={setLength} options={["Short", "Balanced", "Long"]} label="Length" />
       <Dropdown ctx={ctx} value={depth} onChange={setDepth} options={["Quick", "Standard", "Deep"]} label="Depth" />
       <Pill ctx={ctx} onClick={() => setMemory(!memory)}>
