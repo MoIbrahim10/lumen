@@ -7,6 +7,7 @@ import {
   ScanSearch, Lightbulb, Presentation, Image as ImageIcon,
   Plus, History, Library, FolderClosed, Cpu, Plug,
   Settings, User, ChevronRight, PanelLeft, X,
+  Sparkles, Feather, Smile, Scissors, Wand2,
 } from "lucide-react";
 import {
   Command, CommandInput, CommandList, CommandEmpty, CommandGroup,
