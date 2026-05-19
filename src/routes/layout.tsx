@@ -2768,37 +2768,39 @@ function TrayStrip({ ctx }: { ctx: Ctx }) {
 /* ───────────────────────── gallery shell ───────────────────────── */
 
 function LayoutGallery() {
-  const [light, setLight] = useState(true);
-  const [active, setActive] = useState(0);
+  useEffect(() => { settingsStore.hydrate(); }, []);
+  const settings = useSettings();
+  const { light, themeId, hue, saturation, lightness, buttonStyleId } = settings;
+
+  const style = BUTTON_STYLES.find((s) => s.id === buttonStyleId) ?? BUTTON_STYLES[0];
+  const btnClass = light ? style.lightClass : style.darkClass;
+  const preset = THEME_PRESETS.find((p) => p.id === themeId) ?? THEME_PRESETS[1];
 
   const ctx: Ctx = {
     light,
-    btn: light ? "btn-mech-light" : "btn-mech",
+    btn: btnClass,
     panel: light ? "panel-mech-light" : "panel-mech",
     panelInner: light ? "panel-inner-mech-light" : "panel-inner-mech",
   };
 
-  const bg = light ? "#ededeb" : "#0a0a0a";
-  const fg = light ? "#111" : "#f0f0f0";
+  const bg = light ? (themeId === "graphite" ? "#ededeb" : preset.bg) : preset.bg;
+  const fg = light ? "#111111" : preset.fg;
   const wrap = light ? "" : "dark";
-  const current = LAYOUTS[active];
-
+  const accent = `hsl(${hue} ${saturation}% ${lightness}%)`;
   const v12 = LAYOUTS.find((l) => l.id === "12") ?? LAYOUTS[0];
-  void active; void setActive;
 
   return (
     <div className={wrap}>
-      <div className="relative min-h-screen text-foreground" style={{ background: bg, color: fg }}>
+      <div
+        className="relative min-h-screen text-foreground transition-colors duration-500"
+        style={{
+          background: bg,
+          color: fg,
+          ["--lumen-accent" as any]: accent,
+          ["--lumen-preset-accent" as any]: preset.accent,
+        }}
+      >
         {v12.render(ctx)}
-
-        {/* floating theme toggle */}
-        <button
-          onClick={() => setLight(!light)}
-          className={`${ctx.btn} fixed bottom-5 right-5 z-50 flex h-9 w-9 items-center justify-center`}
-          aria-label="Toggle theme"
-        >
-          {light ? <Moon className="h-3.5 w-3.5" /> : <Sun className="h-3.5 w-3.5" />}
-        </button>
       </div>
     </div>
   );
