@@ -238,24 +238,59 @@ function useSettings() {
   return useSyncExternalStore(settingsStore.subscribe, settingsStore.get, () => DEFAULT_SETTINGS);
 }
 
-export const BUTTON_STYLES: { id: ButtonStyleId; name: string; lightClass: string; darkClass: string }[] = [
-  { id: "mech",     name: "Mechanical",  lightClass: "btn-mech-light",  darkClass: "btn-mech" },
-  { id: "clean",    name: "Cupertino",   lightClass: "btn-clean",       darkClass: "btn-clean" },
-  { id: "emboss",   name: "Embossed",    lightClass: "btn-emboss",      darkClass: "btn-emboss" },
-  { id: "depth3d",  name: "Soft 3D",     lightClass: "btn-3d",          darkClass: "btn-3d" },
-  { id: "penrose",  name: "Penrose",     lightClass: "btn-penrose",     darkClass: "btn-penrose" },
-  { id: "squircle", name: "Squircle",    lightClass: "btn-squircle",    darkClass: "btn-squircle" },
-  { id: "liquid",   name: "Liquid",      lightClass: "btn-liquid",      darkClass: "btn-liquid" },
-  { id: "pebble",   name: "Pebble",      lightClass: "btn-pebble",      darkClass: "btn-pebble" },
-  { id: "inflated", name: "Inflated",    lightClass: "btn-inflated",    darkClass: "btn-inflated" },
-  { id: "paper",    name: "Paper",       lightClass: "btn-paper",       darkClass: "btn-paper" },
+export const BUTTON_STYLES: {
+  id: ButtonStyleId; name: string;
+  lightClass: string; darkClass: string;
+  panelLight: string; panelDarkClass: string;
+  panelInnerLight: string; panelInnerDark: string;
+  inner: boolean;
+}[] = [
+  { id: "mech",     name: "Mechanical", lightClass: "btn-mech-light", darkClass: "btn-mech",
+    panelLight: "panel-mech-light", panelDarkClass: "panel-mech",
+    panelInnerLight: "panel-inner-mech-light", panelInnerDark: "panel-inner-mech", inner: false },
+  { id: "clean",    name: "Cupertino",  lightClass: "btn-clean", darkClass: "btn-clean",
+    panelLight: "panel-clean", panelDarkClass: "panel-clean",
+    panelInnerLight: "panel-inner-clean", panelInnerDark: "panel-inner-clean", inner: false },
+  { id: "emboss",   name: "Embossed",   lightClass: "btn-emboss", darkClass: "btn-emboss",
+    panelLight: "panel-emboss", panelDarkClass: "panel-emboss-dark",
+    panelInnerLight: "panel-inner-emboss", panelInnerDark: "panel-inner-emboss-dark", inner: false },
+  { id: "depth3d",  name: "Soft 3D",    lightClass: "btn-3d", darkClass: "btn-3d",
+    panelLight: "panel-3d", panelDarkClass: "panel-3d-dark",
+    panelInnerLight: "panel-inner-3d", panelInnerDark: "panel-inner-3d-dark", inner: false },
+  { id: "penrose",  name: "Penrose",    lightClass: "btn-penrose", darkClass: "btn-penrose",
+    panelLight: "panel-penrose", panelDarkClass: "panel-penrose-dark",
+    panelInnerLight: "panel-inner-penrose", panelInnerDark: "panel-inner-penrose-dark", inner: true },
+  { id: "squircle", name: "Squircle",   lightClass: "btn-squircle", darkClass: "btn-squircle",
+    panelLight: "panel-squircle", panelDarkClass: "panel-squircle-dark",
+    panelInnerLight: "panel-inner-squircle", panelInnerDark: "panel-inner-squircle-dark", inner: true },
+  { id: "liquid",   name: "Liquid",     lightClass: "btn-liquid", darkClass: "btn-liquid",
+    panelLight: "panel-liquid", panelDarkClass: "panel-liquid-dark",
+    panelInnerLight: "panel-inner-liquid", panelInnerDark: "panel-inner-liquid-dark", inner: true },
+  { id: "pebble",   name: "Pebble",     lightClass: "btn-pebble", darkClass: "btn-pebble",
+    panelLight: "panel-pebble", panelDarkClass: "panel-pebble-dark",
+    panelInnerLight: "panel-inner-pebble", panelInnerDark: "panel-inner-pebble-dark", inner: false },
+  { id: "inflated", name: "Inflated",   lightClass: "btn-inflated", darkClass: "btn-inflated",
+    panelLight: "panel-inflated", panelDarkClass: "panel-inflated-dark",
+    panelInnerLight: "panel-inner-inflated", panelInnerDark: "panel-inner-inflated-dark", inner: true },
+  { id: "paper",    name: "Paper",      lightClass: "btn-paper", darkClass: "btn-paper",
+    panelLight: "panel-paper", panelDarkClass: "panel-paper-dark",
+    panelInnerLight: "panel-inner-paper", panelInnerDark: "panel-inner-paper-dark", inner: false },
 ];
 
-export const THEME_PRESETS: { id: ThemePresetId; name: string; bg: string; fg: string; accent: string; tagline: string }[] = [
-  { id: "obsidian", name: "Obsidian",     bg: "#0a0a0a", fg: "#f0f0f0", accent: "#a78bfa", tagline: "Pure black · violet pulse" },
-  { id: "graphite", name: "Graphite Ink", bg: "#ededeb", fg: "#111111", accent: "#3b3b3b", tagline: "Newsprint · soft graphite" },
-  { id: "ocean",    name: "Ocean Deep",   bg: "#0c1f2e", fg: "#e6f1ff", accent: "#5cbdb9", tagline: "Submarine indigo · teal" },
-  { id: "plasma",   name: "Plasma Violet",bg: "#15101f", fg: "#f3eaff", accent: "#e879f9", tagline: "Midnight · neon plasma" },
+type ThemeMode = { bg: string; fg: string; accent: string; panel: string };
+export const THEME_PRESETS: { id: ThemePresetId; name: string; tagline: string; light: ThemeMode; dark: ThemeMode }[] = [
+  { id: "obsidian", name: "Obsidian", tagline: "Pure black · violet pulse",
+    light: { bg: "#f5f3ef", fg: "#1a1a1a", accent: "#7c3aed", panel: "#ecebe6" },
+    dark:  { bg: "#0a0a0a", fg: "#f0f0f0", accent: "#a78bfa", panel: "#161616" } },
+  { id: "graphite", name: "Graphite Ink", tagline: "Newsprint · soft graphite",
+    light: { bg: "#ededeb", fg: "#111111", accent: "#3b3b3b", panel: "#e2e0dc" },
+    dark:  { bg: "#1c1c1c", fg: "#e8e8e6", accent: "#a0a0a0", panel: "#262626" } },
+  { id: "ocean",    name: "Ocean Deep",   tagline: "Submarine indigo · teal",
+    light: { bg: "#e6f1ff", fg: "#0c1f2e", accent: "#0d7a8a", panel: "#d4e5f5" },
+    dark:  { bg: "#0c1f2e", fg: "#e6f1ff", accent: "#5cbdb9", panel: "#13293d" } },
+  { id: "plasma",   name: "Plasma Violet", tagline: "Midnight · neon plasma",
+    light: { bg: "#f7eafe", fg: "#2e0f4a", accent: "#c026d3", panel: "#ecdaf5" },
+    dark:  { bg: "#15101f", fg: "#f3eaff", accent: "#e879f9", panel: "#1f1830" } },
 ];
 
 
