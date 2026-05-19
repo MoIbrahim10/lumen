@@ -170,6 +170,96 @@ function useTools() {
   return useSyncExternalStore(toolsStore.subscribe, toolsStore.get, toolsStore.get);
 }
 
+/* ───────── settingsStore — theme, accent, button style (persisted) ───────── */
+
+export type ButtonStyleId =
+  | "mech" | "clean" | "emboss" | "depth3d" | "penrose"
+  | "squircle" | "liquid" | "pebble" | "inflated" | "paper";
+
+export type ThemePresetId = "obsidian" | "graphite" | "ocean" | "plasma";
+
+type Settings = {
+  light: boolean;
+  themeId: ThemePresetId;
+  hue: number;        // 0-360
+  saturation: number; // 0-100
+  lightness: number;  // 0-100 (accent lightness)
+  buttonStyleId: ButtonStyleId;
+};
+
+const DEFAULT_SETTINGS: Settings = {
+  light: true,
+  themeId: "graphite",
+  hue: 220,
+  saturation: 12,
+  lightness: 92,
+  buttonStyleId: "mech",
+};
+
+const SETTINGS_KEY = "lumen:settings:v1";
+
+const loadSettings = (): Settings => {
+  if (typeof window === "undefined") return DEFAULT_SETTINGS;
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (!raw) return DEFAULT_SETTINGS;
+    return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+  } catch { return DEFAULT_SETTINGS; }
+};
+
+const settingsStore = (() => {
+  let snap: Settings = DEFAULT_SETTINGS;
+  let hydrated = false;
+  const listeners = new Set<() => void>();
+  const notify = () => listeners.forEach((l) => l());
+  const persist = () => {
+    if (typeof window !== "undefined") {
+      try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(snap)); } catch {}
+    }
+  };
+  return {
+    get: () => snap,
+    hydrate: () => {
+      if (hydrated) return;
+      hydrated = true;
+      snap = loadSettings();
+      notify();
+    },
+    subscribe: (cb: () => void) => { listeners.add(cb); return () => { listeners.delete(cb); }; },
+    set: <K extends keyof Settings>(key: K, value: Settings[K]) => {
+      snap = { ...snap, [key]: value };
+      persist(); notify();
+    },
+    reset: () => { snap = DEFAULT_SETTINGS; persist(); notify(); },
+  };
+})();
+
+function useSettings() {
+  return useSyncExternalStore(settingsStore.subscribe, settingsStore.get, () => DEFAULT_SETTINGS);
+}
+
+export const BUTTON_STYLES: { id: ButtonStyleId; name: string; lightClass: string; darkClass: string }[] = [
+  { id: "mech",     name: "Mechanical",  lightClass: "btn-mech-light",  darkClass: "btn-mech" },
+  { id: "clean",    name: "Cupertino",   lightClass: "btn-clean",       darkClass: "btn-clean" },
+  { id: "emboss",   name: "Embossed",    lightClass: "btn-emboss",      darkClass: "btn-emboss" },
+  { id: "depth3d",  name: "Soft 3D",     lightClass: "btn-3d",          darkClass: "btn-3d" },
+  { id: "penrose",  name: "Penrose",     lightClass: "btn-penrose",     darkClass: "btn-penrose" },
+  { id: "squircle", name: "Squircle",    lightClass: "btn-squircle",    darkClass: "btn-squircle" },
+  { id: "liquid",   name: "Liquid",      lightClass: "btn-liquid",      darkClass: "btn-liquid" },
+  { id: "pebble",   name: "Pebble",      lightClass: "btn-pebble",      darkClass: "btn-pebble" },
+  { id: "inflated", name: "Inflated",    lightClass: "btn-inflated",    darkClass: "btn-inflated" },
+  { id: "paper",    name: "Paper",       lightClass: "btn-paper",       darkClass: "btn-paper" },
+];
+
+export const THEME_PRESETS: { id: ThemePresetId; name: string; bg: string; fg: string; accent: string; tagline: string }[] = [
+  { id: "obsidian", name: "Obsidian",     bg: "#0a0a0a", fg: "#f0f0f0", accent: "#a78bfa", tagline: "Pure black · violet pulse" },
+  { id: "graphite", name: "Graphite Ink", bg: "#ededeb", fg: "#111111", accent: "#3b3b3b", tagline: "Newsprint · soft graphite" },
+  { id: "ocean",    name: "Ocean Deep",   bg: "#0c1f2e", fg: "#e6f1ff", accent: "#5cbdb9", tagline: "Submarine indigo · teal" },
+  { id: "plasma",   name: "Plasma Violet",bg: "#15101f", fg: "#f3eaff", accent: "#e879f9", tagline: "Midnight · neon plasma" },
+];
+
+
+
 
 function HoverTip({ label, keys, desc, children, side = "bottom" }: {
   label: string; keys?: string; desc?: string; children: ReactNode; side?: "top" | "bottom";
