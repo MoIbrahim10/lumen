@@ -134,10 +134,11 @@ function TogglePill({
             color: on ? "#10b981" : "var(--muted-foreground)",
           }}
           transition={{
-            scale: { type: "spring", stiffness: 520, damping: 16, mass: 0.6 },
-            rotate: { type: "spring", stiffness: 480, damping: 18 },
+            scale: SPRING_POP,
+            rotate: SPRING_POP,
             color: { duration: 0.2 },
           }}
+
           className="inline-flex"
         >
           {icon}
