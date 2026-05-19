@@ -1369,7 +1369,8 @@ function FramedConsole({ ctx }: { ctx: Ctx }) {
           <div className="w-full max-w-[780px]">
             <Greeting className="text-center" />
             <div className={`${ctx.panel} mt-6 p-4`}>
-              <div className="flex items-center justify-end px-2 pb-3">
+              <div className="flex items-center justify-between px-2 pb-3">
+                <SessionMark />
                 <StatusTicker />
               </div>
 
