@@ -9,7 +9,7 @@ import {
   Settings, User, ChevronRight, PanelLeft, X, ArrowRight, Check,
   Sparkles, Feather, Smile, Scissors, Wand2,
   Upload, Link2, ClipboardPaste, Github, Database, Calendar,
-  Hash, Film, FileAudio,
+  Hash, Film, FileAudio, MonitorUp,
 } from "lucide-react";
 import {
   Command, CommandInput, CommandList, CommandEmpty, CommandGroup,
