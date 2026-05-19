@@ -1177,8 +1177,8 @@ function PrimaryRow({ ctx }: { ctx: Ctx }) {
         />
       </div>
       <div className="flex items-center gap-1.5">
-        <IconBtn ctx={ctx} tip="Dictate" keys="⌘⇧V"><Mic className="h-4 w-4" /></IconBtn>
-        <IconBtn ctx={ctx} tip="Send" keys="↵"><ArrowUp className="h-4 w-4" /></IconBtn>
+        <DictateButton ctx={ctx} />
+        <SendButton ctx={ctx} />
       </div>
     </div>
   );
