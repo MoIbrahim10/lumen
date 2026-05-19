@@ -1627,59 +1627,75 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                   </div>
                 </div>
 
-                {/* Connectors */}
-                <div className="border-t border-border/40 px-2 pb-2 pt-2">
+                {/* Connectors — same row style as tools for consistency */}
+                <div className="border-t border-border/40 px-2 pb-1 pt-2">
                   <div className="mb-1 flex items-center gap-1.5 px-1 font-mono text-[9px] uppercase tracking-[0.2em] opacity-50">
                     <span>Connectors</span>
                     <span className="h-px flex-1 bg-border/40" />
+                    <span className="tabular-nums opacity-70">{conns.size}/{CONN_DEFS.length}</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-1">
-                    {CONN_DEFS.map((c, i) => {
+                  <div className="space-y-0.5">
+                    {(showAllConns ? CONN_DEFS : CONN_DEFS.slice(0, 3)).map((c, i) => {
                       const on = conns.has(c.id);
+                      const linked = c.status === "linked";
                       const Icon = c.icon;
                       return (
                         <motion.button
                           key={c.id}
                           type="button"
-                          initial={{ opacity: 0, y: 4 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.08 + i * 0.025, duration: 0.22 }}
-                          onClick={() => toolsStore.toggleConn(c.id)}
+                          initial={{ opacity: 0, x: -6 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.04 + i * 0.03, duration: 0.22 }}
+                          onClick={() => { if (linked) toolsStore.toggleConn(c.id); }}
                           aria-pressed={on}
-                          className="group/conn relative flex items-center gap-2 overflow-hidden rounded-md border border-border/40 bg-foreground/[0.02] px-2 py-1.5 text-left transition-all hover:bg-foreground/[0.06]"
-                          style={{ borderColor: on ? `${c.hue}55` : undefined }}
+                          disabled={!linked}
+                          className="group/conn relative flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-foreground/[0.05] disabled:cursor-default disabled:hover:bg-transparent"
                         >
                           <motion.span
-                            aria-hidden
-                            initial={false}
-                            animate={{ opacity: on ? 0.18 : 0 }}
-                            transition={{ duration: 0.25 }}
-                            className="pointer-events-none absolute inset-0"
-                            style={{ background: `radial-gradient(circle at 0% 50%, ${c.hue}, transparent 70%)` }}
-                          />
-                          <span
-                            className="relative flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
-                            style={{ background: on ? c.hue : "rgba(127,127,127,0.12)", color: on ? "#fff" : "var(--muted-foreground)" }}
+                            animate={{
+                              backgroundColor: on ? `${c.hue}2e` : "rgba(127,127,127,0.10)",
+                              color: on ? c.hue : "var(--muted-foreground)",
+                            }}
+                            transition={{ duration: 0.2 }}
+                            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
                           >
-                            <Icon className="h-3 w-3" />
-                          </span>
-                          <span className="relative flex min-w-0 flex-1 flex-col">
-                            <span className="truncate text-[10.5px] leading-tight text-foreground/90">{c.label}</span>
-                            <span className="font-mono text-[8.5px] uppercase tracking-[0.16em] opacity-55">
-                              {on ? "active" : c.status === "linked" ? "linked" : "connect"}
+                            <Icon className="h-3.5 w-3.5" />
+                          </motion.span>
+                          <span className="flex min-w-0 flex-1 flex-col">
+                            <span className="text-[11px] leading-tight text-foreground/90">{c.label}</span>
+                            <span className="truncate text-[10px] leading-tight opacity-55">
+                              {linked ? (on ? "Active in this chat" : "Linked — tap to enable") : "Not connected"}
                             </span>
                           </span>
-                          {/* status dot */}
-                          <motion.span
-                            animate={{ scale: on ? [1, 1.6, 1] : 1, opacity: on ? 1 : 0.4 }}
-                            transition={{ duration: on ? 1.4 : 0.2, repeat: on ? Infinity : 0, ease: "easeInOut" }}
-                            className="relative h-1.5 w-1.5 shrink-0 rounded-full"
-                            style={{ background: on ? c.hue : "currentColor" }}
-                          />
+                          {linked ? (
+                            <span className={`relative h-3.5 w-6 shrink-0 rounded-full transition-colors ${on ? "" : "bg-foreground/15"}`} style={on ? { background: c.hue } : undefined}>
+                              <motion.span
+                                animate={{ x: on ? 12 : 2 }}
+                                transition={{ type: "spring", stiffness: 520, damping: 30 }}
+                                className="absolute top-0.5 inline-block h-2.5 w-2.5 rounded-full bg-background shadow"
+                              />
+                            </span>
+                          ) : (
+                            <span className="font-mono text-[8.5px] uppercase tracking-[0.16em] opacity-55 group-hover/conn:opacity-90">
+                              connect →
+                            </span>
+                          )}
                         </motion.button>
                       );
                     })}
                   </div>
+                  {CONN_DEFS.length > 3 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowAllConns((s) => !s)}
+                      className="mt-1 flex w-full items-center justify-center gap-1 rounded-md px-2 py-1 font-mono text-[9px] uppercase tracking-[0.2em] opacity-55 transition-colors hover:bg-foreground/[0.05] hover:opacity-90"
+                    >
+                      <motion.span animate={{ rotate: showAllConns ? 180 : 0 }} transition={SPRING_TURN}>
+                        <ChevronDown className="h-3 w-3" />
+                      </motion.span>
+                      {showAllConns ? "show less" : `show ${CONN_DEFS.length - 3} more`}
+                    </button>
+                  )}
                 </div>
 
                 {/* footer */}
@@ -1688,7 +1704,7 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                     <Plug className="h-2.5 w-2.5" />
                     <span>tap to toggle</span>
                   </span>
-                  <span>{conns.size}/{CONN_DEFS.length} linked</span>
+                  <span className="tabular-nums">{String(activeCount).padStart(2, "0")} active</span>
                 </div>
               </div>
             </motion.div>
