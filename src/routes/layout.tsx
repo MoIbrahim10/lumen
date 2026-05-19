@@ -576,6 +576,40 @@ function SearchPalette({ open, onClose }: { open: boolean; onClose: () => void }
 /* ───────── StatusTicker — cycling status with per-char letter swap ───────── */
 
 const STATUS_STATES = ["ready", "listening", "thinking", "composing"] as const;
+type StatusState = (typeof STATUS_STATES)[number];
+
+/* grayscale depth meter — 5 bars, animation profile per state */
+const METER_PROFILES: Record<StatusState, { heights: number[]; duration: number; opacity: number }> = {
+  ready:     { heights: [0.30, 0.30, 0.30, 0.30, 0.30], duration: 2.4, opacity: 0.35 },
+  listening: { heights: [0.35, 0.55, 0.40, 0.65, 0.30], duration: 1.1, opacity: 0.55 },
+  thinking:  { heights: [0.45, 0.75, 0.95, 0.70, 0.40], duration: 0.7, opacity: 0.75 },
+  composing: { heights: [0.90, 0.55, 0.85, 0.60, 0.95], duration: 0.45, opacity: 0.85 },
+};
+
+function DepthMeter({ state }: { state: StatusState }) {
+  const profile = METER_PROFILES[state];
+  return (
+    <span className="flex h-3 items-end gap-[2px]" aria-hidden>
+      {profile.heights.map((h, i) => (
+        <motion.span
+          key={i}
+          className="w-[2px] rounded-[1px] bg-foreground"
+          animate={{
+            scaleY: state === "ready" ? [h, h, h] : [h * 0.4, h, h * 0.5, h * 0.85, h * 0.3],
+            opacity: profile.opacity,
+          }}
+          transition={{
+            duration: profile.duration,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: i * (profile.duration / 12),
+          }}
+          style={{ height: "100%", transformOrigin: "bottom" }}
+        />
+      ))}
+    </span>
+  );
+}
 
 function StatusTicker() {
   const [idx, setIdx] = useState(0);
@@ -585,15 +619,10 @@ function StatusTicker() {
   }, []);
   const word = STATUS_STATES[idx];
   const longest = STATUS_STATES.reduce((a, b) => (a.length >= b.length ? a : b));
-  const dotColor = word === "ready" ? "#10b981" : "#f59e0b";
 
   return (
-    <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">
-      <motion.span
-        animate={{ backgroundColor: dotColor, boxShadow: `0 0 6px ${dotColor}` }}
-        transition={{ duration: 0.4 }}
-        className="inline-block h-1.5 w-1.5 rounded-full"
-      />
+    <span className="flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-[0.25em] opacity-70">
+      <DepthMeter state={word} />
       <span className="relative inline-block" style={{ minWidth: `${longest.length}ch` }}>
         <span className="invisible">{longest}</span>
         <span className="absolute inset-0 flex">
@@ -622,6 +651,29 @@ function StatusTicker() {
     </span>
   );
 }
+
+/* ───────── SessionMark — left-side crafted mono mark with ticking clock ───────── */
+function SessionMark() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const hh = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  const ss = String(now.getSeconds()).padStart(2, "0");
+  return (
+    <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] opacity-50">
+      <span>S·04A</span>
+      <span aria-hidden className="h-px w-8 bg-foreground/30" />
+      <span className="tabular-nums">
+        {hh}:{mm}
+        <span className="opacity-50">:{ss}</span>
+      </span>
+    </span>
+  );
+}
+
 
 /* ───────── composer fragments (greeting + input + controls) ───────── */
 
