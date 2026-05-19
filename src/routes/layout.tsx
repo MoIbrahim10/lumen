@@ -721,7 +721,18 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
   const [memory, setMemory] = useState(true);
   return (
     <div className={`flex ${vertical ? "flex-col items-stretch" : "flex-wrap items-center"} gap-1.5`}>
-      <StylePicker ctx={ctx} value={style} onChange={setStyle} />
+      <CycleButton
+        ctx={ctx} label="Style" value={style} onChange={setStyle}
+        options={STYLE_OPTIONS}
+        glyph={(i) => <StyleGlyph index={i} />}
+        descriptions={{
+          Auto: "Lumen picks the best tone for your prompt automatically.",
+          Formal: "Polished, professional phrasing — good for work writing.",
+          Friendly: "Warm, conversational tone — great for casual replies.",
+          Concise: "Trim filler — get to the point in fewer words.",
+          Creative: "More vivid, playful language and unexpected angles.",
+        }}
+      />
       <CycleButton
         ctx={ctx} label="Length" value={length} onChange={setLength}
         options={["Short", "Balanced", "Long"] as const}
