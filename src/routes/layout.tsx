@@ -9,7 +9,7 @@ import {
   Settings, User, ChevronRight, PanelLeft, X, ArrowRight, Check,
   Sparkles, Feather, Smile, Scissors, Wand2,
   Upload, Link2, ClipboardPaste, Github, Database, Calendar,
-  Hash, Film, FileAudio,
+  Hash, Film, FileAudio, MonitorUp,
 } from "lucide-react";
 import {
   Command, CommandInput, CommandList, CommandEmpty, CommandGroup,
@@ -1340,11 +1340,36 @@ function AttachButton({ ctx }: { ctx: Ctx }) {
     );
   };
 
+  const captureScreen = async () => {
+    const md = (navigator as any).mediaDevices;
+    if (!md?.getDisplayMedia) {
+      attachmentsStore.add({ kind: "image", name: "screen-capture.png", meta: "screen" });
+      return;
+    }
+    try {
+      const stream: MediaStream = await md.getDisplayMedia({ video: true });
+      const track = stream.getVideoTracks()[0];
+      const settings = track.getSettings();
+      const video = document.createElement("video");
+      video.srcObject = stream;
+      await video.play();
+      const canvas = document.createElement("canvas");
+      canvas.width = settings.width || video.videoWidth;
+      canvas.height = settings.height || video.videoHeight;
+      canvas.getContext("2d")?.drawImage(video, 0, 0, canvas.width, canvas.height);
+      track.stop();
+      const size = `${canvas.width}×${canvas.height}`;
+      attachmentsStore.add({ kind: "image", name: `screen-${Date.now().toString(36)}.png`, meta: size });
+    } catch {
+      /* user cancelled */
+    }
+  };
+
   const sources = [
     { id: "upload", label: "Upload", glyph: <Upload className="h-3.5 w-3.5" />, hint: "From device",
       onClick: () => fileRef.current?.click() },
-    { id: "image",  label: "Image",  glyph: <ImageIcon className="h-3.5 w-3.5" />, hint: "PNG · JPG · WEBP",
-      onClick: () => imageRef.current?.click() },
+    { id: "screen", label: "Screen", glyph: <MonitorUp className="h-3.5 w-3.5" />, hint: "Capture region",
+      onClick: () => { void captureScreen(); } },
     { id: "url",    label: "Link",   glyph: <Link2 className="h-3.5 w-3.5" />, hint: "Paste a URL",
       onClick: () => setMode("url") },
     { id: "text",   label: "Snippet",glyph: <ClipboardPaste className="h-3.5 w-3.5" />, hint: "Paste text",
@@ -1420,7 +1445,7 @@ function AttachButton({ ctx }: { ctx: Ctx }) {
                         <motion.button
                           key={s.id}
                           type="button"
-                          onClick={() => { s.onClick(); if (s.id === "upload" || s.id === "image") close(); }}
+                          onClick={() => { s.onClick(); if (s.id === "upload" || s.id === "screen") close(); }}
                           initial={{ opacity: 0, y: 6 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.04 + i * 0.04, duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
