@@ -2280,7 +2280,7 @@ function Slider({ label, min, max, value, onChange, track }: {
 
 
 function TopBar({
-  ctx, sideOpen, onSide, onTemp, temp, right,
+  ctx, sideOpen, onSide, onTemp, temp,
 }: {
   ctx: Ctx; sideOpen?: boolean; onSide?: () => void; onTemp: () => void; temp: boolean;
   right?: ReactNode;
