@@ -145,7 +145,7 @@ const CONN_DEFS: ConnDef[] = [
 
 const toolsStore = (() => {
   let snap: { tools: Set<string>; conns: Set<string> } = {
-    tools: new Set(["web"]),
+    tools: new Set<string>(),
     conns: new Set<string>(),
   };
   const listeners = new Set<() => void>();
