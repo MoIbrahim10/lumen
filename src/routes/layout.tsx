@@ -1549,7 +1549,6 @@ function AttachButton({ ctx }: { ctx: Ctx }) {
 function ToolsButton({ ctx }: { ctx: Ctx }) {
   const { tools, conns } = useTools();
   const [open, setOpen] = useState(false);
-  const [showAllConns, setShowAllConns] = useState(false);
   const activeCount = tools.size + conns.size;
 
   return (
