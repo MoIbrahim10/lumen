@@ -33,15 +33,28 @@ type Ctx = {
 };
 
 const QUICK = [
-  { icon: FileText, label: "Summarize document" },
-  { icon: Mail, label: "Write email" },
-  { icon: Code2, label: "Generate UI" },
-  { icon: ScanSearch, label: "Research topic" },
-  { icon: Lightbulb, label: "Brainstorm ideas" },
-  { icon: Code2, label: "Code assistant" },
-  { icon: Presentation, label: "Create presentation" },
-  { icon: ImageIcon, label: "Create image" },
+  { icon: FileText, label: "Summarize document", prompt: "Summarize this document into key bullet points with a TL;DR at the top." },
+  { icon: Mail, label: "Write email", prompt: "Draft a polite, concise email about " },
+  { icon: Code2, label: "Generate UI", prompt: "Generate a clean React + Tailwind UI for " },
+  { icon: ScanSearch, label: "Research topic", prompt: "Research the latest on " },
+  { icon: Lightbulb, label: "Brainstorm ideas", prompt: "Brainstorm 10 creative ideas for " },
+  { icon: Code2, label: "Code assistant", prompt: "Help me debug this code:\n\n" },
+  { icon: Presentation, label: "Create presentation", prompt: "Outline a 10-slide presentation about " },
+  { icon: ImageIcon, label: "Create image", prompt: "Generate an image of " },
 ];
+
+/* ───────── tiny pub/sub so chips can stream into the input ───────── */
+const promptBus = (() => {
+  const listeners = new Set<(text: string) => void>();
+  return {
+    emit: (text: string) => listeners.forEach((l) => l(text)),
+    subscribe: (cb: (text: string) => void) => {
+      listeners.add(cb);
+      return () => listeners.delete(cb);
+    },
+  };
+})();
+
 
 function HoverTip({ label, keys, desc, children, side = "bottom" }: {
   label: string; keys?: string; desc?: string; children: ReactNode; side?: "top" | "bottom";
