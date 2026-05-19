@@ -872,31 +872,35 @@ function LeftPill({ ctx, sideOpen, onSide, onSearch }: {
   ctx: Ctx; sideOpen: boolean; onSide?: () => void; onSearch: () => void;
 }) {
   return (
-    <div className={`${ctx.panel} fixed top-3 left-4 z-40 flex items-center gap-1 p-1`}>
+    <div className="fixed top-3 left-4 z-40 flex items-center gap-1.5">
       {onSide && (
+        <HoverTip label={sideOpen ? "Close menu" : "Open menu"} keys="⌘B">
+          <motion.button
+            onClick={onSide}
+            aria-label={sideOpen ? "Close menu" : "Open menu"}
+            whileTap={{ scale: 0.92 }}
+            transition={SPRING_TURN}
+            className={`${ctx.btn} flex h-[30px] w-[30px] items-center justify-center`}
+          >
+            <PanelLeft
+              className="h-[15px] w-[15px] transition-transform duration-300 ease-out"
+              strokeWidth={2}
+              style={{ transform: sideOpen ? "scaleX(-1)" : "scaleX(1)" }}
+            />
+          </motion.button>
+        </HoverTip>
+      )}
+      <HoverTip label="Search" keys="⌘K">
         <motion.button
-          onClick={onSide}
-          aria-label={sideOpen ? "Close menu" : "Open menu"}
+          onClick={onSearch}
+          aria-label="Search"
           whileTap={{ scale: 0.92 }}
           transition={SPRING_TURN}
-          className={`${ctx.btn} flex h-8 w-8 items-center justify-center`}
+          className={`${ctx.btn} flex h-[30px] w-[30px] items-center justify-center`}
         >
-          <PanelLeft
-            className="h-[15px] w-[15px] transition-transform duration-300 ease-out"
-            strokeWidth={2}
-            style={{ transform: sideOpen ? "scaleX(-1)" : "scaleX(1)" }}
-          />
+          <Search className="h-[15px] w-[15px]" strokeWidth={2} />
         </motion.button>
-      )}
-      <motion.button
-        onClick={onSearch}
-        aria-label="Search"
-        whileTap={{ scale: 0.92 }}
-        transition={SPRING_TURN}
-        className={`${ctx.btn} flex h-8 w-8 items-center justify-center`}
-      >
-        <Search className="h-[15px] w-[15px]" strokeWidth={2} />
-      </motion.button>
+      </HoverTip>
     </div>
   );
 }
