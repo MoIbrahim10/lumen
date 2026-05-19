@@ -238,24 +238,59 @@ function useSettings() {
   return useSyncExternalStore(settingsStore.subscribe, settingsStore.get, () => DEFAULT_SETTINGS);
 }
 
-export const BUTTON_STYLES: { id: ButtonStyleId; name: string; lightClass: string; darkClass: string }[] = [
-  { id: "mech",     name: "Mechanical",  lightClass: "btn-mech-light",  darkClass: "btn-mech" },
-  { id: "clean",    name: "Cupertino",   lightClass: "btn-clean",       darkClass: "btn-clean" },
-  { id: "emboss",   name: "Embossed",    lightClass: "btn-emboss",      darkClass: "btn-emboss" },
-  { id: "depth3d",  name: "Soft 3D",     lightClass: "btn-3d",          darkClass: "btn-3d" },
-  { id: "penrose",  name: "Penrose",     lightClass: "btn-penrose",     darkClass: "btn-penrose" },
-  { id: "squircle", name: "Squircle",    lightClass: "btn-squircle",    darkClass: "btn-squircle" },
-  { id: "liquid",   name: "Liquid",      lightClass: "btn-liquid",      darkClass: "btn-liquid" },
-  { id: "pebble",   name: "Pebble",      lightClass: "btn-pebble",      darkClass: "btn-pebble" },
-  { id: "inflated", name: "Inflated",    lightClass: "btn-inflated",    darkClass: "btn-inflated" },
-  { id: "paper",    name: "Paper",       lightClass: "btn-paper",       darkClass: "btn-paper" },
+export const BUTTON_STYLES: {
+  id: ButtonStyleId; name: string;
+  lightClass: string; darkClass: string;
+  panelLight: string; panelDarkClass: string;
+  panelInnerLight: string; panelInnerDark: string;
+  inner: boolean;
+}[] = [
+  { id: "mech",     name: "Mechanical", lightClass: "btn-mech-light", darkClass: "btn-mech",
+    panelLight: "panel-mech-light", panelDarkClass: "panel-mech",
+    panelInnerLight: "panel-inner-mech-light", panelInnerDark: "panel-inner-mech", inner: false },
+  { id: "clean",    name: "Cupertino",  lightClass: "btn-clean", darkClass: "btn-clean",
+    panelLight: "panel-clean", panelDarkClass: "panel-clean",
+    panelInnerLight: "panel-inner-clean", panelInnerDark: "panel-inner-clean", inner: false },
+  { id: "emboss",   name: "Embossed",   lightClass: "btn-emboss", darkClass: "btn-emboss",
+    panelLight: "panel-emboss", panelDarkClass: "panel-emboss-dark",
+    panelInnerLight: "panel-inner-emboss", panelInnerDark: "panel-inner-emboss-dark", inner: false },
+  { id: "depth3d",  name: "Soft 3D",    lightClass: "btn-3d", darkClass: "btn-3d",
+    panelLight: "panel-3d", panelDarkClass: "panel-3d-dark",
+    panelInnerLight: "panel-inner-3d", panelInnerDark: "panel-inner-3d-dark", inner: false },
+  { id: "penrose",  name: "Penrose",    lightClass: "btn-penrose", darkClass: "btn-penrose",
+    panelLight: "panel-penrose", panelDarkClass: "panel-penrose-dark",
+    panelInnerLight: "panel-inner-penrose", panelInnerDark: "panel-inner-penrose-dark", inner: true },
+  { id: "squircle", name: "Squircle",   lightClass: "btn-squircle", darkClass: "btn-squircle",
+    panelLight: "panel-squircle", panelDarkClass: "panel-squircle-dark",
+    panelInnerLight: "panel-inner-squircle", panelInnerDark: "panel-inner-squircle-dark", inner: true },
+  { id: "liquid",   name: "Liquid",     lightClass: "btn-liquid", darkClass: "btn-liquid",
+    panelLight: "panel-liquid", panelDarkClass: "panel-liquid-dark",
+    panelInnerLight: "panel-inner-liquid", panelInnerDark: "panel-inner-liquid-dark", inner: true },
+  { id: "pebble",   name: "Pebble",     lightClass: "btn-pebble", darkClass: "btn-pebble",
+    panelLight: "panel-pebble", panelDarkClass: "panel-pebble-dark",
+    panelInnerLight: "panel-inner-pebble", panelInnerDark: "panel-inner-pebble-dark", inner: false },
+  { id: "inflated", name: "Inflated",   lightClass: "btn-inflated", darkClass: "btn-inflated",
+    panelLight: "panel-inflated", panelDarkClass: "panel-inflated-dark",
+    panelInnerLight: "panel-inner-inflated", panelInnerDark: "panel-inner-inflated-dark", inner: true },
+  { id: "paper",    name: "Paper",      lightClass: "btn-paper", darkClass: "btn-paper",
+    panelLight: "panel-paper", panelDarkClass: "panel-paper-dark",
+    panelInnerLight: "panel-inner-paper", panelInnerDark: "panel-inner-paper-dark", inner: false },
 ];
 
-export const THEME_PRESETS: { id: ThemePresetId; name: string; bg: string; fg: string; accent: string; tagline: string }[] = [
-  { id: "obsidian", name: "Obsidian",     bg: "#0a0a0a", fg: "#f0f0f0", accent: "#a78bfa", tagline: "Pure black · violet pulse" },
-  { id: "graphite", name: "Graphite Ink", bg: "#ededeb", fg: "#111111", accent: "#3b3b3b", tagline: "Newsprint · soft graphite" },
-  { id: "ocean",    name: "Ocean Deep",   bg: "#0c1f2e", fg: "#e6f1ff", accent: "#5cbdb9", tagline: "Submarine indigo · teal" },
-  { id: "plasma",   name: "Plasma Violet",bg: "#15101f", fg: "#f3eaff", accent: "#e879f9", tagline: "Midnight · neon plasma" },
+type ThemeMode = { bg: string; fg: string; accent: string; panel: string };
+export const THEME_PRESETS: { id: ThemePresetId; name: string; tagline: string; light: ThemeMode; dark: ThemeMode }[] = [
+  { id: "obsidian", name: "Obsidian", tagline: "Pure black · violet pulse",
+    light: { bg: "#f5f3ef", fg: "#1a1a1a", accent: "#7c3aed", panel: "#ecebe6" },
+    dark:  { bg: "#0a0a0a", fg: "#f0f0f0", accent: "#a78bfa", panel: "#161616" } },
+  { id: "graphite", name: "Graphite Ink", tagline: "Newsprint · soft graphite",
+    light: { bg: "#ededeb", fg: "#111111", accent: "#3b3b3b", panel: "#e2e0dc" },
+    dark:  { bg: "#1c1c1c", fg: "#e8e8e6", accent: "#a0a0a0", panel: "#262626" } },
+  { id: "ocean",    name: "Ocean Deep",   tagline: "Submarine indigo · teal",
+    light: { bg: "#e6f1ff", fg: "#0c1f2e", accent: "#0d7a8a", panel: "#d4e5f5" },
+    dark:  { bg: "#0c1f2e", fg: "#e6f1ff", accent: "#5cbdb9", panel: "#13293d" } },
+  { id: "plasma",   name: "Plasma Violet", tagline: "Midnight · neon plasma",
+    light: { bg: "#f7eafe", fg: "#2e0f4a", accent: "#c026d3", panel: "#ecdaf5" },
+    dark:  { bg: "#15101f", fg: "#f3eaff", accent: "#e879f9", panel: "#1f1830" } },
 ];
 
 
@@ -2134,6 +2169,7 @@ function PreferencesPanel({ ctx, settings }: { ctx: Ctx; settings: Settings }) {
       <div className="grid grid-cols-2 gap-1.5 px-3 pb-2">
         {THEME_PRESETS.map((p) => {
           const active = settings.themeId === p.id;
+          const mode = settings.light ? p.light : p.dark;
           return (
             <motion.button
               key={p.id}
@@ -2148,52 +2184,78 @@ function PreferencesPanel({ ctx, settings }: { ctx: Ctx; settings: Settings }) {
               aria-pressed={active}
             >
               <div
-                className="mb-1.5 h-6 w-full rounded-sm border border-foreground/10"
-                style={{ background: `linear-gradient(135deg, ${p.bg} 0%, ${p.bg} 55%, ${p.accent} 55%, ${p.accent} 100%)` }}
+                className="mb-1.5 h-7 w-full overflow-hidden rounded-sm border border-foreground/10"
+                style={{ background: `linear-gradient(110deg, ${mode.bg} 0%, ${mode.bg} 52%, ${mode.panel} 52%, ${mode.panel} 64%, ${mode.accent} 64%, ${mode.accent} 100%)` }}
               />
-              <div className="flex items-center justify-between">
-                <span className="text-[10.5px] font-medium leading-none text-foreground">{p.name}</span>
+              <div className="flex items-center justify-between gap-1">
+                <span className="truncate text-[10.5px] font-medium leading-none text-foreground">{p.name}</span>
                 {active && (
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={SPRING_POP}
-                    className="flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-background"
+                    className="flex h-3 w-3 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-background"
                   >
                     <Check className="h-2 w-2" strokeWidth={3} />
                   </motion.span>
                 )}
               </div>
-              <span className="mt-0.5 block text-[9px] leading-tight opacity-55">{p.tagline}</span>
+              <span className="mt-0.5 block truncate text-[9px] leading-tight opacity-55">{p.tagline}</span>
             </motion.button>
           );
         })}
       </div>
 
-      {/* HSL sliders */}
-      <SectionHeader label="Accent · custom" />
-      <div className="space-y-2.5 px-3 pb-3">
-        <Slider label="Hue"        min={0}   max={360} value={settings.hue}        onChange={(v) => settingsStore.set("hue", v)}
-                track={`linear-gradient(90deg, #ff5a5a, #ffd000, #5aff5a, #5addff, #5a5aff, #ff5aff, #ff5a5a)`} />
-        <Slider label="Saturation" min={0}   max={100} value={settings.saturation} onChange={(v) => settingsStore.set("saturation", v)}
-                track={`linear-gradient(90deg, hsl(${settings.hue} 0% 60%), hsl(${settings.hue} 100% 55%))`} />
-        <Slider label="Lightness"  min={20}  max={95}  value={settings.lightness}  onChange={(v) => settingsStore.set("lightness", v)}
-                track={`linear-gradient(90deg, hsl(${settings.hue} ${settings.saturation}% 25%), hsl(${settings.hue} ${settings.saturation}% 95%))`} />
-        <div className="flex items-center justify-between rounded-md border border-foreground/10 bg-foreground/[0.03] px-2 py-1.5">
-          <span className="font-mono text-[9px] uppercase tracking-[0.18em] opacity-55">Preview</span>
-          <div className="flex items-center gap-1.5">
-            <span
-              className="h-4 w-4 rounded-full border border-foreground/15"
-              style={{ background: `hsl(${settings.hue} ${settings.saturation}% ${settings.lightness}%)` }}
-            />
-            <span className="font-mono text-[9px] tabular-nums opacity-65">
-              {Math.round(settings.hue)}·{Math.round(settings.saturation)}·{Math.round(settings.lightness)}
+      {/* Accent · custom — colored swatch preview + clean sliders */}
+      <SectionHeader label="Accent · custom" right={
+        <span className="font-mono text-[9px] tabular-nums opacity-60">
+          {Math.round(settings.hue)}·{Math.round(settings.saturation)}·{Math.round(settings.lightness)}
+        </span>
+      } />
+      <div className="px-3 pb-3">
+        {/* Big live swatch */}
+        <div
+          className="mb-2.5 flex items-center gap-3 overflow-hidden rounded-lg border border-foreground/10 p-2.5"
+          style={{ background: `linear-gradient(135deg, hsl(${settings.hue} ${settings.saturation}% ${settings.lightness}% / 0.12) 0%, transparent 60%)` }}
+        >
+          <motion.span
+            layout
+            animate={{
+              backgroundColor: `hsl(${settings.hue} ${settings.saturation}% ${settings.lightness}%)`,
+              boxShadow: `0 4px 18px -4px hsl(${settings.hue} ${settings.saturation}% ${settings.lightness}% / 0.55)`,
+            }}
+            transition={{ duration: 0.18 }}
+            className="h-10 w-10 shrink-0 rounded-full border border-foreground/15"
+          />
+          <div className="flex min-w-0 flex-1 flex-col leading-tight">
+            <span className="font-mono text-[9px] uppercase tracking-[0.22em] opacity-55">Accent</span>
+            <span className="truncate font-mono text-[10.5px] tabular-nums">
+              hsl({Math.round(settings.hue)} {Math.round(settings.saturation)}% {Math.round(settings.lightness)}%)
             </span>
           </div>
+          <button
+            onClick={() => {
+              settingsStore.set("hue", DEFAULT_SETTINGS.hue);
+              settingsStore.set("saturation", DEFAULT_SETTINGS.saturation);
+              settingsStore.set("lightness", DEFAULT_SETTINGS.lightness);
+            }}
+            className="shrink-0 rounded-md border border-foreground/10 px-1.5 py-0.5 font-mono text-[8.5px] uppercase tracking-[0.18em] opacity-60 transition-opacity hover:opacity-100"
+          >
+            Reset
+          </button>
+        </div>
+
+        <div className="space-y-2">
+          <Slider label="Hue"        min={0}   max={360} value={settings.hue}        onChange={(v) => settingsStore.set("hue", v)}
+                  track="linear-gradient(90deg, #ff5a5a, #ffd000, #5aff5a, #5addff, #5a5aff, #ff5aff, #ff5a5a)" />
+          <Slider label="Saturation" min={0}   max={100} value={settings.saturation} onChange={(v) => settingsStore.set("saturation", v)}
+                  track={`linear-gradient(90deg, hsl(${settings.hue} 0% ${settings.lightness}%), hsl(${settings.hue} 100% ${settings.lightness}%))`} />
+          <Slider label="Lightness"  min={10}  max={95}  value={settings.lightness}  onChange={(v) => settingsStore.set("lightness", v)}
+                  track={`linear-gradient(90deg, hsl(${settings.hue} ${settings.saturation}% 10%), hsl(${settings.hue} ${settings.saturation}% 50%), hsl(${settings.hue} ${settings.saturation}% 95%))`} />
         </div>
       </div>
 
-      {/* Button style picker */}
+      {/* Button style picker — bigger previews, inner span when needed */}
       <SectionHeader label="Button style" right={<span className="font-mono text-[9px] tabular-nums opacity-50">10</span>} />
       <div className="grid grid-cols-2 gap-1.5 px-3 pb-3">
         {BUTTON_STYLES.map((s) => {
@@ -2204,18 +2266,18 @@ function PreferencesPanel({ ctx, settings }: { ctx: Ctx; settings: Settings }) {
               key={s.id}
               onClick={() => settingsStore.set("buttonStyleId", s.id)}
               aria-pressed={active}
-              className={`group relative flex items-center gap-2 rounded-md border p-1.5 pr-2 text-left transition-all ${
+              className={`group relative flex items-center gap-2.5 rounded-md border p-2 pr-2 text-left transition-all ${
                 active
                   ? "border-emerald-500/60 bg-emerald-500/[0.04]"
                   : "border-foreground/10 hover:border-foreground/25"
               }`}
             >
-              <span className={`${cls} flex h-7 w-7 shrink-0 items-center justify-center text-[11px]`}>
-                <span>Aa</span>
+              <span className={`${cls} flex h-9 w-12 shrink-0 items-center justify-center text-[11px] font-medium leading-none`}>
+                {s.inner ? <span>Aa</span> : "Aa"}
               </span>
-              <span className="flex min-w-0 flex-1 flex-col">
-                <span className="truncate text-[10.5px] leading-tight text-foreground">{s.name}</span>
-                <span className="truncate text-[9px] leading-tight opacity-50">{s.id}</span>
+              <span className="flex min-w-0 flex-1 flex-col leading-tight">
+                <span className="truncate text-[11px] text-foreground">{s.name}</span>
+                <span className="truncate font-mono text-[9px] opacity-50">{s.id}</span>
               </span>
               {active && (
                 <span className="flex h-3 w-3 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-background">
@@ -2832,19 +2894,20 @@ function LayoutGallery() {
 
   const style = BUTTON_STYLES.find((s) => s.id === buttonStyleId) ?? BUTTON_STYLES[0];
   const btnClass = light ? style.lightClass : style.darkClass;
+  const panelClass = light ? style.panelLight : style.panelDarkClass;
+  const panelInnerClass = light ? style.panelInnerLight : style.panelInnerDark;
   const preset = THEME_PRESETS.find((p) => p.id === themeId) ?? THEME_PRESETS[1];
+  const mode = light ? preset.light : preset.dark;
 
   const ctx: Ctx = {
     light,
     btn: btnClass,
-    panel: light ? "panel-mech-light" : "panel-mech",
-    panelInner: light ? "panel-inner-mech-light" : "panel-inner-mech",
+    panel: panelClass,
+    panelInner: panelInnerClass,
   };
 
-  const bg = light ? (themeId === "graphite" ? "#ededeb" : preset.bg) : preset.bg;
-  const fg = light ? "#111111" : preset.fg;
-  const wrap = light ? "" : "dark";
   const accent = `hsl(${hue} ${saturation}% ${lightness}%)`;
+  const wrap = light ? "" : "dark";
   const v12 = LAYOUTS.find((l) => l.id === "12") ?? LAYOUTS[0];
 
   return (
@@ -2852,10 +2915,11 @@ function LayoutGallery() {
       <div
         className="relative min-h-screen text-foreground transition-colors duration-500"
         style={{
-          background: bg,
-          color: fg,
+          background: mode.bg,
+          color: mode.fg,
           ["--lumen-accent" as any]: accent,
-          ["--lumen-preset-accent" as any]: preset.accent,
+          ["--lumen-preset-accent" as any]: mode.accent,
+          ["--lumen-panel" as any]: mode.panel,
         }}
       >
         {v12.render(ctx)}
