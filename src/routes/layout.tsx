@@ -1860,41 +1860,37 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                       const linked = c.status === "linked";
                       const Icon = c.icon;
                       return (
-                        <HoverTip
+                        <motion.button
                           key={c.id}
-                          label={c.label}
-                          desc={on ? "Active · tap to disable" : linked ? "Linked · tap to enable" : "Authenticate to connect"}
+                          type="button"
+                          title={c.label}
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.04 + i * 0.025, duration: 0.22 }}
+                          whileTap={{ scale: 0.92 }}
+                          onClick={() => { if (linked) toolsStore.toggleConn(c.id); }}
+                          aria-pressed={on}
+                          aria-label={c.label}
+                          className={`${ctx.light ? "btn-mech-light" : "btn-mech"} relative flex aspect-square w-full items-center justify-center ${on ? "ring-1 ring-emerald-500/60" : ""}`}
                         >
-                          <motion.button
-                            type="button"
-                            initial={{ opacity: 0, y: 4 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.04 + i * 0.025, duration: 0.22 }}
-                            whileTap={{ scale: 0.92 }}
-                            onClick={() => { if (linked) toolsStore.toggleConn(c.id); }}
-                            aria-pressed={on}
-                            aria-label={c.label}
-                            className={`${ctx.light ? "btn-mech-light" : "btn-mech"} relative flex aspect-square w-full items-center justify-center ${on ? "ring-1 ring-emerald-500/60" : ""}`}
-                          >
-                            <Icon className={`h-3.5 w-3.5 transition-colors ${on ? "text-emerald-600 dark:text-emerald-400" : ""}`} />
-                            {on && (
-                              <motion.span
-                                aria-hidden
-                                animate={{ scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }}
-                                transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                                className="absolute right-1 top-1 h-1 w-1 rounded-full bg-emerald-500"
-                              />
-                            )}
-                            {!linked && (
-                              <span
-                                aria-hidden
-                                className="absolute right-0.5 top-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-amber-500 text-[7px] font-bold leading-none text-white"
-                              >
-                                !
-                              </span>
-                            )}
-                          </motion.button>
-                        </HoverTip>
+                          <Icon className={`h-3.5 w-3.5 transition-colors ${on ? "text-emerald-600 dark:text-emerald-400" : ""}`} />
+                          {on && (
+                            <motion.span
+                              aria-hidden
+                              animate={{ scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }}
+                              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                              className="absolute right-1 top-1 h-1 w-1 rounded-full bg-emerald-500"
+                            />
+                          )}
+                          {!linked && (
+                            <span
+                              aria-hidden
+                              className="absolute right-0.5 top-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-amber-500 text-[7px] font-bold leading-none text-white"
+                            >
+                              !
+                            </span>
+                          )}
+                        </motion.button>
                       );
                     })}
                   </div>
@@ -2891,6 +2887,21 @@ function LayoutGallery() {
   useEffect(() => { settingsStore.hydrate(); }, []);
   const settings = useSettings();
   const { light, themeId, hue, saturation, lightness, buttonStyleId } = settings;
+
+  // Sync html.dark + CSS vars so portaled Radix surfaces (Dialog, Popover, Tooltip)
+  // pick up the active theme — they render outside the page wrapper.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (light) root.classList.remove("dark"); else root.classList.add("dark");
+    const preset = THEME_PRESETS.find((p) => p.id === themeId) ?? THEME_PRESETS[1];
+    const mode = light ? preset.light : preset.dark;
+    root.style.setProperty("--lumen-page-bg", mode.bg);
+    root.style.setProperty("--lumen-page-fg", mode.fg);
+    root.style.setProperty("--lumen-panel", mode.panel);
+    root.style.setProperty("--lumen-accent", `hsl(${hue} ${saturation}% ${lightness}%)`);
+    root.style.setProperty("--lumen-preset-accent", mode.accent);
+    return () => { root.classList.remove("dark"); };
+  }, [light, themeId, hue, saturation, lightness]);
 
   const style = BUTTON_STYLES.find((s) => s.id === buttonStyleId) ?? BUTTON_STYLES[0];
   const btnClass = light ? style.lightClass : style.darkClass;
