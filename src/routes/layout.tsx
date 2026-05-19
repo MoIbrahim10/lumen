@@ -267,34 +267,41 @@ function LengthGlyph({ index }: { index: number }) {
 }
 
 function DepthGlyph({ index }: { index: number }) {
-  // Stacked strata; deeper = more layers lit (top→down)
+  // Depth gauge: 3 strata lines + a probe that descends through them
+  const probeY = 3 + index * 4;
   return (
     <svg width="16" height="14" viewBox="0 0 16 14" fill="none" aria-hidden>
       {[0, 1, 2].map((i) => {
-        const active = i <= index;
+        const reached = i <= index;
         const y = 3 + i * 4;
         return (
-          <motion.rect
+          <motion.line
             key={i}
-            x="2"
-            y={y}
-            width="12"
-            height="2"
-            rx="1"
-            fill="currentColor"
+            x1="2"
+            x2="14"
+            y1={y}
+            y2={y}
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeLinecap="round"
             initial={false}
-            animate={{
-              opacity: active ? 1 : 0.25,
-              scaleX: active ? 1 : 0.6,
-            }}
-            transition={{ type: "spring", stiffness: 380, damping: 26, delay: i * 0.05 }}
-            style={{ transformOrigin: "8px center" }}
+            animate={{ opacity: reached ? 0.9 : 0.25 }}
+            transition={{ duration: 0.2, delay: i * 0.04 }}
           />
         );
       })}
+      <motion.circle
+        cx="8"
+        r="1.8"
+        fill="currentColor"
+        initial={false}
+        animate={{ cy: probeY }}
+        transition={{ type: "spring", stiffness: 360, damping: 22 }}
+      />
     </svg>
   );
 }
+
 
 function CycleButton({
   ctx, label, options, value, onChange, glyph,
