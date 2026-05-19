@@ -267,32 +267,28 @@ function LengthGlyph({ index }: { index: number }) {
 }
 
 function DepthGlyph({ index }: { index: number }) {
-  // Sonar-style arcs; deeper = more arcs lit
+  // Stacked strata; deeper = more layers lit (top→down)
   return (
     <svg width="16" height="14" viewBox="0 0 16 14" fill="none" aria-hidden>
       {[0, 1, 2].map((i) => {
         const active = i <= index;
-        const r = 2 + i * 2.5;
+        const y = 3 + i * 4;
         return (
-          <motion.circle
+          <motion.rect
             key={i}
-            cx="8"
-            cy="11"
-            r={r}
-            stroke="currentColor"
-            strokeWidth="1.4"
-            fill="none"
-            strokeDasharray={Math.PI * r}
+            x="2"
+            y={y}
+            width="12"
+            height="2"
+            rx="1"
+            fill="currentColor"
             initial={false}
             animate={{
               opacity: active ? 1 : 0.25,
-              pathLength: active ? 0.5 : 0.5,
-              scale: active ? 1 : 0.85,
+              scaleX: active ? 1 : 0.6,
             }}
             transition={{ type: "spring", stiffness: 380, damping: 26, delay: i * 0.05 }}
-            style={{ transformOrigin: "8px 11px" }}
-            // Render top half only via dashoffset trick
-            strokeDashoffset={Math.PI * r * 0.5}
+            style={{ transformOrigin: "8px center" }}
           />
         );
       })}
@@ -311,7 +307,6 @@ function CycleButton({
   glyph: (i: number) => ReactNode;
 }) {
   const index = Math.max(0, options.indexOf(value));
-  const longest = options.reduce((a, b) => (a.length >= b.length ? a : b));
   const [bump, setBump] = useState(0);
 
   const cycle = () => {
@@ -325,6 +320,7 @@ function CycleButton({
       <motion.button
         type="button"
         onClick={cycle}
+        aria-label={`${label}: ${value}`}
         animate={{ scale: bump ? [1, 0.96, 1] : 1 }}
         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
         className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px] cursor-pointer select-none`}
@@ -339,21 +335,6 @@ function CycleButton({
         >
           {glyph(index)}
         </motion.span>
-        <span className="relative inline-block overflow-hidden text-left" style={{ height: "1.1em" }}>
-          <span className="invisible block">{longest}</span>
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span
-              key={value}
-              initial={{ y: "100%", opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: "-100%", opacity: 0 }}
-              transition={{ type: "spring", stiffness: 460, damping: 32, mass: 0.6 }}
-              className="absolute inset-0 block"
-            >
-              {value}
-            </motion.span>
-          </AnimatePresence>
-        </span>
       </motion.button>
     </HoverTip>
   );
