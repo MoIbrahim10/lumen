@@ -133,6 +133,15 @@ const CFG: Record<Variant, Omit<Cfg, "name" | "number" | "variant">> = {
     headline: "font-grotesk",
     micro: "Stacked · layered cards.",
   },
+  clean: {
+    mode: "light",
+    btnClass: "btn-clean",
+    sendClass: "btn-clean-primary",
+    chipClass: "btn-clean-soft",
+    bg: { background: "#ebebed" },
+    headline: "font-light tracking-tight",
+    micro: "Cupertino · clean nested cards.",
+  },
 };
 
 export function ChatHome({
