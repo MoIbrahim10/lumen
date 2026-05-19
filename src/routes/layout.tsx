@@ -679,14 +679,15 @@ function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
       {streaming && (
         <motion.span
           aria-hidden
-          animate={{ opacity: [1, 0.2, 1] }}
-          transition={{ duration: 0.7, repeat: Infinity, ease: "easeInOut" }}
-          className="pointer-events-none absolute -ml-[1px] inline-block h-[1.1em] w-[2px] translate-y-[3px] bg-foreground"
-          style={{
-            // place a caret right after typed text — approximated via line height
-          }}
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ scaleX: 1, opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          style={{ transformOrigin: "left center" }}
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-emerald-500/70 to-transparent"
         />
       )}
+
     </div>
   );
 }
