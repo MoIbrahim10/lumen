@@ -796,24 +796,64 @@ function Profile({ ctx, align = "right" }: { ctx: Ctx; align?: "left" | "right" 
   const [open, setOpen] = useState(false);
   return (
     <div className="relative">
-      <button
+      <motion.button
         onClick={() => setOpen(!open)}
-        className={`${ctx.btn} flex h-9 w-9 items-center justify-center p-0`}
+        whileTap={{ scale: 0.92 }}
+        transition={SPRING_TURN}
+        className={`${ctx.btn} flex h-[30px] w-[30px] items-center justify-center p-0`}
         aria-label="Profile"
       >
-        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-[10px] text-background">EM</span>
-      </button>
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className={`absolute top-full z-50 mt-1 min-w-[180px] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg ${align === "right" ? "right-0" : "left-0"}`}>
-            <div className="border-b border-border px-3 py-2 text-[11px] opacity-60">Emma · emma@lumen.app</div>
-            {["Account", "Billing", "Workspace", "Sign out"].map((o) => (
-              <div key={o} className="block px-3 py-2 text-xs hover:bg-muted cursor-pointer">{o}</div>
-            ))}
-          </div>
-        </>
-      )}
+        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-[9px] font-medium text-background">EM</span>
+      </motion.button>
+      <AnimatePresence>
+        {open && (
+          <>
+            <div className="fixed inset-0 z-40" onMouseDown={() => setOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: -6, scale: 0.96, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -6, scale: 0.96, filter: "blur(4px)" }}
+              transition={{ type: "spring", stiffness: 420, damping: 30, mass: 0.5 }}
+              style={{ transformOrigin: align === "right" ? "top right" : "top left" }}
+              className={`${ctx.panel} absolute top-full z-50 mt-2 w-[220px] overflow-hidden p-1 ${align === "right" ? "right-0" : "left-0"}`}
+            >
+              <div className={`${ctx.panelInner} flex flex-col`}>
+                <div className="flex items-center gap-2.5 border-b border-foreground/10 px-3 py-2.5">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-foreground text-[10px] font-medium text-background">EM</span>
+                  <div className="flex flex-col leading-tight">
+                    <span className="text-[12px] font-medium">Emma</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.18em] opacity-50">emma@lumen.app</span>
+                  </div>
+                </div>
+                <div className="flex flex-col p-1">
+                  {[
+                    { label: "Account", icon: User },
+                    { label: "Billing", icon: FileText },
+                    { label: "Workspace", icon: FolderClosed },
+                  ].map((o) => (
+                    <button
+                      key={o.label}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-[11px] transition-colors hover:bg-foreground/[0.06]"
+                    >
+                      <o.icon className="h-3.5 w-3.5 opacity-60" />
+                      {o.label}
+                    </button>
+                  ))}
+                  <span aria-hidden className="my-1 h-px bg-foreground/10" />
+                  <button
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-[11px] text-red-500 transition-colors hover:bg-red-500/[0.08]"
+                  >
+                    <ArrowRight className="h-3.5 w-3.5 opacity-70" />
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
