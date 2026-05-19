@@ -236,6 +236,130 @@ function StylePicker({ ctx, value, onChange }: {
   );
 }
 
+/* ───────── CycleButton — click to cycle, animated SVG indicator ───────── */
+
+function LengthGlyph({ index }: { index: number }) {
+  // 3 horizontal bars of growing width; active count = index+1
+  const widths = [6, 10, 14];
+  return (
+    <svg width="16" height="14" viewBox="0 0 16 14" fill="none" aria-hidden>
+      {widths.map((w, i) => {
+        const active = i <= index;
+        return (
+          <motion.rect
+            key={i}
+            x="1"
+            y={2 + i * 4}
+            height="2"
+            rx="1"
+            initial={false}
+            animate={{
+              width: active ? w : 3,
+              opacity: active ? 1 : 0.3,
+            }}
+            transition={{ type: "spring", stiffness: 380, damping: 28, delay: i * 0.04 }}
+            fill="currentColor"
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
+function DepthGlyph({ index }: { index: number }) {
+  // Sonar-style arcs; deeper = more arcs lit
+  return (
+    <svg width="16" height="14" viewBox="0 0 16 14" fill="none" aria-hidden>
+      {[0, 1, 2].map((i) => {
+        const active = i <= index;
+        const r = 2 + i * 2.5;
+        return (
+          <motion.circle
+            key={i}
+            cx="8"
+            cy="11"
+            r={r}
+            stroke="currentColor"
+            strokeWidth="1.4"
+            fill="none"
+            strokeDasharray={Math.PI * r}
+            initial={false}
+            animate={{
+              opacity: active ? 1 : 0.25,
+              pathLength: active ? 0.5 : 0.5,
+              scale: active ? 1 : 0.85,
+            }}
+            transition={{ type: "spring", stiffness: 380, damping: 26, delay: i * 0.05 }}
+            style={{ transformOrigin: "8px 11px" }}
+            // Render top half only via dashoffset trick
+            strokeDashoffset={Math.PI * r * 0.5}
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
+function CycleButton({
+  ctx, label, options, value, onChange, glyph,
+}: {
+  ctx: Ctx;
+  label: string;
+  options: readonly string[];
+  value: string;
+  onChange: (v: string) => void;
+  glyph: (i: number) => ReactNode;
+}) {
+  const index = Math.max(0, options.indexOf(value));
+  const longest = options.reduce((a, b) => (a.length >= b.length ? a : b));
+  const [bump, setBump] = useState(0);
+
+  const cycle = () => {
+    const next = options[(index + 1) % options.length];
+    onChange(next);
+    setBump((b) => b + 1);
+  };
+
+  return (
+    <HoverTip label={`${label}: ${value}`}>
+      <motion.button
+        type="button"
+        onClick={cycle}
+        animate={{ scale: bump ? [1, 0.96, 1] : 1 }}
+        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+        className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px] cursor-pointer select-none`}
+      >
+        <span className="opacity-60">{label}</span>
+        <motion.span
+          key={`g-${index}`}
+          initial={{ rotate: -8, scale: 0.85, opacity: 0 }}
+          animate={{ rotate: 0, scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 460, damping: 24 }}
+          className="inline-flex"
+        >
+          {glyph(index)}
+        </motion.span>
+        <span className="relative inline-block overflow-hidden text-left" style={{ height: "1.1em" }}>
+          <span className="invisible block">{longest}</span>
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={value}
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "-100%", opacity: 0 }}
+              transition={{ type: "spring", stiffness: 460, damping: 32, mass: 0.6 }}
+              className="absolute inset-0 block"
+            >
+              {value}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+      </motion.button>
+    </HoverTip>
+  );
+}
+
+
 
 function Profile({ ctx, align = "right" }: { ctx: Ctx; align?: "left" | "right" }) {
   const [open, setOpen] = useState(false);
@@ -430,8 +554,16 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
   return (
     <div className={`flex ${vertical ? "flex-col items-stretch" : "flex-wrap items-center"} gap-1.5`}>
       <StylePicker ctx={ctx} value={style} onChange={setStyle} />
-      <Dropdown ctx={ctx} value={length} onChange={setLength} options={["Short", "Balanced", "Long"]} label="Length" />
-      <Dropdown ctx={ctx} value={depth} onChange={setDepth} options={["Quick", "Standard", "Deep"]} label="Depth" />
+      <CycleButton
+        ctx={ctx} label="Length" value={length} onChange={setLength}
+        options={["Short", "Balanced", "Long"] as const}
+        glyph={(i) => <LengthGlyph index={i} />}
+      />
+      <CycleButton
+        ctx={ctx} label="Depth" value={depth} onChange={setDepth}
+        options={["Quick", "Standard", "Deep"] as const}
+        glyph={(i) => <DepthGlyph index={i} />}
+      />
       <Pill ctx={ctx} onClick={() => setMemory(!memory)}>
         <Brain className="h-3.5 w-3.5" /> Memory {memory ? "on" : "off"}
       </Pill>
@@ -441,6 +573,7 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
     </div>
   );
 }
+
 
 function QuickChips({ ctx, limit = 8 }: { ctx: Ctx; limit?: number }) {
   return (
