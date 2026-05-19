@@ -1,13 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "motion/react";
 import {
   Paperclip, Mic, Wrench, ArrowUp, Globe, Brain, ChevronDown, Sun, Moon,
   SlidersHorizontal, Menu, EyeOff, FileText, Mail, Code2, Search,
   ScanSearch, Lightbulb, Presentation, Image as ImageIcon,
   Plus, History, Library, FolderClosed, Cpu, Plug,
-  Settings, User, ChevronRight, PanelLeft, X,
+  Settings, User, ChevronRight, PanelLeft, X, ArrowRight, Check,
   Sparkles, Feather, Smile, Scissors, Wand2,
+
 } from "lucide-react";
 import {
   Command, CommandInput, CommandList, CommandEmpty, CommandGroup,
@@ -33,15 +34,28 @@ type Ctx = {
 };
 
 const QUICK = [
-  { icon: FileText, label: "Summarize document" },
-  { icon: Mail, label: "Write email" },
-  { icon: Code2, label: "Generate UI" },
-  { icon: ScanSearch, label: "Research topic" },
-  { icon: Lightbulb, label: "Brainstorm ideas" },
-  { icon: Code2, label: "Code assistant" },
-  { icon: Presentation, label: "Create presentation" },
-  { icon: ImageIcon, label: "Create image" },
+  { icon: FileText, label: "Summarize document", prompt: "Summarize this document into key bullet points with a TL;DR at the top." },
+  { icon: Mail, label: "Write email", prompt: "Draft a polite, concise email about " },
+  { icon: Code2, label: "Generate UI", prompt: "Generate a clean React + Tailwind UI for " },
+  { icon: ScanSearch, label: "Research topic", prompt: "Research the latest on " },
+  { icon: Lightbulb, label: "Brainstorm ideas", prompt: "Brainstorm 10 creative ideas for " },
+  { icon: Code2, label: "Code assistant", prompt: "Help me debug this code:\n\n" },
+  { icon: Presentation, label: "Create presentation", prompt: "Outline a 10-slide presentation about " },
+  { icon: ImageIcon, label: "Create image", prompt: "Generate an image of " },
 ];
+
+/* ───────── tiny pub/sub so chips can stream into the input ───────── */
+const promptBus = (() => {
+  const listeners = new Set<(text: string) => void>();
+  return {
+    emit: (text: string) => listeners.forEach((l) => l(text)),
+    subscribe: (cb: (text: string) => void) => {
+      listeners.add(cb);
+      return () => listeners.delete(cb);
+    },
+  };
+})();
+
 
 function HoverTip({ label, keys, desc, children, side = "bottom" }: {
   label: string; keys?: string; desc?: string; children: ReactNode; side?: "top" | "bottom";
@@ -623,15 +637,61 @@ function Greeting({ className = "" }: { className?: string }) {
 }
 
 function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
+  const [value, setValue] = useState("");
+  const [streaming, setStreaming] = useState(false);
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const unsub = promptBus.subscribe((text) => {
+      setValue("");
+      setStreaming(true);
+      ref.current?.focus();
+      let i = 0;
+      const tick = () => {
+        i += 1;
+        setValue(text.slice(0, i));
+        if (i < text.length) {
+          // variable speed: faster for spaces, slight jitter for life
+          const ch = text[i - 1];
+          const delay = ch === " " ? 14 : 18 + Math.random() * 22;
+          window.setTimeout(tick, delay);
+        } else {
+          setStreaming(false);
+        }
+      };
+      tick();
+    });
+    return () => { unsub(); };
+  }, []);
+
+
   return (
-    <textarea
-      rows={rows}
-      placeholder="Type a prompt …"
-      className="w-full resize-none bg-transparent text-[15px] leading-relaxed placeholder:opacity-40 focus:outline-none"
-      style={{ color: "inherit" }}
-    />
+    <div className="relative">
+      <textarea
+        ref={ref}
+        rows={rows}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder="Type a prompt …"
+        className="w-full resize-none bg-transparent text-[15px] leading-relaxed placeholder:opacity-40 focus:outline-none"
+        style={{ color: "inherit" }}
+      />
+      {streaming && (
+        <motion.span
+          aria-hidden
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ scaleX: 1, opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          style={{ transformOrigin: "left center" }}
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-emerald-500/70 to-transparent"
+        />
+      )}
+
+    </div>
   );
 }
+
 
 function PrimaryRow({ ctx }: { ctx: Ctx }) {
   const [model, setModel] = useState("Lumen 4");
@@ -668,7 +728,7 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
         ctx={ctx} label="Depth" value={depth} onChange={setDepth}
         options={["Quick", "Standard", "Deep"] as const}
         glyph={(i) => <DepthGlyph index={i} />}
-        showLabel={false}
+        
         descriptions={{
           Quick: "Fast surface-level answer with minimal reasoning.",
           Standard: "Balanced analysis — the default reasoning depth.",
@@ -694,17 +754,77 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
 }
 
 
+function QuickChip({
+  ctx, item, index,
+}: { ctx: Ctx; item: typeof QUICK[number]; index: number }) {
+  const [fired, setFired] = useState(false);
+
+  const send = () => {
+    if (fired) return;
+    setFired(true);
+    promptBus.emit(item.prompt);
+    window.setTimeout(() => setFired(false), 900);
+  };
+
+  return (
+    <motion.button
+      onClick={send}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.04 * index, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.96 }}
+      className={`group/chip ${ctx.btn} relative flex items-center gap-2 overflow-hidden px-3.5 py-2 text-[11px]`}
+    >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 -left-full w-1/2 bg-gradient-to-r from-transparent via-foreground/[0.06] to-transparent transition-transform duration-700 ease-out group-hover/chip:translate-x-[400%]"
+      />
+      <span className="relative inline-flex h-3.5 w-3.5 items-center justify-center">
+        <AnimatePresence mode="popLayout" initial={false}>
+          {fired ? (
+            <motion.span
+              key="check"
+              initial={{ scale: 0, rotate: -90 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0, rotate: 90 }}
+              transition={SPRING_POP}
+              className="absolute inset-0 inline-flex items-center justify-center text-emerald-500"
+            >
+              <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+            </motion.span>
+          ) : (
+            <motion.span
+              key="icon"
+              initial={{ scale: 0, rotate: 90 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0, rotate: -90 }}
+              transition={SPRING_POP}
+              className="absolute inset-0 inline-flex items-center justify-center"
+            >
+              <item.icon className="h-3.5 w-3.5 opacity-70" />
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </span>
+      <span>{item.label}</span>
+      <span className="inline-flex w-0 overflow-hidden opacity-0 transition-all duration-300 ease-out group-hover/chip:w-3 group-hover/chip:opacity-60">
+        <ArrowRight className="h-3 w-3" />
+      </span>
+    </motion.button>
+  );
+}
+
 function QuickChips({ ctx, limit = 8 }: { ctx: Ctx; limit?: number }) {
   return (
-    <div className="flex flex-wrap gap-1.5">
-      {QUICK.slice(0, limit).map((a) => (
-        <button key={a.label} className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px]`}>
-          <a.icon className="h-3.5 w-3.5" /> {a.label}
-        </button>
+    <div className="flex flex-wrap items-center justify-center gap-1.5">
+      {QUICK.slice(0, limit).map((a, i) => (
+        <QuickChip key={a.label} ctx={ctx} item={a} index={i} />
       ))}
     </div>
   );
 }
+
 
 /* ───────────────────────── chrome ───────────────────────── */
 
@@ -855,7 +975,7 @@ function Centered({ ctx }: { ctx: Ctx }) {
             <div className={`${ctx.panel} mt-3 px-3 py-2`}>
               <SecondaryRow ctx={ctx} />
             </div>
-            <div className="mt-6 flex justify-center"><QuickChips ctx={ctx} /></div>
+            <div className="mt-10 flex justify-center"><QuickChips ctx={ctx} /></div>
           </div>
         </main>
       </div>
@@ -879,7 +999,7 @@ function SidebarStage({ ctx }: { ctx: Ctx }) {
             <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
             <div className="mt-3 border-t border-border/40 pt-3"><SecondaryRow ctx={ctx} /></div>
           </div>
-          <div className="mt-6"><QuickChips ctx={ctx} /></div>
+          <div className="mt-10"><QuickChips ctx={ctx} /></div>
         </main>
       </div>
     </div>
@@ -929,7 +1049,7 @@ function BottomDock({ ctx }: { ctx: Ctx }) {
           <div className="mt-6 max-w-2xl text-center text-sm opacity-60">
             Ask anything. Compose below. Suggested starting points →
           </div>
-          <div className="mt-6"><QuickChips ctx={ctx} /></div>
+          <div className="mt-10"><QuickChips ctx={ctx} /></div>
         </main>
         <div className="border-t border-border px-6 py-4">
           <div className="mx-auto flex max-w-[820px] flex-col gap-2">
@@ -1008,7 +1128,7 @@ function MegaHeader({ ctx }: { ctx: Ctx }) {
               <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
             </div>
             <div className="mt-3"><SecondaryRow ctx={ctx} /></div>
-            <div className="mt-6"><QuickChips ctx={ctx} /></div>
+            <div className="mt-10"><QuickChips ctx={ctx} /></div>
           </div>
         </main>
       </div>
@@ -1032,7 +1152,7 @@ function RightToolRail({ ctx }: { ctx: Ctx }) {
               <InputBlock ctx={ctx} rows={5} />
               <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
             </div>
-            <div className="mt-6"><QuickChips ctx={ctx} limit={5} /></div>
+            <div className="mt-10"><QuickChips ctx={ctx} limit={5} /></div>
           </div>
           <aside className="w-[240px] shrink-0 border-l border-border p-4">
             <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] opacity-50">Controls</p>
@@ -1178,7 +1298,7 @@ function NestedTile({ ctx }: { ctx: Ctx }) {
                 <SecondaryRow ctx={ctx} />
               </div>
             </div>
-            <div className="mt-6 flex justify-center"><QuickChips ctx={ctx} limit={6} /></div>
+            <div className="mt-10 flex justify-center"><QuickChips ctx={ctx} limit={6} /></div>
           </div>
         </main>
       </div>
@@ -1212,7 +1332,7 @@ function FramedConsole({ ctx }: { ctx: Ctx }) {
                 <SecondaryRow ctx={ctx} />
               </div>
             </div>
-            <div className="mt-6 flex justify-center"><QuickChips ctx={ctx} limit={5} /></div>
+            <div className="mt-10 flex justify-center"><QuickChips ctx={ctx} limit={5} /></div>
           </div>
         </main>
       </div>
@@ -1250,7 +1370,7 @@ function TrayStrip({ ctx }: { ctx: Ctx }) {
               </div>
             </div>
             <div className="mt-3 flex justify-center"><SecondaryRow ctx={ctx} /></div>
-            <div className="mt-6 flex justify-center"><QuickChips ctx={ctx} limit={6} /></div>
+            <div className="mt-10 flex justify-center"><QuickChips ctx={ctx} limit={6} /></div>
           </div>
         </main>
       </div>
