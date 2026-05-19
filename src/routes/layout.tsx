@@ -6,8 +6,9 @@ import {
   SlidersHorizontal, Menu, EyeOff, FileText, Mail, Code2, Search,
   ScanSearch, Lightbulb, Presentation, Image as ImageIcon,
   Plus, History, Library, FolderClosed, Cpu, Plug,
-  Settings, User, ChevronRight, PanelLeft, X,
+  Settings, User, ChevronRight, PanelLeft, X, ArrowRight, Check,
   Sparkles, Feather, Smile, Scissors, Wand2,
+
 } from "lucide-react";
 import {
   Command, CommandInput, CommandList, CommandEmpty, CommandGroup,
