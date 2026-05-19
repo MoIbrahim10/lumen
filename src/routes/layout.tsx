@@ -559,7 +559,60 @@ function SearchPalette({ open, onClose }: { open: boolean; onClose: () => void }
   );
 }
 
+/* ───────── StatusTicker — cycling status with per-char letter swap ───────── */
+
+const STATUS_STATES = ["ready", "listening", "thinking", "composing"] as const;
+
+function StatusTicker({ model = "Lumen 4" }: { model?: string }) {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setIdx((i) => (i + 1) % STATUS_STATES.length), 3200);
+    return () => clearInterval(t);
+  }, []);
+  const word = STATUS_STATES[idx];
+  const longest = STATUS_STATES.reduce((a, b) => (a.length >= b.length ? a : b));
+  const dotColor = word === "ready" ? "#10b981" : "#f59e0b";
+
+  return (
+    <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">
+      <span>{model}</span>
+      <span className="opacity-40">·</span>
+      <motion.span
+        animate={{ backgroundColor: dotColor, boxShadow: `0 0 6px ${dotColor}` }}
+        transition={{ duration: 0.4 }}
+        className="inline-block h-1.5 w-1.5 rounded-full"
+      />
+      <span className="relative inline-block" style={{ minWidth: `${longest.length}ch` }}>
+        <span className="invisible">{longest}</span>
+        <span className="absolute inset-0 flex">
+          {Array.from(word).map((ch, i) => (
+            <span key={i} className="relative inline-block" style={{ width: "1ch" }}>
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span
+                  key={`${idx}-${ch}-${i}`}
+                  initial={{ y: "-90%", opacity: 0, filter: "blur(2px)" }}
+                  animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
+                  exit={{ y: "90%", opacity: 0, filter: "blur(2px)" }}
+                  transition={{
+                    duration: 0.32,
+                    delay: i * 0.025,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  className="absolute inset-0 inline-block"
+                >
+                  {ch}
+                </motion.span>
+              </AnimatePresence>
+            </span>
+          ))}
+        </span>
+      </span>
+    </span>
+  );
+}
+
 /* ───────── composer fragments (greeting + input + controls) ───────── */
+
 
 function Greeting({ className = "" }: { className?: string }) {
   return (
