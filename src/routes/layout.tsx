@@ -78,6 +78,99 @@ function useComposer() {
   return useSyncExternalStore(composerStore.subscribe, composerStore.get, composerStore.get);
 }
 
+/* ───────── attachmentsStore — files + links + pasted snippets in the composer ───────── */
+type AttachKind = "file" | "image" | "audio" | "video" | "url" | "text";
+type Attachment = { id: string; kind: AttachKind; name: string; meta?: string };
+
+const attachmentsStore = (() => {
+  let snap: Attachment[] = [];
+  const listeners = new Set<() => void>();
+  const notify = () => listeners.forEach((l) => l());
+  let counter = 0;
+  return {
+    get: () => snap,
+    subscribe: (cb: () => void) => { listeners.add(cb); return () => { listeners.delete(cb); }; },
+    add: (a: Omit<Attachment, "id">) => { snap = [...snap, { ...a, id: `att-${++counter}` }]; notify(); },
+    remove: (id: string) => { snap = snap.filter((a) => a.id !== id); notify(); },
+    clear: () => { snap = []; notify(); },
+  };
+})();
+
+function useAttachments() {
+  return useSyncExternalStore(attachmentsStore.subscribe, attachmentsStore.get, attachmentsStore.get);
+}
+
+const kindIcon = (k: AttachKind) => {
+  switch (k) {
+    case "image": return <ImageIcon className="h-3 w-3" />;
+    case "audio": return <FileAudio className="h-3 w-3" />;
+    case "video": return <Film className="h-3 w-3" />;
+    case "url": return <Link2 className="h-3 w-3" />;
+    case "text": return <ClipboardPaste className="h-3 w-3" />;
+    default: return <FileText className="h-3 w-3" />;
+  }
+};
+
+const kindFromFile = (f: File): AttachKind => {
+  if (f.type.startsWith("image/")) return "image";
+  if (f.type.startsWith("audio/")) return "audio";
+  if (f.type.startsWith("video/")) return "video";
+  return "file";
+};
+
+const prettyBytes = (n: number) => {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${(n / 1024 / 1024).toFixed(1)} MB`;
+};
+
+/* ───────── toolsStore — tools + connectors toggled by the user ───────── */
+type ToolDef = { id: string; label: string; desc: string; icon: typeof Globe };
+const TOOL_DEFS: ToolDef[] = [
+  { id: "web",    label: "Web search",   desc: "Live results from the open web.", icon: Globe },
+  { id: "think",  label: "Deep think",   desc: "Slower, multi-step reasoning.",   icon: Brain },
+  { id: "code",   label: "Code runner",  desc: "Run snippets in a sandbox.",      icon: Code2 },
+  { id: "image",  label: "Image gen",    desc: "Generate images inline.",         icon: ImageIcon },
+  { id: "memory", label: "Memory",       desc: "Recall facts across chats.",      icon: Cpu },
+];
+
+type ConnDef = { id: string; label: string; icon: typeof Github; hue: string; status: "linked" | "available" };
+const CONN_DEFS: ConnDef[] = [
+  { id: "github",   label: "GitHub",          icon: Github,       hue: "#a78bfa", status: "linked" },
+  { id: "notion",   label: "Notion",          icon: FileText,     hue: "#94a3b8", status: "linked" },
+  { id: "slack",    label: "Slack",           icon: Hash,         hue: "#ec4899", status: "available" },
+  { id: "drive",    label: "Google Drive",    icon: FolderClosed, hue: "#60a5fa", status: "linked" },
+  { id: "calendar", label: "Calendar",        icon: Calendar,     hue: "#f59e0b", status: "available" },
+  { id: "db",       label: "Postgres",        icon: Database,     hue: "#34d399", status: "available" },
+];
+
+const toolsStore = (() => {
+  let snap: { tools: Set<string>; conns: Set<string> } = {
+    tools: new Set(["web"]),
+    conns: new Set<string>(),
+  };
+  const listeners = new Set<() => void>();
+  const notify = () => listeners.forEach((l) => l());
+  return {
+    get: () => snap,
+    subscribe: (cb: () => void) => { listeners.add(cb); return () => { listeners.delete(cb); }; },
+    toggleTool: (id: string) => {
+      const t = new Set(snap.tools);
+      t.has(id) ? t.delete(id) : t.add(id);
+      snap = { ...snap, tools: t }; notify();
+    },
+    toggleConn: (id: string) => {
+      const c = new Set(snap.conns);
+      c.has(id) ? c.delete(id) : c.add(id);
+      snap = { ...snap, conns: c }; notify();
+    },
+  };
+})();
+
+function useTools() {
+  return useSyncExternalStore(toolsStore.subscribe, toolsStore.get, toolsStore.get);
+}
+
 
 function HoverTip({ label, keys, desc, children, side = "bottom" }: {
   label: string; keys?: string; desc?: string; children: ReactNode; side?: "top" | "bottom";
