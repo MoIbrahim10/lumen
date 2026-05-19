@@ -274,8 +274,12 @@ function FancyPicker({
   align?: "left" | "right";
 }) {
   const [open, setOpen] = useState(false);
+  const [hoverId, setHoverId] = useState<string | null>(null);
   const current = options.find((o) => o.id === value) ?? options[0];
   const longest = options.reduce((a, b) => (a.id.length >= b.id.length ? a : b)).id;
+  const activeId = hoverId ?? value;
+  const activeIndex = Math.max(0, options.findIndex((o) => o.id === activeId));
+  const total = options.length;
 
   return (
     <div className="relative">
@@ -318,65 +322,147 @@ function FancyPicker({
               onMouseDown={(e) => { e.preventDefault(); setOpen(false); }}
             />
             <motion.div
-              initial={{ opacity: 0, y: -6, scale: 0.96, filter: "blur(4px)" }}
+              initial={{ opacity: 0, y: -8, scale: 0.95, filter: "blur(6px)" }}
               animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -6, scale: 0.96, filter: "blur(4px)" }}
-              transition={{ type: "spring", stiffness: 420, damping: 32, mass: 0.6 }}
+              exit={{ opacity: 0, y: -8, scale: 0.95, filter: "blur(6px)" }}
+              transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
               style={{ transformOrigin: align === "right" ? "top right" : "top left" }}
-              className={`absolute top-full z-50 mt-2 w-[240px] overflow-hidden rounded-lg border border-border/60 bg-popover/95 p-1 text-popover-foreground shadow-xl backdrop-blur-sm ${align === "right" ? "right-0" : "left-0"}`}
+              onMouseLeave={() => setHoverId(null)}
+              className={`absolute top-full z-50 mt-2 w-[260px] overflow-hidden rounded-xl border border-border/60 bg-popover/95 text-popover-foreground shadow-2xl backdrop-blur-md ${align === "right" ? "right-0" : "left-0"}`}
             >
-              <div className="px-2 pb-1 pt-1.5 font-mono text-[9px] uppercase tracking-[0.22em] opacity-50">
-                {label}
+              {/* dotted grid backdrop */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 opacity-[0.06]"
+                style={{
+                  backgroundImage: "radial-gradient(currentColor 1px, transparent 1px)",
+                  backgroundSize: "10px 10px",
+                }}
+              />
+
+              {/* header strip */}
+              <div className="relative flex items-center justify-between border-b border-border/40 px-3 py-2">
+                <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] opacity-70">
+                  <span aria-hidden className="inline-block h-1 w-1 rounded-full bg-foreground/60" />
+                  {label}
+                </span>
+                <span className="font-mono text-[9px] tabular-nums uppercase tracking-[0.18em] opacity-45">
+                  {String(activeIndex + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
+                </span>
               </div>
+
+              {/* options list */}
               <LayoutGroup id={`picker-${label}`}>
-                {options.map((o, i) => {
-                  const selected = o.id === value;
-                  return (
-                    <motion.button
-                      key={o.id}
-                      type="button"
-                      initial={{ opacity: 0, x: -6 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{
-                        delay: 0.04 + i * 0.035,
-                        duration: 0.24,
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
-                      onClick={() => { onChange(o.id); setOpen(false); }}
-                      className="group/row relative flex w-full items-start gap-2.5 rounded-md px-2 py-1.5 text-left hover:bg-muted/50"
-                    >
-                      {selected && (
-                        <motion.span
-                          layoutId={`picker-rail-${label}`}
-                          transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.5 }}
-                          className="absolute left-0 top-1.5 bottom-1.5 w-[2px] rounded-full bg-foreground"
-                        />
-                      )}
-                      <span className={`mt-[2px] flex h-4 w-4 shrink-0 items-center justify-center ${selected ? "opacity-100" : "opacity-60 group-hover/row:opacity-90"}`}>
-                        {o.glyph}
-                      </span>
-                      <span className="flex min-w-0 flex-1 flex-col">
-                        <span className={`text-[11px] ${selected ? "text-foreground" : "text-foreground/80"}`}>
-                          {o.id}
-                        </span>
-                        {o.desc && (
-                          <span className="mt-0.5 text-[10px] leading-snug opacity-55">
-                            {o.desc}
-                          </span>
+                <div className="relative py-1">
+                  {options.map((o, i) => {
+                    const selected = o.id === value;
+                    const active = o.id === activeId;
+                    return (
+                      <motion.button
+                        key={o.id}
+                        type="button"
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{
+                          delay: 0.05 + i * 0.04,
+                          duration: 0.28,
+                          ease: [0.22, 1, 0.36, 1],
+                        }}
+                        onClick={() => { onChange(o.id); setOpen(false); }}
+                        onMouseEnter={() => setHoverId(o.id)}
+                        className="group/row relative flex w-full items-start gap-2.5 px-3 py-2 text-left"
+                      >
+                        {/* active row backdrop */}
+                        {active && (
+                          <motion.span
+                            layoutId={`picker-bg-${label}`}
+                            transition={{ type: "spring", stiffness: 480, damping: 36, mass: 0.5 }}
+                            className="absolute inset-x-1 inset-y-0.5 rounded-md bg-foreground/[0.06]"
+                          />
                         )}
-                      </span>
-                      {selected && (
+                        {/* left rail for selected */}
+                        {selected && (
+                          <motion.span
+                            layoutId={`picker-rail-${label}`}
+                            transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.5 }}
+                            className="absolute left-0 top-2 bottom-2 w-[2px] rounded-r-full bg-foreground"
+                          />
+                        )}
+
+                        {/* index + caret column */}
+                        <span className="relative z-10 mt-[1px] flex w-7 shrink-0 items-center gap-1 font-mono text-[9px] uppercase tracking-[0.14em] opacity-60 tabular-nums">
+                          <span className="inline-block w-2 text-foreground/80">
+                            {active ? (
+                              <motion.span
+                                layoutId={`picker-caret-${label}`}
+                                transition={{ type: "spring", stiffness: 520, damping: 34 }}
+                                className="inline-block"
+                              >
+                                ▸
+                              </motion.span>
+                            ) : null}
+                          </span>
+                          <span>{String(i + 1).padStart(2, "0")}</span>
+                        </span>
+
+                        {/* glyph */}
                         <motion.span
-                          initial={{ scale: 0, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          transition={{ type: "spring", stiffness: 500, damping: 28 }}
-                          className="mt-[3px] inline-flex h-1.5 w-1.5 shrink-0 rounded-full bg-foreground"
-                        />
-                      )}
-                    </motion.button>
-                  );
-                })}
+                          animate={{ scale: active ? 1.08 : 1, opacity: active ? 1 : 0.65 }}
+                          transition={{ type: "spring", stiffness: 420, damping: 28 }}
+                          className="relative z-10 mt-[2px] flex h-4 w-4 shrink-0 items-center justify-center"
+                        >
+                          {o.glyph}
+                        </motion.span>
+
+                        {/* text */}
+                        <span className="relative z-10 flex min-w-0 flex-1 flex-col">
+                          <span className={`text-[11px] leading-tight ${selected ? "text-foreground" : active ? "text-foreground/90" : "text-foreground/70"}`}>
+                            {o.id}
+                          </span>
+                          {o.desc && (
+                            <motion.span
+                              initial={false}
+                              animate={{
+                                height: active ? "auto" : 0,
+                                opacity: active ? 0.6 : 0,
+                                marginTop: active ? 2 : 0,
+                              }}
+                              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                              className="overflow-hidden text-[10px] leading-snug"
+                            >
+                              {o.desc}
+                            </motion.span>
+                          )}
+                        </span>
+
+                        {/* selected marker */}
+                        <span className="relative z-10 mt-[5px] flex h-2 w-2 shrink-0 items-center justify-center">
+                          {selected && (
+                            <motion.span
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{ type: "spring", stiffness: 520, damping: 24 }}
+                              className="inline-block h-1.5 w-1.5 rounded-full bg-foreground"
+                            />
+                          )}
+                        </span>
+                      </motion.button>
+                    );
+                  })}
+                </div>
               </LayoutGroup>
+
+              {/* footer hint strip */}
+              <div className="relative flex items-center justify-between border-t border-border/40 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] opacity-45">
+                <span className="flex items-center gap-1">
+                  <kbd className="rounded-sm border border-border/60 px-1 py-px text-[8px]">↑↓</kbd>
+                  <span>navigate</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <kbd className="rounded-sm border border-border/60 px-1 py-px text-[8px]">↵</kbd>
+                  <span>select</span>
+                </span>
+              </div>
             </motion.div>
           </>
         )}
@@ -384,6 +470,7 @@ function FancyPicker({
     </div>
   );
 }
+
 
 /* ───────── CycleButton — click to cycle, animated SVG indicator ───────── */
 
