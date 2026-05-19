@@ -166,7 +166,8 @@ function StyleCard({ s, idx }: { s: Style; idx: number }) {
       </header>
 
       {/* Showcase grid */}
-      <div className="px-6 py-8 space-y-6">
+      <div className={`px-6 py-8 ${s.panel ?? ""}`}>
+        <div className={`${s.panelInner ?? ""} ${s.panelInner ? "p-6" : ""} space-y-6`}>
         {/* Row 1 — icon buttons */}
         <div>
           <p className={`mb-3 font-mono text-[10px] uppercase tracking-[0.2em] ${muted}`}>
@@ -205,7 +206,12 @@ function StyleCard({ s, idx }: { s: Style; idx: number }) {
           </p>
           <div className="flex flex-wrap gap-2">
             {["Summarize doc", "Write email", "Generate UI", "Research", "Brainstorm"].map((q) => (
-              <Btn s={s} key={q} size="sm">{q}</Btn>
+              <button
+                key={q}
+                className={`${s.chip} h-8 px-3 text-xs inline-flex items-center justify-center gap-2`}
+              >
+                {s.inner ? <span>{q}</span> : q}
+              </button>
             ))}
           </div>
         </div>
@@ -224,6 +230,7 @@ function StyleCard({ s, idx }: { s: Style; idx: number }) {
             <Btn s={s} size="lg" className="min-w-[160px]">Send message</Btn>
           </div>
         </div>
+        </div>
       </div>
 
       {/* Footer pick */}
@@ -232,7 +239,7 @@ function StyleCard({ s, idx }: { s: Style; idx: number }) {
           Mode · {s.mode}
         </span>
         <Link
-          to={`/v${idx + 1}` as any}
+          to={(s.route ?? `/v${idx + 1}`) as any}
           className={`font-mono text-[10px] uppercase tracking-[0.22em] underline-offset-4 hover:underline ${text}`}
         >
           Open homepage →
