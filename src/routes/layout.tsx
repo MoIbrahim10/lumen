@@ -858,17 +858,18 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
   const [memory, setMemory] = useState(true);
   return (
     <div className={`flex ${vertical ? "flex-col items-stretch" : "flex-wrap items-center"} gap-1.5`}>
-      <CycleButton
+      <FancyPicker
         ctx={ctx} label="Style" value={style} onChange={setStyle}
-        options={STYLE_OPTIONS}
-        glyph={(i) => <StyleGlyph index={i} />}
-        descriptions={{
-          Auto: "Lumen picks the best tone for your prompt automatically.",
-          Formal: "Polished, professional phrasing — good for work writing.",
-          Friendly: "Warm, conversational tone — great for casual replies.",
-          Concise: "Trim filler — get to the point in fewer words.",
-          Creative: "More vivid, playful language and unexpected angles.",
-        }}
+        options={STYLE_OPTIONS.map((id, i) => {
+          const descs: Record<string, string> = {
+            Auto: "Lumen picks the best tone automatically.",
+            Formal: "Polished, professional phrasing.",
+            Friendly: "Warm, conversational tone.",
+            Concise: "Trim filler — fewer words.",
+            Creative: "Vivid, playful, unexpected angles.",
+          };
+          return { id, glyph: <StyleGlyph index={i} />, desc: descs[id] };
+        })}
       />
       <CycleButton
         ctx={ctx} label="Length" value={length} onChange={setLength}
