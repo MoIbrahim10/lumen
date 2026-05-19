@@ -554,8 +554,16 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
   return (
     <div className={`flex ${vertical ? "flex-col items-stretch" : "flex-wrap items-center"} gap-1.5`}>
       <StylePicker ctx={ctx} value={style} onChange={setStyle} />
-      <Dropdown ctx={ctx} value={length} onChange={setLength} options={["Short", "Balanced", "Long"]} label="Length" />
-      <Dropdown ctx={ctx} value={depth} onChange={setDepth} options={["Quick", "Standard", "Deep"]} label="Depth" />
+      <CycleButton
+        ctx={ctx} label="Length" value={length} onChange={setLength}
+        options={["Short", "Balanced", "Long"] as const}
+        glyph={(i) => <LengthGlyph index={i} />}
+      />
+      <CycleButton
+        ctx={ctx} label="Depth" value={depth} onChange={setDepth}
+        options={["Quick", "Standard", "Deep"] as const}
+        glyph={(i) => <DepthGlyph index={i} />}
+      />
       <Pill ctx={ctx} onClick={() => setMemory(!memory)}>
         <Brain className="h-3.5 w-3.5" /> Memory {memory ? "on" : "off"}
       </Pill>
@@ -565,6 +573,7 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
     </div>
   );
 }
+
 
 function QuickChips({ ctx, limit = 8 }: { ctx: Ctx; limit?: number }) {
   return (
