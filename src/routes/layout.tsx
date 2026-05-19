@@ -636,15 +636,58 @@ function Greeting({ className = "" }: { className?: string }) {
 }
 
 function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
+  const [value, setValue] = useState("");
+  const [streaming, setStreaming] = useState(false);
+  const ref = React.useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    return promptBus.subscribe((text) => {
+      setValue("");
+      setStreaming(true);
+      ref.current?.focus();
+      let i = 0;
+      const tick = () => {
+        i += 1;
+        setValue(text.slice(0, i));
+        if (i < text.length) {
+          // variable speed: faster for spaces, slight jitter for life
+          const ch = text[i - 1];
+          const delay = ch === " " ? 14 : 18 + Math.random() * 22;
+          window.setTimeout(tick, delay);
+        } else {
+          setStreaming(false);
+        }
+      };
+      tick();
+    });
+  }, []);
+
   return (
-    <textarea
-      rows={rows}
-      placeholder="Type a prompt …"
-      className="w-full resize-none bg-transparent text-[15px] leading-relaxed placeholder:opacity-40 focus:outline-none"
-      style={{ color: "inherit" }}
-    />
+    <div className="relative">
+      <textarea
+        ref={ref}
+        rows={rows}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder="Type a prompt …"
+        className="w-full resize-none bg-transparent text-[15px] leading-relaxed placeholder:opacity-40 focus:outline-none"
+        style={{ color: "inherit" }}
+      />
+      {streaming && (
+        <motion.span
+          aria-hidden
+          animate={{ opacity: [1, 0.2, 1] }}
+          transition={{ duration: 0.7, repeat: Infinity, ease: "easeInOut" }}
+          className="pointer-events-none absolute -ml-[1px] inline-block h-[1.1em] w-[2px] translate-y-[3px] bg-foreground"
+          style={{
+            // place a caret right after typed text — approximated via line height
+          }}
+        />
+      )}
+    </div>
   );
 }
+
 
 function PrimaryRow({ ctx }: { ctx: Ctx }) {
   const [model, setModel] = useState("Lumen 4");
