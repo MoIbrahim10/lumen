@@ -914,15 +914,17 @@ function DepthMeter({ state }: { state: StatusState }) {
 }
 
 function StatusTicker() {
-  const [idx, setIdx] = useState(0);
-  const [hovered, setHovered] = useState(false);
-  useEffect(() => {
-    const t = setInterval(() => setIdx((i) => (i + 1) % STATUS_STATES.length), 3600);
-    return () => clearInterval(t);
-  }, []);
-  const word = STATUS_STATES[idx];
+  const { value, streaming, listening } = useComposer();
+  const word: StatusState = streaming
+    ? "composing"
+    : listening
+    ? "listening"
+    : value.trim().length > 0
+    ? "drafting"
+    : "ready";
   const code = STATUS_CODE[word];
   const label = STATUS_LABEL[word];
+  const [hovered, setHovered] = useState(false);
 
   return (
     <span
