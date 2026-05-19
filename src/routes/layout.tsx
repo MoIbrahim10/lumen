@@ -823,7 +823,7 @@ function StatusTicker() {
       {/* fixed 4ch box — no layout shift, ever */}
       <span
         className="relative inline-flex justify-end overflow-hidden tabular-nums"
-        style={{ height: "1em", width: "4ch" }}
+        style={{ height: "1em", width: "5.2ch" }}
         aria-hidden
       >
         <AnimatePresence mode="wait" initial={false}>
