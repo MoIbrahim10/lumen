@@ -328,17 +328,10 @@ function FancyPicker({
               transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
               style={{ transformOrigin: align === "right" ? "top right" : "top left" }}
               onMouseLeave={() => setHoverId(null)}
-              className={`absolute top-full z-50 mt-2 w-[260px] overflow-hidden rounded-xl border border-border/60 bg-popover/95 text-popover-foreground shadow-2xl backdrop-blur-md ${align === "right" ? "right-0" : "left-0"}`}
+              className={`${ctx.panel} absolute top-full z-50 mt-2 w-[260px] overflow-hidden p-1 ${align === "right" ? "right-0" : "left-0"}`}
             >
-              {/* dotted grid backdrop */}
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0 opacity-[0.06]"
-                style={{
-                  backgroundImage: "radial-gradient(currentColor 1px, transparent 1px)",
-                  backgroundSize: "10px 10px",
-                }}
-              />
+              <div className={`${ctx.panelInner} relative overflow-hidden`}>
+
 
               {/* header strip */}
               <div className="relative flex items-center justify-between border-b border-border/40 px-3 py-2">
