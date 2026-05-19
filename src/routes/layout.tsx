@@ -974,7 +974,7 @@ function Centered({ ctx }: { ctx: Ctx }) {
             <div className={`${ctx.panel} mt-3 px-3 py-2`}>
               <SecondaryRow ctx={ctx} />
             </div>
-            <div className="mt-6 flex justify-center"><QuickChips ctx={ctx} /></div>
+            <div className="mt-10 flex justify-center"><QuickChips ctx={ctx} /></div>
           </div>
         </main>
       </div>
@@ -998,7 +998,7 @@ function SidebarStage({ ctx }: { ctx: Ctx }) {
             <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
             <div className="mt-3 border-t border-border/40 pt-3"><SecondaryRow ctx={ctx} /></div>
           </div>
-          <div className="mt-6"><QuickChips ctx={ctx} /></div>
+          <div className="mt-10"><QuickChips ctx={ctx} /></div>
         </main>
       </div>
     </div>
@@ -1048,7 +1048,7 @@ function BottomDock({ ctx }: { ctx: Ctx }) {
           <div className="mt-6 max-w-2xl text-center text-sm opacity-60">
             Ask anything. Compose below. Suggested starting points →
           </div>
-          <div className="mt-6"><QuickChips ctx={ctx} /></div>
+          <div className="mt-10"><QuickChips ctx={ctx} /></div>
         </main>
         <div className="border-t border-border px-6 py-4">
           <div className="mx-auto flex max-w-[820px] flex-col gap-2">
@@ -1127,7 +1127,7 @@ function MegaHeader({ ctx }: { ctx: Ctx }) {
               <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
             </div>
             <div className="mt-3"><SecondaryRow ctx={ctx} /></div>
-            <div className="mt-6"><QuickChips ctx={ctx} /></div>
+            <div className="mt-10"><QuickChips ctx={ctx} /></div>
           </div>
         </main>
       </div>
@@ -1151,7 +1151,7 @@ function RightToolRail({ ctx }: { ctx: Ctx }) {
               <InputBlock ctx={ctx} rows={5} />
               <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
             </div>
-            <div className="mt-6"><QuickChips ctx={ctx} limit={5} /></div>
+            <div className="mt-10"><QuickChips ctx={ctx} limit={5} /></div>
           </div>
           <aside className="w-[240px] shrink-0 border-l border-border p-4">
             <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] opacity-50">Controls</p>
@@ -1297,7 +1297,7 @@ function NestedTile({ ctx }: { ctx: Ctx }) {
                 <SecondaryRow ctx={ctx} />
               </div>
             </div>
-            <div className="mt-6 flex justify-center"><QuickChips ctx={ctx} limit={6} /></div>
+            <div className="mt-10 flex justify-center"><QuickChips ctx={ctx} limit={6} /></div>
           </div>
         </main>
       </div>
@@ -1331,7 +1331,7 @@ function FramedConsole({ ctx }: { ctx: Ctx }) {
                 <SecondaryRow ctx={ctx} />
               </div>
             </div>
-            <div className="mt-6 flex justify-center"><QuickChips ctx={ctx} limit={5} /></div>
+            <div className="mt-10 flex justify-center"><QuickChips ctx={ctx} limit={5} /></div>
           </div>
         </main>
       </div>
@@ -1369,7 +1369,7 @@ function TrayStrip({ ctx }: { ctx: Ctx }) {
               </div>
             </div>
             <div className="mt-3 flex justify-center"><SecondaryRow ctx={ctx} /></div>
-            <div className="mt-6 flex justify-center"><QuickChips ctx={ctx} limit={6} /></div>
+            <div className="mt-10 flex justify-center"><QuickChips ctx={ctx} limit={6} /></div>
           </div>
         </main>
       </div>
