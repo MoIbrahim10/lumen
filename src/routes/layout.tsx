@@ -1535,7 +1535,6 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
           aria-label="Tools and Connectors"
           aria-expanded={open}
           whileTap={{ scale: 0.92 }}
-          animate={{ rotate: open ? 90 : 0 }}
           transition={SPRING_TURN}
           className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center`}
         >
