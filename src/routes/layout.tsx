@@ -747,54 +747,84 @@ const STATUS_CODE: Record<StatusState, string> = {
   composing: "CMPS",
 };
 
-/* grayscale depth meter — slowed so it reads as ambient, not frantic */
-const METER_PROFILES: Record<StatusState, { heights: number[]; duration: number; opacity: number }> = {
-  ready:     { heights: [0.30, 0.30, 0.30, 0.30, 0.30], duration: 3.2, opacity: 0.35 },
-  listening: { heights: [0.35, 0.55, 0.40, 0.65, 0.30], duration: 2.0, opacity: 0.55 },
-  thinking:  { heights: [0.45, 0.75, 0.95, 0.70, 0.40], duration: 1.4, opacity: 0.75 },
-  composing: { heights: [0.90, 0.55, 0.85, 0.60, 0.95], duration: 0.95, opacity: 0.85 },
+/* expanded labels for aria + tooltip — visual code stays fixed-width */
+const STATUS_LABEL: Record<StatusState, { name: string; desc: string }> = {
+  ready:     { name: "Ready",     desc: "Idle · awaiting input" },
+  listening: { name: "Listening", desc: "Capturing voice input" },
+  thinking:  { name: "Thinking",  desc: "Reasoning over context" },
+  composing: { name: "Composing", desc: "Streaming response" },
+};
+
+/* Single shared waveform + per-state intensity/opacity.
+   Keeping `duration` constant across states means the bars never restart
+   their timeline when state changes — only amplitude/opacity tween. */
+const WAVE_DURATION = 1.6;
+const WAVE_HEIGHTS = [0.40, 0.75, 0.95, 0.70, 0.45];
+
+const PROFILES: Record<StatusState, { intensity: number; opacity: number }> = {
+  ready:     { intensity: 0.28, opacity: 0.35 },
+  listening: { intensity: 0.55, opacity: 0.55 },
+  thinking:  { intensity: 0.80, opacity: 0.75 },
+  composing: { intensity: 1.00, opacity: 0.90 },
 };
 
 function DepthMeter({ state }: { state: StatusState }) {
-  const profile = METER_PROFILES[state];
+  const profile = PROFILES[state];
   return (
-    <span className="flex h-2.5 items-end gap-[2px] translate-y-[1px]" aria-hidden>
-      {profile.heights.map((h, i) => (
+    // Wrapper tweens amplitude + opacity smoothly when state changes —
+    // no keyframe restart, no timing jump.
+    <motion.span
+      className="flex h-2.5 items-end gap-[2px] translate-y-[1px] origin-bottom"
+      animate={{ scaleY: profile.intensity, opacity: profile.opacity }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      aria-hidden
+    >
+      {WAVE_HEIGHTS.map((h, i) => (
         <motion.span
           key={i}
           className="block h-full w-[2px] rounded-[1px] bg-foreground origin-bottom"
-          animate={{
-            scaleY: state === "ready" ? [h, h, h] : [h * 0.4, h, h * 0.5, h * 0.85, h * 0.3],
-            opacity: profile.opacity,
-          }}
+          animate={{ scaleY: [h * 0.35, h, h * 0.5, h * 0.85, h * 0.3, h * 0.35] }}
           transition={{
-            duration: profile.duration,
+            duration: WAVE_DURATION,
             repeat: Infinity,
             ease: "easeInOut",
-            delay: i * (profile.duration / 12),
+            delay: i * (WAVE_DURATION / 14),
           }}
         />
       ))}
-    </span>
+    </motion.span>
   );
 }
 
 function StatusTicker() {
   const [idx, setIdx] = useState(0);
+  const [hovered, setHovered] = useState(false);
   useEffect(() => {
     const t = setInterval(() => setIdx((i) => (i + 1) % STATUS_STATES.length), 3600);
     return () => clearInterval(t);
   }, []);
   const word = STATUS_STATES[idx];
   const code = STATUS_CODE[word];
+  const label = STATUS_LABEL[word];
 
   return (
-    <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] opacity-70">
+    <span
+      className="relative inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] opacity-70"
+      role="status"
+      aria-live="polite"
+      aria-label={`Status: ${label.name} — ${label.desc}`}
+      tabIndex={0}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
+    >
       <DepthMeter state={word} />
       {/* fixed 4ch box — no layout shift, ever */}
       <span
         className="relative inline-flex justify-end overflow-hidden tabular-nums"
         style={{ height: "1em", width: "4ch" }}
+        aria-hidden
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
@@ -809,6 +839,25 @@ function StatusTicker() {
           </motion.span>
         </AnimatePresence>
       </span>
+
+      {/* tooltip — appears on hover/focus, doesn't affect layout */}
+      <AnimatePresence>
+        {hovered && (
+          <motion.span
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 -translate-x-1/2 whitespace-nowrap rounded-md border border-foreground/10 bg-background/95 px-2.5 py-1.5 text-[10px] normal-case tracking-normal text-foreground shadow-md backdrop-blur"
+            role="tooltip"
+          >
+            <span className="font-mono uppercase tracking-[0.18em] opacity-60">{code}</span>
+            <span className="mx-1.5 opacity-30">·</span>
+            <span className="font-medium">{label.name}</span>
+            <span className="ml-1.5 opacity-60">{label.desc}</span>
+          </motion.span>
+        )}
+      </AnimatePresence>
     </span>
   );
 }
