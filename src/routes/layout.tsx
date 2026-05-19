@@ -1027,22 +1027,23 @@ function SendButton({ ctx }: { ctx: Ctx }) {
         aria-label="Send"
         whileHover={disabled ? undefined : { scale: 1.06 }}
         whileTap={disabled ? undefined : { scale: 0.9 }}
+        animate={{ opacity: disabled && !sent ? 0.55 : 1 }}
         transition={{ type: "spring", stiffness: 500, damping: 22 }}
-        className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center overflow-hidden transition-opacity ${
-          disabled && !sent ? "opacity-35 cursor-not-allowed" : "cursor-pointer"
+        className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center overflow-hidden ${
+          disabled && !sent ? "cursor-default" : "cursor-pointer"
         }`}
       >
-        {/* aura ring on send */}
+        {/* aura on send — matches button radius */}
         <AnimatePresence>
           {sent && (
             <motion.span
               key="aura"
               aria-hidden
-              initial={{ scale: 0.4, opacity: 0.6 }}
-              animate={{ scale: 2.2, opacity: 0 }}
+              initial={{ scale: 1, opacity: 0.55 }}
+              animate={{ scale: 1.9, opacity: 0 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-              className="absolute inset-0 rounded-full border border-foreground/50"
+              transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0 rounded-[inherit] border border-foreground/45"
             />
           )}
         </AnimatePresence>
