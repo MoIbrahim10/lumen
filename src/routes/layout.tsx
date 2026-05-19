@@ -352,7 +352,7 @@ function DepthGlyph({ index }: { index: number }) {
 
 
 function CycleButton({
-  ctx, label, options, value, onChange, glyph,
+  ctx, label, options, value, onChange, glyph, descriptions, showLabel = true,
 }: {
   ctx: Ctx;
   label: string;
@@ -360,6 +360,8 @@ function CycleButton({
   value: string;
   onChange: (v: string) => void;
   glyph: (i: number) => ReactNode;
+  descriptions?: Record<string, string>;
+  showLabel?: boolean;
 }) {
   const index = Math.max(0, options.indexOf(value));
   const [bump, setBump] = useState(0);
@@ -370,17 +372,19 @@ function CycleButton({
     setBump((b) => b + 1);
   };
 
+  const desc = descriptions?.[value];
+
   return (
-    <HoverTip label={`${label}: ${value}`}>
+    <HoverTip label={`${label} · ${value}`} desc={desc}>
       <motion.button
         type="button"
         onClick={cycle}
         aria-label={`${label}: ${value}`}
         animate={{ scale: bump ? [1, 0.96, 1] : 1 }}
         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-        className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px] cursor-pointer select-none`}
+        className={`${ctx.btn} flex items-center gap-1.5 ${showLabel ? "px-3" : "px-2.5"} py-1.5 text-[11px] cursor-pointer select-none`}
       >
-        <span className="opacity-60">{label}</span>
+        {showLabel && <span className="opacity-60">{label}</span>}
         <motion.span
           key={`g-${index}`}
           initial={{ rotate: -14, scale: 0.7 }}
@@ -391,13 +395,13 @@ function CycleButton({
           }}
           className="inline-flex"
         >
-
           {glyph(index)}
         </motion.span>
       </motion.button>
     </HoverTip>
   );
 }
+
 
 
 
@@ -603,17 +607,26 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
         ctx={ctx} label="Depth" value={depth} onChange={setDepth}
         options={["Quick", "Standard", "Deep"] as const}
         glyph={(i) => <DepthGlyph index={i} />}
+        showLabel={false}
+        descriptions={{
+          Quick: "Fast surface-level answer with minimal reasoning.",
+          Standard: "Balanced analysis — the default reasoning depth.",
+          Deep: "Slower, multi-step reasoning for harder problems.",
+        }}
       />
       <TogglePill
         ctx={ctx} on={memory} onClick={() => setMemory(!memory)}
-        label="Memory" desc="Recall facts across chats"
+        label={memory ? "Memory · on" : "Memory · off"}
+        desc="Remember details about you across conversations and use them to personalize replies."
         icon={<Brain className="h-3.5 w-3.5" />}
       />
       <TogglePill
         ctx={ctx} on={web} onClick={() => setWeb(!web)}
-        label="Web" desc="Search the live web for answers"
+        label={web ? "Web · on" : "Web · off"}
+        desc="Let the model search the live web for fresh information and cite sources."
         icon={<Globe className="h-3.5 w-3.5" />}
       />
+
 
     </div>
   );
