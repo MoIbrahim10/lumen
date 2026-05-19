@@ -829,16 +829,17 @@ function PrimaryRow({ ctx }: { ctx: Ctx }) {
       <div className="flex items-center gap-1.5">
         <IconBtn ctx={ctx} tip="Attach file" keys="⌘U"><Paperclip className="h-4 w-4" /></IconBtn>
         <IconBtn ctx={ctx} tip="Tools & connectors" keys="⌘T"><Wrench className="h-4 w-4" /></IconBtn>
-        <CycleButton
+        <FancyPicker
           ctx={ctx} label="Model" value={model}
           onChange={(v) => setModel(v as (typeof MODEL_OPTIONS)[number])}
-          options={MODEL_OPTIONS}
-          glyph={(i) => <ModelGlyph index={i} />}
-          descriptions={{
-            "Lumen 4 Mini": "Fastest, lightest tier — best for quick chats.",
-            "Lumen 4": "Balanced default — good for most tasks.",
-            "Lumen 4 Pro": "Highest reasoning tier — slower, deeper answers.",
-          }}
+          options={MODEL_OPTIONS.map((id, i) => ({
+            id,
+            glyph: <ModelGlyph index={i} />,
+            desc:
+              id === "Lumen 4 Mini" ? "Fastest, lightest tier — quick chats."
+              : id === "Lumen 4" ? "Balanced default — good for most tasks."
+              : "Highest reasoning tier — slower, deeper.",
+          }))}
         />
       </div>
       <div className="flex items-center gap-1.5">
