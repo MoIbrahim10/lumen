@@ -132,7 +132,7 @@ function Dropdown({
   );
 }
 
-/* ───────── Style picker — inline Stamp Pills (variant 4) ───────── */
+/* ───────── Style picker — horizontal ribbon unfurl ───────── */
 
 const STYLE_OPTIONS = [
   { id: "Auto", icon: Sparkles },
@@ -153,57 +153,78 @@ function StylePicker({ ctx, value, onChange }: {
   return (
     <div className="relative">
       <button
+        type="button"
         onClick={() => setOpen((o) => !o)}
         className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px]`}
       >
         <span className="opacity-60">Style</span>
-        {/* fixed width based on longest label — prevents layout shift */}
         <span className="relative inline-block text-left">
           <span className="invisible">{longest}</span>
           <span className="absolute inset-0">{value}</span>
         </span>
-        <ChevronDown className="h-3 w-3 opacity-60" />
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ type: "spring", stiffness: 380, damping: 28 }}
+          className="inline-flex"
+        >
+          <ChevronDown className="h-3 w-3 opacity-60" />
+        </motion.span>
       </button>
 
       <AnimatePresence>
         {open && (
           <>
-            <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+            <div
+              className="fixed inset-0 z-40"
+              onMouseDown={(e) => { e.preventDefault(); setOpen(false); }}
+            />
             <motion.div
-              initial={{ opacity: 0, y: -4, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -4, scale: 0.98 }}
-              transition={{ type: "spring", stiffness: 520, damping: 32, mass: 0.5 }}
+              initial={{ clipPath: "inset(0 100% 0 0)", opacity: 0 }}
+              animate={{ clipPath: "inset(0 0% 0 0)", opacity: 1 }}
+              exit={{ clipPath: "inset(0 100% 0 0)", opacity: 0 }}
+              transition={{
+                clipPath: { duration: 0.42, ease: [0.22, 1, 0.36, 1] },
+                opacity: { duration: 0.18 },
+              }}
+              style={{ transformOrigin: "left center" }}
               onMouseLeave={() => setHover(null)}
-              className="absolute left-0 top-full z-50 mt-2 flex items-center gap-1 rounded-lg border border-zinc-200 bg-white p-2 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.12)]"
+              className="absolute left-0 top-full z-50 mt-2 flex items-center gap-0.5 rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-lg"
             >
               <LayoutGroup id="style-picker">
-                {STYLE_OPTIONS.map((s) => {
+                {STYLE_OPTIONS.map((s, i) => {
                   const lit = indicatorId === s.id;
                   const selected = value === s.id;
                   return (
-                    <button
+                    <motion.button
                       key={s.id}
+                      type="button"
+                      initial={{ opacity: 0, x: -6 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        delay: 0.06 + i * 0.035,
+                        duration: 0.28,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
                       onClick={() => { onChange(s.id); setOpen(false); }}
                       onMouseEnter={() => setHover(s.id)}
-                      className="relative flex items-center gap-1.5 rounded-md px-3 py-1 text-[10px] font-mono uppercase tracking-wider"
+                      className="relative flex items-center gap-1.5 rounded-[4px] px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider"
                     >
                       {lit && (
                         <motion.span
                           layoutId="style-indicator"
-                          transition={{ type: "spring", stiffness: 500, damping: 34, mass: 0.6 }}
-                          className="absolute inset-0 rounded-md border-2 border-zinc-900 bg-zinc-900 shadow-[3px_3px_0_0_rgba(0,0,0,1)]"
+                          transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.5 }}
+                          className="absolute inset-0 rounded-[4px] bg-foreground"
                         />
                       )}
                       <span
-                        className={`relative z-10 flex items-center gap-1.5 transition-colors ${
-                          lit ? "text-white" : selected ? "text-zinc-900" : "text-zinc-500"
+                        className={`relative z-10 flex items-center gap-1.5 transition-colors duration-150 ${
+                          lit ? "text-background" : selected ? "text-foreground" : "text-muted-foreground"
                         }`}
                       >
                         <s.icon className="h-3 w-3" />
                         {s.id}
                       </span>
-                    </button>
+                    </motion.button>
                   );
                 })}
               </LayoutGroup>
