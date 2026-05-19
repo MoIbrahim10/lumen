@@ -1846,12 +1846,12 @@ function TrayStrip({ ctx }: { ctx: Ctx }) {
                 <div className="flex items-center gap-1.5">
                   <IconBtn ctx={ctx} size={8}><Paperclip className="h-3.5 w-3.5" /></IconBtn>
                   <IconBtn ctx={ctx} size={8}><Wrench className="h-3.5 w-3.5" /></IconBtn>
-                  <IconBtn ctx={ctx} size={8}><Mic className="h-3.5 w-3.5" /></IconBtn>
+                  <DictateButton ctx={ctx} />
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Pill ctx={ctx}><Brain className="h-3.5 w-3.5" /> Memory</Pill>
                   <Pill ctx={ctx}><Globe className="h-3.5 w-3.5" /> Web</Pill>
-                  <IconBtn ctx={ctx} size={8}><ArrowUp className="h-3.5 w-3.5" /></IconBtn>
+                  <SendButton ctx={ctx} />
                 </div>
               </div>
             </div>
