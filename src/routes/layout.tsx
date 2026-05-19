@@ -753,17 +753,77 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
 }
 
 
+function QuickChip({
+  ctx, item, index,
+}: { ctx: Ctx; item: typeof QUICK[number]; index: number }) {
+  const [fired, setFired] = useState(false);
+
+  const send = () => {
+    if (fired) return;
+    setFired(true);
+    promptBus.emit(item.prompt);
+    window.setTimeout(() => setFired(false), 900);
+  };
+
+  return (
+    <motion.button
+      onClick={send}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.04 * index, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.96 }}
+      className={`group/chip ${ctx.btn} relative flex items-center gap-2 overflow-hidden px-3.5 py-2 text-[11px]`}
+    >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 -left-full w-1/2 bg-gradient-to-r from-transparent via-foreground/[0.06] to-transparent transition-transform duration-700 ease-out group-hover/chip:translate-x-[400%]"
+      />
+      <span className="relative inline-flex h-3.5 w-3.5 items-center justify-center">
+        <AnimatePresence mode="popLayout" initial={false}>
+          {fired ? (
+            <motion.span
+              key="check"
+              initial={{ scale: 0, rotate: -90 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0, rotate: 90 }}
+              transition={SPRING_POP}
+              className="absolute inset-0 inline-flex items-center justify-center text-emerald-500"
+            >
+              <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+            </motion.span>
+          ) : (
+            <motion.span
+              key="icon"
+              initial={{ scale: 0, rotate: 90 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0, rotate: -90 }}
+              transition={SPRING_POP}
+              className="absolute inset-0 inline-flex items-center justify-center"
+            >
+              <item.icon className="h-3.5 w-3.5 opacity-70" />
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </span>
+      <span>{item.label}</span>
+      <span className="inline-flex w-0 overflow-hidden opacity-0 transition-all duration-300 ease-out group-hover/chip:w-3 group-hover/chip:opacity-60">
+        <ArrowRight className="h-3 w-3" />
+      </span>
+    </motion.button>
+  );
+}
+
 function QuickChips({ ctx, limit = 8 }: { ctx: Ctx; limit?: number }) {
   return (
-    <div className="flex flex-wrap gap-1.5">
-      {QUICK.slice(0, limit).map((a) => (
-        <button key={a.label} className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px]`}>
-          <a.icon className="h-3.5 w-3.5" /> {a.label}
-        </button>
+    <div className="flex flex-wrap items-center justify-center gap-1.5">
+      {QUICK.slice(0, limit).map((a, i) => (
+        <QuickChip key={a.label} ctx={ctx} item={a} index={i} />
       ))}
     </div>
   );
 }
+
 
 /* ───────────────────────── chrome ───────────────────────── */
 
