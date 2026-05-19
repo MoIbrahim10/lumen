@@ -1186,14 +1186,14 @@ function SendButton({ ctx }: { ctx: Ctx }) {
         onClick={onSend}
         disabled={disabled}
         aria-label="Send"
-        whileHover={disabled ? undefined : { scale: 1.06 }}
-        whileTap={disabled ? undefined : { scale: 0.9 }}
-        animate={{ opacity: disabled && !sent ? 0.55 : 1 }}
+        whileHover={disabled ? undefined : { scale: 1.04 }}
+        whileTap={disabled ? undefined : { scale: 0.92 }}
         transition={{ type: "spring", stiffness: 500, damping: 22 }}
-        className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center overflow-hidden ${
-          disabled && !sent ? "cursor-default" : "cursor-pointer"
+        className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center overflow-visible transition-opacity ${
+          disabled && !sent ? "cursor-default opacity-50" : "cursor-pointer opacity-100"
         }`}
       >
+
         {/* aura on send — matches button radius */}
         <AnimatePresence>
           {sent && (
@@ -1251,10 +1251,11 @@ function DictateButton({ ctx }: { ctx: Ctx }) {
         onClick={toggle}
         aria-pressed={listening}
         aria-label={listening ? "Stop dictation" : "Start dictation"}
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.92 }}
         transition={{ type: "spring", stiffness: 500, damping: 22 }}
         className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center overflow-visible`}
+
       >
         {/* pulsing rings while listening — match button radius, smoother */}
         <AnimatePresence>
