@@ -19,6 +19,12 @@ export const Route = createFileRoute("/layout")({ component: LayoutGallery });
 
 /* ───────────────────────── shared bits ───────────────────────── */
 
+// Unified spring presets — all icon feedback uses these for consistent feel.
+const SPRING_POP = { type: "spring" as const, stiffness: 500, damping: 18, mass: 0.6 };
+const SPRING_TURN = { type: "spring" as const, stiffness: 500, damping: 22 };
+const SPRING_SETTLE = { type: "spring" as const, stiffness: 360, damping: 26 };
+
+
 type Ctx = {
   light: boolean;
   btn: string;
