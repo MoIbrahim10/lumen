@@ -37,8 +37,8 @@ const QUICK = [
   { icon: ImageIcon, label: "Create image" },
 ];
 
-function HoverTip({ label, keys, children, side = "bottom" }: {
-  label: string; keys?: string; children: ReactNode; side?: "top" | "bottom";
+function HoverTip({ label, keys, desc, children, side = "bottom" }: {
+  label: string; keys?: string; desc?: string; children: ReactNode; side?: "top" | "bottom";
 }) {
   const [hover, setHover] = useState(false);
   const pos = side === "top" ? "bottom-[calc(100%+8px)]" : "top-[calc(100%+8px)]";
@@ -56,11 +56,16 @@ function HoverTip({ label, keys, children, side = "bottom" }: {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: side === "top" ? 4 : -4, scale: 0.92 }}
             transition={{ type: "spring", stiffness: 520, damping: 32, mass: 0.5 }}
-            className={`pointer-events-none absolute left-1/2 z-[60] -translate-x-1/2 ${pos} flex items-center gap-2 whitespace-nowrap rounded-md border border-border bg-popover px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-popover-foreground shadow-lg`}
+            className={`pointer-events-none absolute left-1/2 z-[60] -translate-x-1/2 ${pos} ${desc ? "flex-col items-start max-w-[200px] whitespace-normal" : "flex items-center gap-2 whitespace-nowrap"} flex rounded-md border border-border bg-popover px-2.5 py-1.5 text-popover-foreground shadow-lg`}
           >
-            <span className="opacity-80">{label}</span>
-            {keys && (
-              <kbd className="rounded-sm border border-border bg-muted/40 px-1.5 py-[1px] text-[9px] tracking-[0.1em]">
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] opacity-80">{label}</span>
+            {desc && (
+              <span className="mt-0.5 text-[11px] leading-snug opacity-60 normal-case tracking-normal">
+                {desc}
+              </span>
+            )}
+            {keys && !desc && (
+              <kbd className="rounded-sm border border-border bg-muted/40 px-1.5 py-[1px] font-mono text-[9px] tracking-[0.1em]">
                 {keys}
               </kbd>
             )}
@@ -70,6 +75,7 @@ function HoverTip({ label, keys, children, side = "bottom" }: {
     </span>
   );
 }
+
 
 function IconBtn({ ctx, children, onClick, dim = false, size = 9, tip, keys, "aria-label": ariaLabel }: {
   ctx: Ctx; children: ReactNode; onClick?: () => void; dim?: boolean; size?: number;
@@ -95,6 +101,50 @@ function Pill({ ctx, children, onClick }: { ctx: Ctx; children: ReactNode; onCli
     </button>
   );
 }
+
+function TogglePill({
+  ctx, on, onClick, label, desc, icon,
+}: {
+  ctx: Ctx; on: boolean; onClick: () => void;
+  label: string; desc: string; icon: ReactNode;
+}) {
+  return (
+    <HoverTip label={label} desc={desc}>
+      <motion.button
+        type="button"
+        onClick={onClick}
+        aria-pressed={on}
+        aria-label={`${label} ${on ? "on" : "off"}`}
+        whileTap={{ scale: 0.92 }}
+        transition={{ type: "spring", stiffness: 500, damping: 28 }}
+        className={`${ctx.btn} relative flex h-[30px] w-[30px] items-center justify-center overflow-hidden`}
+      >
+        <AnimatePresence initial={false}>
+          {on && (
+            <motion.span
+              key="on-bg"
+              initial={{ opacity: 0, scale: 0.6 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.6 }}
+              transition={{ type: "spring", stiffness: 460, damping: 28 }}
+              className="absolute inset-0 bg-foreground"
+            />
+          )}
+        </AnimatePresence>
+        <motion.span
+          animate={{
+            color: on ? "var(--background)" : "var(--muted-foreground)",
+          }}
+          transition={{ duration: 0.2 }}
+          className="relative z-10 inline-flex"
+        >
+          {icon}
+        </motion.span>
+      </motion.button>
+    </HoverTip>
+  );
+}
+
 
 function Dropdown({
   ctx, value, options, label, onChange, align = "left",
@@ -267,34 +317,41 @@ function LengthGlyph({ index }: { index: number }) {
 }
 
 function DepthGlyph({ index }: { index: number }) {
-  // Stacked strata; deeper = more layers lit (top→down)
+  // Depth gauge: 3 strata lines + a probe that descends through them
+  const probeY = 3 + index * 4;
   return (
     <svg width="16" height="14" viewBox="0 0 16 14" fill="none" aria-hidden>
       {[0, 1, 2].map((i) => {
-        const active = i <= index;
+        const reached = i <= index;
         const y = 3 + i * 4;
         return (
-          <motion.rect
+          <motion.line
             key={i}
-            x="2"
-            y={y}
-            width="12"
-            height="2"
-            rx="1"
-            fill="currentColor"
+            x1="2"
+            x2="14"
+            y1={y}
+            y2={y}
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeLinecap="round"
             initial={false}
-            animate={{
-              opacity: active ? 1 : 0.25,
-              scaleX: active ? 1 : 0.6,
-            }}
-            transition={{ type: "spring", stiffness: 380, damping: 26, delay: i * 0.05 }}
-            style={{ transformOrigin: "8px center" }}
+            animate={{ opacity: reached ? 0.9 : 0.25 }}
+            transition={{ duration: 0.2, delay: i * 0.04 }}
           />
         );
       })}
+      <motion.circle
+        cx="8"
+        r="1.8"
+        fill="currentColor"
+        initial={false}
+        animate={{ cy: probeY }}
+        transition={{ type: "spring", stiffness: 360, damping: 22 }}
+      />
     </svg>
   );
 }
+
 
 function CycleButton({
   ctx, label, options, value, onChange, glyph,
@@ -545,12 +602,17 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
         options={["Quick", "Standard", "Deep"] as const}
         glyph={(i) => <DepthGlyph index={i} />}
       />
-      <Pill ctx={ctx} onClick={() => setMemory(!memory)}>
-        <Brain className="h-3.5 w-3.5" /> Memory {memory ? "on" : "off"}
-      </Pill>
-      <Pill ctx={ctx} onClick={() => setWeb(!web)}>
-        <Globe className="h-3.5 w-3.5" /> Web {web ? "on" : "off"}
-      </Pill>
+      <TogglePill
+        ctx={ctx} on={memory} onClick={() => setMemory(!memory)}
+        label="Memory" desc="Recall facts across chats"
+        icon={<Brain className="h-3.5 w-3.5" />}
+      />
+      <TogglePill
+        ctx={ctx} on={web} onClick={() => setWeb(!web)}
+        label="Web" desc="Search the live web for answers"
+        icon={<Globe className="h-3.5 w-3.5" />}
+      />
+
     </div>
   );
 }
