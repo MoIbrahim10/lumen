@@ -1748,10 +1748,10 @@ function MinimalConsole({ ctx }: { ctx: Ctx }) {
               <div className="flex items-center gap-1.5">
                 <IconBtn ctx={ctx} size={8}><Paperclip className="h-3.5 w-3.5" /></IconBtn>
                 <IconBtn ctx={ctx} size={8}><Wrench className="h-3.5 w-3.5" /></IconBtn>
-                <IconBtn ctx={ctx} size={8}><Mic className="h-3.5 w-3.5" /></IconBtn>
+                <DictateButton ctx={ctx} />
                 <IconBtn ctx={ctx} size={8} onClick={() => setShowOpts(!showOpts)}><ChevronDown className={`h-3.5 w-3.5 transition-transform ${showOpts ? "rotate-180" : ""}`} /></IconBtn>
               </div>
-              <IconBtn ctx={ctx} size={8}><ArrowUp className="h-3.5 w-3.5" /></IconBtn>
+              <SendButton ctx={ctx} />
             </div>
             {showOpts && (
               <div className="mt-3 border-t border-border/40 pt-3"><SecondaryRow ctx={ctx} /></div>
