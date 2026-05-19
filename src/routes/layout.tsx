@@ -322,13 +322,13 @@ function FancyPicker({
               onMouseDown={(e) => { e.preventDefault(); setOpen(false); }}
             />
             <motion.div
-              initial={{ opacity: 0, y: -8, scale: 0.95, filter: "blur(6px)" }}
+              initial={{ opacity: 0, y: 8, scale: 0.95, filter: "blur(6px)" }}
               animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -8, scale: 0.95, filter: "blur(6px)" }}
+              exit={{ opacity: 0, y: 8, scale: 0.95, filter: "blur(6px)" }}
               transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
-              style={{ transformOrigin: align === "right" ? "top right" : "top left" }}
+              style={{ transformOrigin: align === "right" ? "bottom right" : "bottom left" }}
               onMouseLeave={() => setHoverId(null)}
-              className={`${ctx.panel} absolute top-full z-50 mt-2 w-[260px] overflow-hidden p-1 ${align === "right" ? "right-0" : "left-0"}`}
+              className={`${ctx.panel} absolute bottom-full z-50 mb-2 w-[260px] overflow-hidden p-1 ${align === "right" ? "right-0" : "left-0"}`}
             >
               <div className={`${ctx.panelInner} relative overflow-hidden`}>
 
