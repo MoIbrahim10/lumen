@@ -828,40 +828,39 @@ const NAV_ITEMS = [
   { label: "History", icon: History, keys: "⌘H" },
 ];
 
-function LeftPill({ sideOpen, onSide, onSearch }: {
-  sideOpen: boolean; onSide?: () => void; onSearch: () => void;
+function LeftPill({ ctx, sideOpen, onSide, onSearch }: {
+  ctx: Ctx; sideOpen: boolean; onSide?: () => void; onSearch: () => void;
 }) {
   return (
-    <div
-      className="fixed top-3 left-4 z-40 flex items-center p-1 bg-[#f1f1ef] border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] rounded-lg"
-      style={{ height: 40 }}
-    >
+    <div className={`${ctx.panel} fixed top-3 left-4 z-40 flex items-center gap-1 p-1`}>
       {onSide && (
-        <>
-          <button
-            onClick={onSide}
-            aria-label={sideOpen ? "Close menu" : "Open menu"}
-            className="p-2 hover:bg-black/[0.04] text-zinc-500 hover:text-zinc-900 rounded-md transition-colors duration-150 cursor-pointer"
-          >
-            <PanelLeft
-              className="h-[18px] w-[18px] transition-transform duration-300 ease-out"
-              strokeWidth={2}
-              style={{ transform: sideOpen ? "scaleX(-1)" : "scaleX(1)" }}
-            />
-          </button>
-          <span className="w-px h-4 bg-zinc-300/60 mx-1" aria-hidden />
-        </>
+        <motion.button
+          onClick={onSide}
+          aria-label={sideOpen ? "Close menu" : "Open menu"}
+          whileTap={{ scale: 0.92 }}
+          transition={SPRING_TURN}
+          className={`${ctx.btn} flex h-8 w-8 items-center justify-center`}
+        >
+          <PanelLeft
+            className="h-[15px] w-[15px] transition-transform duration-300 ease-out"
+            strokeWidth={2}
+            style={{ transform: sideOpen ? "scaleX(-1)" : "scaleX(1)" }}
+          />
+        </motion.button>
       )}
-      <button
+      <motion.button
         onClick={onSearch}
         aria-label="Search"
-        className="p-2 hover:bg-black/[0.04] text-zinc-500 hover:text-zinc-900 rounded-md transition-colors duration-150 cursor-pointer"
+        whileTap={{ scale: 0.92 }}
+        transition={SPRING_TURN}
+        className={`${ctx.btn} flex h-8 w-8 items-center justify-center`}
       >
-        <Search className="h-[18px] w-[18px]" strokeWidth={2} />
-      </button>
+        <Search className="h-[15px] w-[15px]" strokeWidth={2} />
+      </motion.button>
     </div>
   );
 }
+
 
 function SideMenu({ ctx, open }: { ctx: Ctx; open: boolean; onToggle?: () => void; placement?: "left" | "right" }) {
   return (
