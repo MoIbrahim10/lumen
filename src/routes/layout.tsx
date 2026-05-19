@@ -312,7 +312,7 @@ function LengthGlyph({ index }: { index: number }) {
               width: active ? w : 3,
               opacity: active ? 1 : 0.3,
             }}
-            transition={{ type: "spring", stiffness: 380, damping: 28, delay: i * 0.04 }}
+            transition={{ ...SPRING_SETTLE, delay: i * 0.04 }}
             fill="currentColor"
           />
         );
