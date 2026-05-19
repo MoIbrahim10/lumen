@@ -739,12 +739,20 @@ function SearchPalette({ open, onClose }: { open: boolean; onClose: () => void }
 const STATUS_STATES = ["ready", "listening", "thinking", "composing"] as const;
 type StatusState = (typeof STATUS_STATES)[number];
 
-/* grayscale depth meter — 5 bars, animation profile per state */
+/* fixed-width 4-char codes — eliminates layout shift entirely */
+const STATUS_CODE: Record<StatusState, string> = {
+  ready: "RDY·",
+  listening: "LSTN",
+  thinking: "THNK",
+  composing: "CMPS",
+};
+
+/* grayscale depth meter — slowed so it reads as ambient, not frantic */
 const METER_PROFILES: Record<StatusState, { heights: number[]; duration: number; opacity: number }> = {
-  ready:     { heights: [0.30, 0.30, 0.30, 0.30, 0.30], duration: 2.4, opacity: 0.35 },
-  listening: { heights: [0.35, 0.55, 0.40, 0.65, 0.30], duration: 1.1, opacity: 0.55 },
-  thinking:  { heights: [0.45, 0.75, 0.95, 0.70, 0.40], duration: 0.7, opacity: 0.75 },
-  composing: { heights: [0.90, 0.55, 0.85, 0.60, 0.95], duration: 0.45, opacity: 0.85 },
+  ready:     { heights: [0.30, 0.30, 0.30, 0.30, 0.30], duration: 3.2, opacity: 0.35 },
+  listening: { heights: [0.35, 0.55, 0.40, 0.65, 0.30], duration: 2.0, opacity: 0.55 },
+  thinking:  { heights: [0.45, 0.75, 0.95, 0.70, 0.40], duration: 1.4, opacity: 0.75 },
+  composing: { heights: [0.90, 0.55, 0.85, 0.60, 0.95], duration: 0.95, opacity: 0.85 },
 };
 
 function DepthMeter({ state }: { state: StatusState }) {
@@ -774,31 +782,30 @@ function DepthMeter({ state }: { state: StatusState }) {
 function StatusTicker() {
   const [idx, setIdx] = useState(0);
   useEffect(() => {
-    const t = setInterval(() => setIdx((i) => (i + 1) % STATUS_STATES.length), 3200);
+    const t = setInterval(() => setIdx((i) => (i + 1) % STATUS_STATES.length), 3600);
     return () => clearInterval(t);
   }, []);
   const word = STATUS_STATES[idx];
-  // Reserve width for the longest state so bars never shift.
-  // Account for tracking by adding a small character buffer.
-  const longest = STATUS_STATES.reduce((a, b) => (a.length >= b.length ? a : b));
+  const code = STATUS_CODE[word];
 
   return (
     <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] opacity-70">
       <DepthMeter state={word} />
+      {/* fixed 4ch box — no layout shift, ever */}
       <span
-        className="relative inline-flex justify-end overflow-hidden"
-        style={{ height: "1em", minWidth: `${longest.length + 0.5}ch` }}
+        className="relative inline-flex justify-end overflow-hidden tabular-nums"
+        style={{ height: "1em", width: "4ch" }}
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
-            key={word}
-            initial={{ y: "-100%", opacity: 0, filter: "blur(3px)" }}
-            animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
-            exit={{ y: "100%", opacity: 0, filter: "blur(3px)" }}
-            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            key={code}
+            initial={{ y: "-100%", opacity: 0 }}
+            animate={{ y: "0%", opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
             className="inline-block whitespace-nowrap leading-none"
           >
-            {word}
+            {code}
           </motion.span>
         </AnimatePresence>
       </span>
@@ -835,12 +842,6 @@ function SessionMark() {
 function Greeting({ className = "" }: { className?: string }) {
   return (
     <div className={`flex flex-col items-center gap-3 ${className}`}>
-      {/* tiny eyebrow line — anchors the headline visually */}
-      <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.32em] opacity-50">
-        <span aria-hidden className="h-px w-6 bg-foreground/40" />
-        <span>Compose · 14:15 local</span>
-        <span aria-hidden className="h-px w-6 bg-foreground/40" />
-      </div>
       <h1 className="text-center text-[36px] font-light leading-[1] tracking-tight md:text-[52px]">
         <span className="opacity-90">what&rsquo;s on your</span>
         <span className="ml-2 italic font-normal" style={{ fontFamily: "ui-serif, Georgia, serif" }}>
