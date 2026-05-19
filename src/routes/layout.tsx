@@ -72,17 +72,27 @@ function HoverTip({ label, keys, desc, children, side = "bottom" }: {
       <AnimatePresence>
         {hover && (
           <motion.span
-            initial={{ opacity: 0, y: side === "top" ? 4 : -4, scale: 0.92 }}
+            initial={{ opacity: 0, y: side === "top" ? 6 : -6, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: side === "top" ? 4 : -4, scale: 0.92 }}
-            transition={{ type: "spring", stiffness: 520, damping: 32, mass: 0.5 }}
-            className={`pointer-events-none absolute left-1/2 z-[60] -translate-x-1/2 ${pos} ${desc ? "flex-col items-start max-w-[200px] whitespace-normal" : "flex items-center gap-2 whitespace-nowrap"} flex rounded-md border border-border bg-popover px-2.5 py-1.5 text-popover-foreground shadow-lg`}
+            exit={{ opacity: 0, y: side === "top" ? 6 : -6, scale: 0.94 }}
+            transition={{ type: "spring", stiffness: 480, damping: 30, mass: 0.5 }}
+            className={`pointer-events-none absolute left-1/2 z-[60] -translate-x-1/2 ${pos} ${
+              desc
+                ? "w-[240px] flex-col items-start"
+                : "flex items-center gap-2 whitespace-nowrap"
+            } flex rounded-lg border border-border/60 bg-popover/95 px-3 py-2 text-popover-foreground shadow-xl backdrop-blur-sm`}
           >
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] opacity-80">{label}</span>
+            <span className="flex w-full items-center gap-1.5">
+              <span aria-hidden className="h-1 w-1 rounded-full bg-foreground/50" />
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] opacity-80">{label}</span>
+            </span>
             {desc && (
-              <span className="mt-0.5 text-[11px] leading-snug opacity-60 normal-case tracking-normal">
-                {desc}
-              </span>
+              <>
+                <span aria-hidden className="my-1.5 h-px w-full bg-border/60" />
+                <span className="text-[11px] leading-relaxed opacity-70 normal-case tracking-normal">
+                  {desc}
+                </span>
+              </>
             )}
             {keys && !desc && (
               <kbd className="rounded-sm border border-border bg-muted/40 px-1.5 py-[1px] font-mono text-[9px] tracking-[0.1em]">
