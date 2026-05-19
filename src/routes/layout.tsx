@@ -638,10 +638,10 @@ function Greeting({ className = "" }: { className?: string }) {
 function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
   const [value, setValue] = useState("");
   const [streaming, setStreaming] = useState(false);
-  const ref = React.useRef<HTMLTextAreaElement>(null);
+  const ref = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    return promptBus.subscribe((text) => {
+    const unsub = promptBus.subscribe((text) => {
       setValue("");
       setStreaming(true);
       ref.current?.focus();
