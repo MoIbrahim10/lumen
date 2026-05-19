@@ -660,7 +660,9 @@ function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
       };
       tick();
     });
+    return () => { unsub(); };
   }, []);
+
 
   return (
     <div className="relative">
