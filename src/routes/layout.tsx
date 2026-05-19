@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ReactNode, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "motion/react";
 import {
-  Paperclip, Mic, Wrench, ArrowUp, Globe, Brain, ChevronDown, Sun, Moon,
+  Paperclip, Mic, Wrench, ArrowUp, Globe, Brain, ChevronDown, Sun, Moon, Eye,
   SlidersHorizontal, Menu, EyeOff, FileText, Mail, Code2, Search,
   ScanSearch, Lightbulb, Presentation, Image as ImageIcon,
   Plus, History, Library, FolderClosed, Cpu, Plug,
