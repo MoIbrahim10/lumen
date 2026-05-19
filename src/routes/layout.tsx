@@ -328,17 +328,10 @@ function FancyPicker({
               transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
               style={{ transformOrigin: align === "right" ? "top right" : "top left" }}
               onMouseLeave={() => setHoverId(null)}
-              className={`absolute top-full z-50 mt-2 w-[260px] overflow-hidden rounded-xl border border-border/60 bg-popover/95 text-popover-foreground shadow-2xl backdrop-blur-md ${align === "right" ? "right-0" : "left-0"}`}
+              className={`${ctx.panel} absolute top-full z-50 mt-2 w-[260px] overflow-hidden p-1 ${align === "right" ? "right-0" : "left-0"}`}
             >
-              {/* dotted grid backdrop */}
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0 opacity-[0.06]"
-                style={{
-                  backgroundImage: "radial-gradient(currentColor 1px, transparent 1px)",
-                  backgroundSize: "10px 10px",
-                }}
-              />
+              <div className={`${ctx.panelInner} relative overflow-hidden`}>
+
 
               {/* header strip */}
               <div className="relative flex items-center justify-between border-b border-border/40 px-3 py-2">
@@ -462,6 +455,7 @@ function FancyPicker({
                   <kbd className="rounded-sm border border-border/60 px-1 py-px text-[8px]">↵</kbd>
                   <span>select</span>
                 </span>
+              </div>
               </div>
             </motion.div>
           </>
@@ -784,14 +778,17 @@ function StatusTicker() {
     return () => clearInterval(t);
   }, []);
   const word = STATUS_STATES[idx];
+  // Reserve width for the longest state so bars never shift.
+  // Account for tracking by adding a small character buffer.
+  const longest = STATUS_STATES.reduce((a, b) => (a.length >= b.length ? a : b));
 
   return (
-    <motion.span
-      layout
-      className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] opacity-70"
-    >
+    <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] opacity-70">
       <DepthMeter state={word} />
-      <span className="relative inline-flex overflow-hidden" style={{ height: "1em" }}>
+      <span
+        className="relative inline-flex justify-end overflow-hidden"
+        style={{ height: "1em", minWidth: `${longest.length + 0.5}ch` }}
+      >
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
             key={word}
@@ -799,13 +796,13 @@ function StatusTicker() {
             animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
             exit={{ y: "100%", opacity: 0, filter: "blur(3px)" }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-            className="inline-block leading-none"
+            className="inline-block whitespace-nowrap leading-none"
           >
             {word}
           </motion.span>
         </AnimatePresence>
       </span>
-    </motion.span>
+    </span>
   );
 }
 
@@ -837,11 +834,35 @@ function SessionMark() {
 
 function Greeting({ className = "" }: { className?: string }) {
   return (
-    <h1 className={`text-[34px] leading-[1.05] tracking-tight md:text-[42px] ${className}`}>
-      What's on your mind, <span className="uppercase">Emma?</span>
-    </h1>
+    <div className={`flex flex-col items-center gap-3 ${className}`}>
+      {/* tiny eyebrow line — anchors the headline visually */}
+      <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.32em] opacity-50">
+        <span aria-hidden className="h-px w-6 bg-foreground/40" />
+        <span>Compose · 14:15 local</span>
+        <span aria-hidden className="h-px w-6 bg-foreground/40" />
+      </div>
+      <h1 className="text-center text-[36px] font-light leading-[1] tracking-tight md:text-[52px]">
+        <span className="opacity-90">what&rsquo;s on your</span>
+        <span className="ml-2 italic font-normal" style={{ fontFamily: "ui-serif, Georgia, serif" }}>
+          mind
+        </span>
+        <span className="opacity-90">,</span>
+        <br />
+        <span className="relative inline-block">
+          <span className="font-mono text-[28px] uppercase tracking-[0.08em] md:text-[40px]">
+            Emma
+          </span>
+          <span className="ml-0.5 inline-block animate-pulse text-foreground/70">?</span>
+          <span
+            aria-hidden
+            className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-transparent via-foreground/40 to-transparent"
+          />
+        </span>
+      </h1>
+    </div>
   );
 }
+
 
 function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
   const [value, setValue] = useState("");
@@ -1541,7 +1562,7 @@ function FramedConsole({ ctx }: { ctx: Ctx }) {
   const [side, setSide] = useState(false);
   const [temp, setTemp] = useState(false);
   return (
-    <div className="flex h-full">
+    <div className="flex min-h-screen">
       <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
