@@ -401,7 +401,7 @@ function FancyPicker({
         type="button"
         onClick={() => setOpen((o) => !o)}
         whileTap={{ scale: 0.97 }}
-        className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px] cursor-pointer select-none`}
+        className={`${ctx.btn} flex h-9 items-center gap-1.5 px-3 text-[11px] cursor-pointer select-none`}
       >
         <span className="opacity-60">{label}</span>
         <span className="relative inline-block text-left">
@@ -1588,7 +1588,7 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
               exit={{ opacity: 0, y: 8, scale: 0.95, filter: "blur(6px)" }}
               transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
               style={{ transformOrigin: "bottom left" }}
-              className={`${ctx.panel} absolute bottom-full left-0 z-50 mb-2 flex max-h-[min(80vh,560px)] w-[320px] flex-col overflow-hidden p-1`}
+              className={`${ctx.panel} absolute bottom-full left-0 z-50 mb-2 flex max-h-[min(70vh,460px)] w-[320px] flex-col overflow-hidden p-1`}
             >
               <div className={`${ctx.panelInner} relative flex min-h-0 flex-1 flex-col overflow-y-auto`}>
                 {/* header */}
@@ -1658,7 +1658,7 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                     <span className="h-px flex-1 bg-border/40" />
                     <span className="tabular-nums opacity-70">{conns.size}/{CONN_DEFS.length}</span>
                   </div>
-                  <div className="grid grid-cols-3 gap-1.5">
+                  <div className="grid grid-cols-6 gap-1">
                     {CONN_DEFS.map((c, i) => {
                       const on = conns.has(c.id);
                       const linked = c.status === "linked";
@@ -1670,7 +1670,7 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                           initial={{ opacity: 0, y: 4 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.04 + i * 0.025, duration: 0.22 }}
-                          whileTap={{ scale: 0.94 }}
+                          whileTap={{ scale: 0.9 }}
                           onClick={() => { if (linked) toolsStore.toggleConn(c.id); }}
                           aria-pressed={on}
                           title={
@@ -1678,30 +1678,29 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                               : linked ? `${c.label} · tap to enable`
                               : `${c.label} · authenticate to connect`
                           }
-                          className={`group/conn relative flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border transition-all ${
+                          className={`group/conn relative flex aspect-square items-center justify-center rounded-md border transition-all ${
                             on
-                              ? "border-emerald-500/50 bg-emerald-500/[0.10] text-emerald-600 dark:text-emerald-400"
+                              ? "border-emerald-500/60 bg-emerald-500/[0.12] text-emerald-600 dark:text-emerald-400"
                               : "border-border/50 bg-foreground/[0.02] text-foreground/75 hover:bg-foreground/[0.06]"
                           }`}
                         >
                           {on && (
                             <motion.span
                               aria-hidden
-                              animate={{ scale: [1, 1.6, 1], opacity: [1, 0.4, 1] }}
+                              animate={{ scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }}
                               transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                              className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500"
+                              className="absolute right-0.5 top-0.5 h-1 w-1 rounded-full bg-emerald-500"
                             />
                           )}
                           {!linked && (
                             <span
                               aria-hidden
-                              className="absolute right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400"
+                              className="absolute right-0 top-0 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400"
                             >
-                              <span className="font-mono text-[8px] font-bold leading-none">!</span>
+                              <span className="font-mono text-[7px] font-bold leading-none">!</span>
                             </span>
                           )}
-                          <Icon className="h-4 w-4" />
-                          <span className="text-[9.5px] leading-tight opacity-80">{c.label}</span>
+                          <Icon className="h-3.5 w-3.5" />
                         </motion.button>
                       );
                     })}
