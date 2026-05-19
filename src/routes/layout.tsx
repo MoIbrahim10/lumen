@@ -397,9 +397,10 @@ function CycleButton({
           initial={{ rotate: -14, scale: 0.7 }}
           animate={{ rotate: [-14, 8, 0], scale: [0.7, 1.18, 1] }}
           transition={{
-            scale: { type: "spring", stiffness: 520, damping: 16, mass: 0.6 },
-            rotate: { type: "spring", stiffness: 480, damping: 18 },
+            scale: SPRING_POP,
+            rotate: SPRING_POP,
           }}
+
           className="inline-flex"
         >
           {glyph(index)}
