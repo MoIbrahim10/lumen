@@ -589,11 +589,11 @@ const METER_PROFILES: Record<StatusState, { heights: number[]; duration: number;
 function DepthMeter({ state }: { state: StatusState }) {
   const profile = METER_PROFILES[state];
   return (
-    <span className="flex h-3 items-end gap-[2px]" aria-hidden>
+    <span className="flex h-2.5 items-end gap-[2px] translate-y-[1px]" aria-hidden>
       {profile.heights.map((h, i) => (
         <motion.span
           key={i}
-          className="w-[2px] rounded-[1px] bg-foreground"
+          className="block h-full w-[2px] rounded-[1px] bg-foreground origin-bottom"
           animate={{
             scaleY: state === "ready" ? [h, h, h] : [h * 0.4, h, h * 0.5, h * 0.85, h * 0.3],
             opacity: profile.opacity,
@@ -604,7 +604,6 @@ function DepthMeter({ state }: { state: StatusState }) {
             ease: "easeInOut",
             delay: i * (profile.duration / 12),
           }}
-          style={{ height: "100%", transformOrigin: "bottom" }}
         />
       ))}
     </span>
@@ -1369,7 +1368,7 @@ function FramedConsole({ ctx }: { ctx: Ctx }) {
           <div className="w-full max-w-[780px]">
             <Greeting className="text-center" />
             <div className={`${ctx.panel} mt-6 p-4`}>
-              <div className="flex items-center justify-between px-2 pb-3">
+              <div className="flex items-center justify-between px-4 pb-3">
                 <SessionMark />
                 <StatusTicker />
               </div>
