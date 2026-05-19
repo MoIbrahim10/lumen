@@ -948,34 +948,56 @@ function SideMenu({ ctx, open }: { ctx: Ctx; open: boolean; onToggle?: () => voi
   );
 }
 
-function SearchPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
+function SearchPalette({ open, onClose, ctx }: { open: boolean; onClose: () => void; ctx: Ctx }) {
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="overflow-hidden p-0 sm:max-w-[560px]">
-        <Command className="[&_[cmdk-input]]:h-12">
-          <CommandInput placeholder="Type a command or search your threads…" />
-          <CommandList>
-            <CommandEmpty>No results.</CommandEmpty>
-            <CommandGroup>
-              <CommandItem><Plus className="h-4 w-4" /> New chat <CommandShortcut>⌘N</CommandShortcut></CommandItem>
-            </CommandGroup>
-            <CommandSeparator />
-            <CommandGroup heading="Chat">
-              <CommandItem><History className="h-4 w-4" /> Manage chat history</CommandItem>
-              <CommandItem><Cpu className="h-4 w-4" /> View all available models</CommandItem>
-              <CommandItem><Paperclip className="h-4 w-4" /> View all uploaded attachments</CommandItem>
-            </CommandGroup>
-            <CommandSeparator />
-            <CommandGroup heading="Profiles">
-              <CommandItem>✓ Default</CommandItem>
-              <CommandItem><Plus className="h-4 w-4" /> Create new profile</CommandItem>
-            </CommandGroup>
-          </CommandList>
-          <div className="flex items-center justify-end gap-2 border-t border-border px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            <kbd className="rounded border border-border bg-muted/40 px-1.5 py-[1px] font-mono">↵</kbd>
-            <span>type to search or start a new chat</span>
-          </div>
-        </Command>
+      <DialogContent className={`${ctx.panel} overflow-hidden border-0 p-1 shadow-2xl sm:max-w-[560px]`}>
+        <div className={`${ctx.panelInner} overflow-hidden`}>
+          <Command className="bg-transparent [&_[cmdk-input]]:h-12 [&_[cmdk-input]]:bg-transparent [&_[cmdk-input-wrapper]]:border-foreground/10">
+            <CommandInput placeholder="Type a command or search your threads…" />
+            <CommandList className="px-1 py-1">
+              <CommandEmpty className="py-6 text-center font-mono text-[10px] uppercase tracking-[0.2em] opacity-50">
+                No results
+              </CommandEmpty>
+              <CommandGroup>
+                <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/[0.06]">
+                  <Plus className="h-3.5 w-3.5 opacity-70" /> New chat <CommandShortcut className="font-mono text-[9px] tracking-[0.18em] opacity-50">⌘N</CommandShortcut>
+                </CommandItem>
+              </CommandGroup>
+              <CommandSeparator className="my-1 bg-foreground/10" />
+              <CommandGroup heading="Chat" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-mono [&_[cmdk-group-heading]]:text-[9px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.22em] [&_[cmdk-group-heading]]:opacity-50">
+                <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/[0.06]">
+                  <History className="h-3.5 w-3.5 opacity-70" /> Manage chat history
+                </CommandItem>
+                <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/[0.06]">
+                  <Cpu className="h-3.5 w-3.5 opacity-70" /> View all available models
+                </CommandItem>
+                <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/[0.06]">
+                  <Paperclip className="h-3.5 w-3.5 opacity-70" /> View all uploaded attachments
+                </CommandItem>
+              </CommandGroup>
+              <CommandSeparator className="my-1 bg-foreground/10" />
+              <CommandGroup heading="Profiles" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-mono [&_[cmdk-group-heading]]:text-[9px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.22em] [&_[cmdk-group-heading]]:opacity-50">
+                <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/[0.06]">
+                  <Check className="h-3.5 w-3.5 text-emerald-500" /> Default
+                </CommandItem>
+                <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/[0.06]">
+                  <Plus className="h-3.5 w-3.5 opacity-70" /> Create new profile
+                </CommandItem>
+              </CommandGroup>
+            </CommandList>
+            <div className="flex items-center justify-between gap-2 border-t border-foreground/10 px-3 py-2 font-mono text-[9px] uppercase tracking-[0.22em] opacity-50">
+              <span className="flex items-center gap-1.5">
+                <span aria-hidden className="h-1 w-1 rounded-full bg-foreground/50" />
+                <span>Search</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <kbd className="rounded-sm border border-foreground/15 bg-foreground/[0.04] px-1.5 py-[1px]">↵</kbd>
+                <span className="normal-case tracking-normal">open</span>
+              </span>
+            </div>
+          </Command>
+        </div>
       </DialogContent>
     </Dialog>
   );
