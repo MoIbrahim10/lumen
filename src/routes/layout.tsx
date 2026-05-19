@@ -850,13 +850,14 @@ function SearchPalette({ open, onClose }: { open: boolean; onClose: () => void }
 
 /* ───────── StatusTicker — cycling status with per-char letter swap ───────── */
 
-const STATUS_STATES = ["ready", "listening", "thinking", "composing"] as const;
+const STATUS_STATES = ["ready", "listening", "drafting", "thinking", "composing"] as const;
 type StatusState = (typeof STATUS_STATES)[number];
 
 /* fixed-width 4-char codes — eliminates layout shift entirely */
 const STATUS_CODE: Record<StatusState, string> = {
   ready: "RDY·",
   listening: "LSTN",
+  drafting: "DRFT",
   thinking: "THNK",
   composing: "CMPS",
 };
@@ -865,6 +866,7 @@ const STATUS_CODE: Record<StatusState, string> = {
 const STATUS_LABEL: Record<StatusState, { name: string; desc: string }> = {
   ready:     { name: "Ready",     desc: "Idle · awaiting input" },
   listening: { name: "Listening", desc: "Capturing voice input" },
+  drafting:  { name: "Drafting",  desc: "You're typing a prompt" },
   thinking:  { name: "Thinking",  desc: "Reasoning over context" },
   composing: { name: "Composing", desc: "Streaming response" },
 };
@@ -878,6 +880,7 @@ const WAVE_HEIGHTS = [0.40, 0.75, 0.95, 0.70, 0.45];
 const PROFILES: Record<StatusState, { intensity: number; opacity: number }> = {
   ready:     { intensity: 0.28, opacity: 0.35 },
   listening: { intensity: 0.55, opacity: 0.55 },
+  drafting:  { intensity: 0.50, opacity: 0.60 },
   thinking:  { intensity: 0.80, opacity: 0.75 },
   composing: { intensity: 1.00, opacity: 0.90 },
 };
@@ -911,15 +914,17 @@ function DepthMeter({ state }: { state: StatusState }) {
 }
 
 function StatusTicker() {
-  const [idx, setIdx] = useState(0);
-  const [hovered, setHovered] = useState(false);
-  useEffect(() => {
-    const t = setInterval(() => setIdx((i) => (i + 1) % STATUS_STATES.length), 3600);
-    return () => clearInterval(t);
-  }, []);
-  const word = STATUS_STATES[idx];
+  const { value, streaming, listening } = useComposer();
+  const word: StatusState = streaming
+    ? "composing"
+    : listening
+    ? "listening"
+    : value.trim().length > 0
+    ? "drafting"
+    : "ready";
   const code = STATUS_CODE[word];
   const label = STATUS_LABEL[word];
+  const [hovered, setHovered] = useState(false);
 
   return (
     <span
