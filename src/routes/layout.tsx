@@ -351,7 +351,7 @@ function DepthGlyph({ index }: { index: number }) {
         fill="currentColor"
         initial={false}
         animate={{ cy: probeY }}
-        transition={{ type: "spring", stiffness: 360, damping: 22 }}
+        transition={SPRING_SETTLE}
       />
     </svg>
   );
