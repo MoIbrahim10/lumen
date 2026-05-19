@@ -456,6 +456,7 @@ function FancyPicker({
                   <span>select</span>
                 </span>
               </div>
+              </div>
             </motion.div>
           </>
         )}
