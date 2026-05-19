@@ -740,3 +740,176 @@
   border-color: rgba(255,255,255,0.35);
   box-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
+
+/* ============ Panel variants matching each button style ============
+   Each style has a panel (outer chrome) + inner (recessed surface)
+   for both light and dark mode. Where appropriate, reuses existing
+   mech panel as fallback chrome with a style-specific accent.        */
+
+/* EMBOSS panels */
+.panel-emboss {
+  background: linear-gradient(180deg, #f4f4f4 0%, #e2e2e2 100%);
+  border: 1px solid #c0c0c0;
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 #fff, inset 0 -1px 0 rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.08);
+}
+.panel-emboss-dark {
+  background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+  border: 1px solid #0a0a0a;
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.6), 0 4px 10px rgba(0,0,0,0.5);
+}
+.panel-inner-emboss {
+  background: #ededed; border: 1px solid #c8c8c8; border-radius: 10px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
+}
+.panel-inner-emboss-dark {
+  background: #161616; border: 1px solid #050505; border-radius: 10px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
+}
+
+/* 3D panels */
+.panel-3d {
+  background: linear-gradient(180deg, #fff 0%, #e8e8e8 100%);
+  border: 1px solid #cfcfcf;
+  border-radius: 16px;
+  box-shadow: 0 1px 0 #fff inset, 0 -2px 0 rgba(0,0,0,0.04) inset,
+              0 8px 0 -2px #d8d8d8, 0 14px 24px -10px rgba(0,0,0,0.25);
+}
+.panel-3d-dark {
+  background: linear-gradient(180deg, #2a2a2a 0%, #181818 100%);
+  border: 1px solid #0a0a0a;
+  border-radius: 16px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset,
+              0 8px 0 -2px #0a0a0a, 0 14px 24px -10px rgba(0,0,0,0.55);
+}
+.panel-inner-3d { background: #f8f8f8; border: 1px solid #d8d8d8; border-radius: 12px; }
+.panel-inner-3d-dark { background: #141414; border: 1px solid #050505; border-radius: 12px; }
+
+/* PENROSE panels — paper card with offset shadow */
+.panel-penrose {
+  background: #fafaf6; border: 1px solid #111; border-radius: 0;
+  box-shadow: 4px 4px 0 #111;
+}
+.panel-penrose-dark {
+  background: #1a1a1a; border: 1px solid #000; border-radius: 0;
+  box-shadow: 4px 4px 0 #000, 0 0 0 1px rgba(255,255,255,0.06) inset;
+}
+.panel-inner-penrose { background: #fff; border: 1px solid #111; border-radius: 0; }
+.panel-inner-penrose-dark { background: #0e0e0e; border: 1px solid #000; border-radius: 0; }
+
+/* SQUIRCLE panels — superellipse chrome */
+.panel-squircle {
+  background: linear-gradient(180deg, #f6f2ea 0%, #e8e1d2 100%);
+  border: 1px solid #c2bdb2;
+  border-radius: 22px / 26px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 8px 0 -3px #d8d2c4, 0 14px 24px -10px rgba(0,0,0,0.25);
+}
+.panel-squircle-dark {
+  background: linear-gradient(180deg, #2a2622 0%, #1a1714 100%);
+  border: 1px solid #0a0907;
+  border-radius: 22px / 26px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 0 -3px #0a0907, 0 14px 24px -10px rgba(0,0,0,0.6);
+}
+.panel-inner-squircle {
+  background: #fbfaf6; border: 1px solid #d8d2c4; border-radius: 18px / 22px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+}
+.panel-inner-squircle-dark {
+  background: #14110e; border: 1px solid #0a0907; border-radius: 18px / 22px;
+}
+
+/* LIQUID panels — acrylic */
+.panel-liquid {
+  background: linear-gradient(160deg, #f3f6fb 0%, #d9dee7 100%);
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.95),
+              inset 0 -2px 6px rgba(40,55,80,0.12),
+              0 4px 0 -2px #b6bdcb, 0 18px 30px -12px rgba(20,30,50,0.3);
+}
+.panel-liquid-dark {
+  background: linear-gradient(160deg, #1a2030 0%, #0c1018 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08),
+              0 4px 0 -2px #050810, 0 18px 30px -12px rgba(0,0,0,0.6);
+}
+.panel-inner-liquid {
+  background: linear-gradient(160deg, #fafbfd 0%, #eaecef 100%);
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.95);
+}
+.panel-inner-liquid-dark {
+  background: linear-gradient(160deg, #161c28 0%, #0a0d14 100%);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px;
+}
+
+/* PEBBLE panels — organic */
+.panel-pebble {
+  background: linear-gradient(155deg, #ebe7de 0%, #d4cebd 100%);
+  border: 0;
+  border-radius: 22px;
+  box-shadow: inset 0 2px 1px rgba(255,255,255,0.85),
+              inset 0 -2px 1px rgba(0,0,0,0.1),
+              0 6px 0 -2px #b6b0a1, 0 14px 24px -10px rgba(0,0,0,0.25);
+}
+.panel-pebble-dark {
+  background: linear-gradient(155deg, #2a2520 0%, #1a1712 100%);
+  border: 0;
+  border-radius: 22px;
+  box-shadow: inset 0 2px 1px rgba(255,255,255,0.06),
+              0 6px 0 -2px #0a0807, 0 14px 24px -10px rgba(0,0,0,0.55);
+}
+.panel-inner-pebble { background: #f5f1e7; border-radius: 16px; }
+.panel-inner-pebble-dark { background: #14110d; border-radius: 16px; }
+
+/* INFLATED panels — vinyl pillow */
+.panel-inflated {
+  background: linear-gradient(180deg, #ece7da 0%, #c8c2b0 100%);
+  border: 0;
+  border-radius: 24px;
+  box-shadow: 0 6px 0 -1px #a39c8c, 0 12px 0 -2px #8d8676,
+              0 20px 30px -12px rgba(0,0,0,0.35);
+}
+.panel-inflated-dark {
+  background: linear-gradient(180deg, #232018 0%, #14120c 100%);
+  border: 0;
+  border-radius: 24px;
+  box-shadow: 0 6px 0 -1px #0a0805, 0 12px 0 -2px #050402,
+              0 20px 30px -12px rgba(0,0,0,0.6);
+}
+.panel-inner-inflated {
+  background: linear-gradient(180deg, #fdfdfb 0%, #ece7da 100%);
+  border-radius: 18px;
+  box-shadow: inset 0 2px 1px rgba(255,255,255,0.9), inset 0 -2px 1px rgba(0,0,0,0.08);
+}
+.panel-inner-inflated-dark {
+  background: linear-gradient(180deg, #1a1812 0%, #0e0c08 100%);
+  border-radius: 18px;
+  box-shadow: inset 0 2px 1px rgba(255,255,255,0.05);
+}
+
+/* PAPER panels — letterpress card */
+.panel-paper {
+  background: #f6f1e6;
+  border: 1px solid #d9cfb8;
+  border-radius: 6px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6),
+              0 2px 4px rgba(80,60,20,0.1);
+}
+.panel-paper-dark {
+  background: #1a1612;
+  border: 1px solid #2a241a;
+  border-radius: 6px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05),
+              0 2px 6px rgba(0,0,0,0.5);
+}
+.panel-inner-paper {
+  background: #fbf6ea; border: 1px solid #e6dcc4; border-radius: 4px;
+}
+.panel-inner-paper-dark {
+  background: #14110d; border: 1px solid #2a241a; border-radius: 4px;
+}
