@@ -401,7 +401,7 @@ function FancyPicker({
         type="button"
         onClick={() => setOpen((o) => !o)}
         whileTap={{ scale: 0.97 }}
-        className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px] cursor-pointer select-none`}
+        className={`${ctx.btn} flex h-9 items-center gap-1.5 px-3 text-[11px] cursor-pointer select-none`}
       >
         <span className="opacity-60">{label}</span>
         <span className="relative inline-block text-left">
