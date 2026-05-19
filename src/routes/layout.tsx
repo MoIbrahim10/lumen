@@ -1541,7 +1541,7 @@ function FramedConsole({ ctx }: { ctx: Ctx }) {
   const [side, setSide] = useState(false);
   const [temp, setTemp] = useState(false);
   return (
-    <div className="flex h-full">
+    <div className="flex min-h-screen">
       <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
