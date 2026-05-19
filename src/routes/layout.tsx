@@ -128,7 +128,6 @@ function TogglePill({
         </motion.span>
       </motion.button>
 
-      </motion.button>
     </HoverTip>
   );
 }
