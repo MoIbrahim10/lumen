@@ -1365,7 +1365,6 @@ function AttachButton({ ctx }: { ctx: Ctx }) {
           aria-label="Attach"
           aria-expanded={open}
           whileTap={{ scale: 0.92 }}
-          animate={{ rotate: open ? -35 : 0 }}
           transition={SPRING_TURN}
           className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center`}
         >
