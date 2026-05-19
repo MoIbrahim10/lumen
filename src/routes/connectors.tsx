@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, type ReactNode, type ComponentType } from "react";
+import { useState, type ComponentType } from "react";
 import { motion } from "motion/react";
 import {
   Github, FileText, Hash, FolderClosed, Calendar, Database,
-  Check, Plug, AlertCircle, Power, type LucideIcon,
+  type LucideIcon,
 } from "lucide-react";
+
 
 export const Route = createFileRoute("/connectors")({ component: ConnectorsLab });
 
