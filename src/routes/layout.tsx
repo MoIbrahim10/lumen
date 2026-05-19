@@ -2243,26 +2243,21 @@ function TopBar({
       <LeftPill ctx={ctx} sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
       <div />
 
-      {/* right cluster — temp + preferences + profile, matches composer */}
-      <div className={`${ctx.panel} flex items-center gap-1 p-1`}>
-        <HoverTip label={temp ? "Temporary chat on" : "Temporary chat"} keys="⌘⇧T">
-          <motion.button
-            onClick={onTemp}
-            aria-label={temp ? "Temporary chat on" : "Temporary chat"}
-            aria-pressed={temp}
-            whileTap={{ scale: 0.92 }}
-            transition={SPRING_TURN}
-            className={`${ctx.btn} flex h-8 w-8 items-center justify-center ${temp ? "text-emerald-600 dark:text-emerald-400" : ""}`}
-          >
-            <EyeOff className="h-[15px] w-[15px]" strokeWidth={2} />
-          </motion.button>
-        </HoverTip>
+      {/* right cluster — individual floating controls, no group panel */}
+      <div className="flex items-center gap-1.5">
+        <TogglePill
+          ctx={ctx}
+          on={temp}
+          onClick={onTemp}
+          label={temp ? "Temporary chat · on" : "Temporary chat"}
+          desc="Hide this conversation from history and memory. Nothing is saved."
+          icon={temp ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+        />
         <PreferencesButton ctx={ctx} />
-        <span className="mx-0.5 h-4 w-px bg-foreground/10" aria-hidden />
-        {right ?? <Profile ctx={ctx} />}
+        <Profile ctx={ctx} />
       </div>
 
-      <SearchPalette open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <SearchPalette open={searchOpen} onClose={() => setSearchOpen(false)} ctx={ctx} />
     </div>
   );
 }
