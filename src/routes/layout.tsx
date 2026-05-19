@@ -1976,7 +1976,245 @@ function QuickChips({ ctx, limit = 8 }: { ctx: Ctx; limit?: number }) {
 }
 
 
+/* ───────────────────────── PreferencesButton + Panel ───────────────────────── */
+
+function PreferencesButton({ ctx }: { ctx: Ctx }) {
+  const [open, setOpen] = useState(false);
+  const settings = useSettings();
+  return (
+    <div className="relative">
+      <HoverTip label="Preferences" keys="⌘,">
+        <motion.button
+          onClick={() => setOpen((o) => !o)}
+          aria-label="Preferences"
+          aria-expanded={open}
+          whileTap={{ scale: 0.92 }}
+          transition={SPRING_TURN}
+          className={`${ctx.btn} flex h-8 w-8 items-center justify-center`}
+        >
+          <SlidersHorizontal className="h-[15px] w-[15px]" strokeWidth={2} />
+        </motion.button>
+      </HoverTip>
+
+      <AnimatePresence>
+        {open && (
+          <>
+            <div className="fixed inset-0 z-40" onMouseDown={() => setOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: -8, scale: 0.96, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -8, scale: 0.96, filter: "blur(6px)" }}
+              transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
+              style={{ transformOrigin: "top right" }}
+              className={`${ctx.panel} absolute top-full right-0 z-50 mt-2 w-[360px] overflow-hidden p-1`}
+            >
+              <PreferencesPanel ctx={ctx} settings={settings} />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function PreferencesPanel({ ctx, settings }: { ctx: Ctx; settings: Settings }) {
+  return (
+    <div className={`${ctx.panelInner} flex max-h-[min(80vh,640px)] flex-col overflow-y-auto`}>
+      {/* header */}
+      <div className="flex items-center justify-between border-b border-foreground/10 px-3 py-2">
+        <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] opacity-70">
+          <span aria-hidden className="inline-block h-1 w-1 rounded-full bg-foreground/60" />
+          Preferences
+        </span>
+        <button
+          onClick={() => settingsStore.reset()}
+          className="font-mono text-[9px] uppercase tracking-[0.18em] opacity-50 transition-opacity hover:opacity-90"
+        >
+          Reset
+        </button>
+      </div>
+
+      {/* Mode (light / dark) segmented */}
+      <SectionHeader label="Mode" />
+      <div className="px-3 pb-2">
+        <div className="relative grid grid-cols-2 gap-1 rounded-md border border-foreground/10 bg-foreground/[0.03] p-1">
+          {[
+            { id: "light", label: "Light", icon: Sun },
+            { id: "dark",  label: "Dark",  icon: Moon },
+          ].map((m) => {
+            const active = (m.id === "light") === settings.light;
+            return (
+              <button
+                key={m.id}
+                onClick={() => settingsStore.set("light", m.id === "light")}
+                className={`relative flex items-center justify-center gap-1.5 rounded-[5px] py-1.5 text-[11px] transition-colors ${
+                  active ? "text-foreground" : "text-foreground/55 hover:text-foreground/80"
+                }`}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="mode-active"
+                    className="absolute inset-0 rounded-[5px] bg-foreground/[0.08]"
+                    transition={{ type: "spring", stiffness: 480, damping: 32 }}
+                  />
+                )}
+                <m.icon className="relative h-3 w-3" />
+                <span className="relative">{m.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Theme presets */}
+      <SectionHeader label="Theme" />
+      <div className="grid grid-cols-2 gap-1.5 px-3 pb-2">
+        {THEME_PRESETS.map((p) => {
+          const active = settings.themeId === p.id;
+          return (
+            <motion.button
+              key={p.id}
+              onClick={() => settingsStore.set("themeId", p.id)}
+              whileTap={{ scale: 0.97 }}
+              transition={SPRING_TURN}
+              className={`group relative overflow-hidden rounded-md border p-2 text-left transition-all ${
+                active
+                  ? "border-emerald-500/60 bg-emerald-500/[0.05]"
+                  : "border-foreground/10 hover:border-foreground/25"
+              }`}
+              aria-pressed={active}
+            >
+              <div
+                className="mb-1.5 h-6 w-full rounded-sm border border-foreground/10"
+                style={{ background: `linear-gradient(135deg, ${p.bg} 0%, ${p.bg} 55%, ${p.accent} 55%, ${p.accent} 100%)` }}
+              />
+              <div className="flex items-center justify-between">
+                <span className="text-[10.5px] font-medium leading-none text-foreground">{p.name}</span>
+                {active && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={SPRING_POP}
+                    className="flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-background"
+                  >
+                    <Check className="h-2 w-2" strokeWidth={3} />
+                  </motion.span>
+                )}
+              </div>
+              <span className="mt-0.5 block text-[9px] leading-tight opacity-55">{p.tagline}</span>
+            </motion.button>
+          );
+        })}
+      </div>
+
+      {/* HSL sliders */}
+      <SectionHeader label="Accent · custom" />
+      <div className="space-y-2.5 px-3 pb-3">
+        <Slider label="Hue"        min={0}   max={360} value={settings.hue}        onChange={(v) => settingsStore.set("hue", v)}
+                track={`linear-gradient(90deg, #ff5a5a, #ffd000, #5aff5a, #5addff, #5a5aff, #ff5aff, #ff5a5a)`} />
+        <Slider label="Saturation" min={0}   max={100} value={settings.saturation} onChange={(v) => settingsStore.set("saturation", v)}
+                track={`linear-gradient(90deg, hsl(${settings.hue} 0% 60%), hsl(${settings.hue} 100% 55%))`} />
+        <Slider label="Lightness"  min={20}  max={95}  value={settings.lightness}  onChange={(v) => settingsStore.set("lightness", v)}
+                track={`linear-gradient(90deg, hsl(${settings.hue} ${settings.saturation}% 25%), hsl(${settings.hue} ${settings.saturation}% 95%))`} />
+        <div className="flex items-center justify-between rounded-md border border-foreground/10 bg-foreground/[0.03] px-2 py-1.5">
+          <span className="font-mono text-[9px] uppercase tracking-[0.18em] opacity-55">Preview</span>
+          <div className="flex items-center gap-1.5">
+            <span
+              className="h-4 w-4 rounded-full border border-foreground/15"
+              style={{ background: `hsl(${settings.hue} ${settings.saturation}% ${settings.lightness}%)` }}
+            />
+            <span className="font-mono text-[9px] tabular-nums opacity-65">
+              {Math.round(settings.hue)}·{Math.round(settings.saturation)}·{Math.round(settings.lightness)}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Button style picker */}
+      <SectionHeader label="Button style" right={<span className="font-mono text-[9px] tabular-nums opacity-50">10</span>} />
+      <div className="grid grid-cols-2 gap-1.5 px-3 pb-3">
+        {BUTTON_STYLES.map((s) => {
+          const active = settings.buttonStyleId === s.id;
+          const cls = settings.light ? s.lightClass : s.darkClass;
+          return (
+            <button
+              key={s.id}
+              onClick={() => settingsStore.set("buttonStyleId", s.id)}
+              aria-pressed={active}
+              className={`group relative flex items-center gap-2 rounded-md border p-1.5 pr-2 text-left transition-all ${
+                active
+                  ? "border-emerald-500/60 bg-emerald-500/[0.04]"
+                  : "border-foreground/10 hover:border-foreground/25"
+              }`}
+            >
+              <span className={`${cls} flex h-7 w-7 shrink-0 items-center justify-center text-[11px]`}>
+                <span>Aa</span>
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span className="truncate text-[10.5px] leading-tight text-foreground">{s.name}</span>
+                <span className="truncate text-[9px] leading-tight opacity-50">{s.id}</span>
+              </span>
+              {active && (
+                <span className="flex h-3 w-3 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-background">
+                  <Check className="h-2 w-2" strokeWidth={3} />
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* footer */}
+      <div className="flex items-center justify-between border-t border-foreground/10 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] opacity-50">
+        <span>auto-saved</span>
+        <Link to="/connectors" className="underline-offset-4 hover:underline">connectors lab →</Link>
+      </div>
+    </div>
+  );
+}
+
+function SectionHeader({ label, right }: { label: string; right?: ReactNode }) {
+  return (
+    <div className="flex items-center gap-1.5 px-3 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.2em] opacity-50">
+      <span>{label}</span>
+      <span className="h-px flex-1 bg-foreground/10" />
+      {right}
+    </div>
+  );
+}
+
+function Slider({ label, min, max, value, onChange, track }: {
+  label: string; min: number; max: number; value: number; onChange: (v: number) => void; track: string;
+}) {
+  return (
+    <label className="block">
+      <div className="mb-1 flex items-center justify-between text-[10px]">
+        <span className="opacity-70">{label}</span>
+        <span className="font-mono tabular-nums opacity-50">{Math.round(value)}</span>
+      </div>
+      <div className="relative h-4">
+        <span
+          aria-hidden
+          className="pointer-events-none absolute left-0 right-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full border border-foreground/10"
+          style={{ background: track }}
+        />
+        <input
+          type="range"
+          min={min}
+          max={max}
+          value={value}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="lumen-range absolute inset-0 w-full appearance-none bg-transparent"
+          aria-label={label}
+        />
+      </div>
+    </label>
+  );
+}
+
 /* ───────────────────────── chrome ───────────────────────── */
+
+
 
 function TopBar({
   ctx, sideOpen, onSide, onTemp, temp, right,
