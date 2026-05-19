@@ -15,6 +15,14 @@ type Style = {
   /** optional inner-span wrapper (for nested-frame styles) */
   inner?: boolean;
   bg: string;
+  /** optional explicit route override (otherwise /v{idx+1}) */
+  route?: string;
+  /** optional override classes for individual control slots */
+  sendClass?: string;
+  chipClass?: string;
+  /** wrap the showcase in a nested inner panel */
+  panel?: string;
+  panelInner?: string;
 };
 
 const STYLES: Style[] = [
