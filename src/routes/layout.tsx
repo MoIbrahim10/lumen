@@ -109,7 +109,7 @@ function TogglePill({
   label: string; desc: string; icon: ReactNode;
 }) {
   return (
-    <HoverTip label={label} keys={desc}>
+    <HoverTip label={label} desc={desc}>
       <motion.button
         type="button"
         onClick={onClick}
