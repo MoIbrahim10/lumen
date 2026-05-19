@@ -697,37 +697,28 @@ function StatusTicker() {
     return () => clearInterval(t);
   }, []);
   const word = STATUS_STATES[idx];
-  const longest = STATUS_STATES.reduce((a, b) => (a.length >= b.length ? a : b));
 
   return (
-    <span className="flex items-center gap-2.5 font-mono text-[10px] uppercase tracking-[0.25em] opacity-70">
+    <motion.span
+      layout
+      className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] opacity-70"
+    >
       <DepthMeter state={word} />
-      <span className="relative inline-block" style={{ minWidth: `${longest.length}ch` }}>
-        <span className="invisible">{longest}</span>
-        <span className="absolute inset-0 flex">
-          {Array.from(word).map((ch, i) => (
-            <span key={i} className="relative inline-block" style={{ width: "1ch" }}>
-              <AnimatePresence mode="popLayout" initial={false}>
-                <motion.span
-                  key={`${idx}-${ch}-${i}`}
-                  initial={{ y: "-90%", opacity: 0, filter: "blur(2px)" }}
-                  animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
-                  exit={{ y: "90%", opacity: 0, filter: "blur(2px)" }}
-                  transition={{
-                    duration: 0.32,
-                    delay: i * 0.025,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                  className="absolute inset-0 inline-block"
-                >
-                  {ch}
-                </motion.span>
-              </AnimatePresence>
-            </span>
-          ))}
-        </span>
+      <span className="relative inline-flex overflow-hidden" style={{ height: "1em" }}>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            key={word}
+            initial={{ y: "-100%", opacity: 0, filter: "blur(3px)" }}
+            animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
+            exit={{ y: "100%", opacity: 0, filter: "blur(3px)" }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            className="inline-block leading-none"
+          >
+            {word}
+          </motion.span>
+        </AnimatePresence>
       </span>
-    </span>
+    </motion.span>
   );
 }
 
