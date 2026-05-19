@@ -842,12 +842,6 @@ function SessionMark() {
 function Greeting({ className = "" }: { className?: string }) {
   return (
     <div className={`flex flex-col items-center gap-3 ${className}`}>
-      {/* tiny eyebrow line — anchors the headline visually */}
-      <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.32em] opacity-50">
-        <span aria-hidden className="h-px w-6 bg-foreground/40" />
-        <span>Compose · 14:15 local</span>
-        <span aria-hidden className="h-px w-6 bg-foreground/40" />
-      </div>
       <h1 className="text-center text-[36px] font-light leading-[1] tracking-tight md:text-[52px]">
         <span className="opacity-90">what&rsquo;s on your</span>
         <span className="ml-2 italic font-normal" style={{ fontFamily: "ui-serif, Georgia, serif" }}>
