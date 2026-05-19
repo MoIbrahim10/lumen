@@ -2892,6 +2892,21 @@ function LayoutGallery() {
   const settings = useSettings();
   const { light, themeId, hue, saturation, lightness, buttonStyleId } = settings;
 
+  // Sync html.dark + CSS vars so portaled Radix surfaces (Dialog, Popover, Tooltip)
+  // pick up the active theme — they render outside the page wrapper.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (light) root.classList.remove("dark"); else root.classList.add("dark");
+    const preset = THEME_PRESETS.find((p) => p.id === themeId) ?? THEME_PRESETS[1];
+    const mode = light ? preset.light : preset.dark;
+    root.style.setProperty("--lumen-page-bg", mode.bg);
+    root.style.setProperty("--lumen-page-fg", mode.fg);
+    root.style.setProperty("--lumen-panel", mode.panel);
+    root.style.setProperty("--lumen-accent", `hsl(${hue} ${saturation}% ${lightness}%)`);
+    root.style.setProperty("--lumen-preset-accent", mode.accent);
+    return () => { root.classList.remove("dark"); };
+  }, [light, themeId, hue, saturation, lightness]);
+
   const style = BUTTON_STYLES.find((s) => s.id === buttonStyleId) ?? BUTTON_STYLES[0];
   const btnClass = light ? style.lightClass : style.darkClass;
   const panelClass = light ? style.panelLight : style.panelDarkClass;
