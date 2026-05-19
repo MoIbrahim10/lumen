@@ -8,7 +8,7 @@ import {
   Plus, History, Library, FolderClosed, Cpu, Plug,
   Settings, User, ChevronRight, PanelLeft, X, ArrowRight, Check,
   Sparkles, Feather, Smile, Scissors, Wand2,
-  Upload, Link2, ClipboardPaste, Camera, Github, Database, Calendar,
+  Upload, Link2, ClipboardPaste, Github, Database, Calendar,
   Hash, Film, FileAudio,
 } from "lucide-react";
 import {
