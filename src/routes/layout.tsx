@@ -383,11 +383,15 @@ function CycleButton({
         <span className="opacity-60">{label}</span>
         <motion.span
           key={`g-${index}`}
-          initial={{ rotate: -8, scale: 0.85, opacity: 0 }}
-          animate={{ rotate: 0, scale: 1, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 460, damping: 24 }}
+          initial={{ rotate: -14, scale: 0.7 }}
+          animate={{ rotate: [-14, 8, 0], scale: [0.7, 1.18, 1] }}
+          transition={{
+            scale: { type: "spring", stiffness: 520, damping: 16, mass: 0.6 },
+            rotate: { type: "spring", stiffness: 480, damping: 18 },
+          }}
           className="inline-flex"
         >
+
           {glyph(index)}
         </motion.span>
       </motion.button>
