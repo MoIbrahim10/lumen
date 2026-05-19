@@ -2005,27 +2005,25 @@ function TopBar({
 
   return (
     <div className="flex h-14 items-center justify-between gap-3 px-4">
-      {/* fixed pill stays in same place; menu bg expands from behind it */}
-      <LeftPill sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
+      <LeftPill ctx={ctx} sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
       <div />
 
-
-      {/* right cluster — temp + preferences + profile */}
-      <div className="flex items-center bg-white border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] rounded-lg p-1 gap-0.5">
-        <button
-          onClick={onTemp}
-          aria-label={temp ? "Temporary chat on" : "Temporary chat"}
-          className={`p-2 hover:bg-zinc-50 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer ${temp ? "text-zinc-900" : "text-zinc-400"}`}
-        >
-          <EyeOff className="h-[18px] w-[18px]" strokeWidth={2} />
-        </button>
-        <button
-          aria-label="Preferences"
-          className="p-2 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer"
-        >
-          <SlidersHorizontal className="h-[18px] w-[18px]" strokeWidth={2} />
-        </button>
-        <span className="w-px h-4 bg-zinc-200/60 mx-1" aria-hidden />
+      {/* right cluster — temp + preferences + profile, matches composer */}
+      <div className={`${ctx.panel} flex items-center gap-1 p-1`}>
+        <HoverTip label={temp ? "Temporary chat on" : "Temporary chat"} keys="⌘⇧T">
+          <motion.button
+            onClick={onTemp}
+            aria-label={temp ? "Temporary chat on" : "Temporary chat"}
+            aria-pressed={temp}
+            whileTap={{ scale: 0.92 }}
+            transition={SPRING_TURN}
+            className={`${ctx.btn} flex h-8 w-8 items-center justify-center ${temp ? "text-emerald-600 dark:text-emerald-400" : ""}`}
+          >
+            <EyeOff className="h-[15px] w-[15px]" strokeWidth={2} />
+          </motion.button>
+        </HoverTip>
+        <PreferencesButton ctx={ctx} />
+        <span className="mx-0.5 h-4 w-px bg-foreground/10" aria-hidden />
         {right ?? <Profile ctx={ctx} />}
       </div>
 
@@ -2033,6 +2031,7 @@ function TopBar({
     </div>
   );
 }
+
 
 /* ───────────────────────── 10 layouts ───────────────────────── */
 
