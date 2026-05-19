@@ -1340,11 +1340,36 @@ function AttachButton({ ctx }: { ctx: Ctx }) {
     );
   };
 
+  const captureScreen = async () => {
+    const md = (navigator as any).mediaDevices;
+    if (!md?.getDisplayMedia) {
+      attachmentsStore.add({ kind: "image", name: "screen-capture.png", meta: "screen" });
+      return;
+    }
+    try {
+      const stream: MediaStream = await md.getDisplayMedia({ video: true });
+      const track = stream.getVideoTracks()[0];
+      const settings = track.getSettings();
+      const video = document.createElement("video");
+      video.srcObject = stream;
+      await video.play();
+      const canvas = document.createElement("canvas");
+      canvas.width = settings.width || video.videoWidth;
+      canvas.height = settings.height || video.videoHeight;
+      canvas.getContext("2d")?.drawImage(video, 0, 0, canvas.width, canvas.height);
+      track.stop();
+      const size = `${canvas.width}×${canvas.height}`;
+      attachmentsStore.add({ kind: "image", name: `screen-${Date.now().toString(36)}.png`, meta: size });
+    } catch {
+      /* user cancelled */
+    }
+  };
+
   const sources = [
     { id: "upload", label: "Upload", glyph: <Upload className="h-3.5 w-3.5" />, hint: "From device",
       onClick: () => fileRef.current?.click() },
-    { id: "image",  label: "Image",  glyph: <ImageIcon className="h-3.5 w-3.5" />, hint: "PNG · JPG · WEBP",
-      onClick: () => imageRef.current?.click() },
+    { id: "screen", label: "Screen", glyph: <MonitorUp className="h-3.5 w-3.5" />, hint: "Capture region",
+      onClick: () => { void captureScreen(); } },
     { id: "url",    label: "Link",   glyph: <Link2 className="h-3.5 w-3.5" />, hint: "Paste a URL",
       onClick: () => setMode("url") },
     { id: "text",   label: "Snippet",glyph: <ClipboardPaste className="h-3.5 w-3.5" />, hint: "Paste text",
