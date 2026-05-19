@@ -1046,7 +1046,7 @@ function DepthMeter({ state }: { state: StatusState }) {
     // Wrapper tweens amplitude + opacity smoothly when state changes —
     // no keyframe restart, no timing jump.
     <motion.span
-      className="flex h-2.5 items-end gap-[2px] translate-y-[1px] origin-bottom"
+      className="flex h-2.5 items-end gap-[2px] -translate-x-[2px] translate-y-[1px] origin-bottom"
       animate={{ scaleY: profile.intensity, opacity: profile.opacity }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       aria-hidden
