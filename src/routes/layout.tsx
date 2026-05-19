@@ -1027,22 +1027,23 @@ function SendButton({ ctx }: { ctx: Ctx }) {
         aria-label="Send"
         whileHover={disabled ? undefined : { scale: 1.06 }}
         whileTap={disabled ? undefined : { scale: 0.9 }}
+        animate={{ opacity: disabled && !sent ? 0.55 : 1 }}
         transition={{ type: "spring", stiffness: 500, damping: 22 }}
-        className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center overflow-hidden transition-opacity ${
-          disabled && !sent ? "opacity-35 cursor-not-allowed" : "cursor-pointer"
+        className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center overflow-hidden ${
+          disabled && !sent ? "cursor-default" : "cursor-pointer"
         }`}
       >
-        {/* aura ring on send */}
+        {/* aura on send — matches button radius */}
         <AnimatePresence>
           {sent && (
             <motion.span
               key="aura"
               aria-hidden
-              initial={{ scale: 0.4, opacity: 0.6 }}
-              animate={{ scale: 2.2, opacity: 0 }}
+              initial={{ scale: 1, opacity: 0.55 }}
+              animate={{ scale: 1.9, opacity: 0 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-              className="absolute inset-0 rounded-full border border-foreground/50"
+              transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0 rounded-[inherit] border border-foreground/45"
             />
           )}
         </AnimatePresence>
@@ -1094,27 +1095,27 @@ function DictateButton({ ctx }: { ctx: Ctx }) {
         transition={{ type: "spring", stiffness: 500, damping: 22 }}
         className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center overflow-visible`}
       >
-        {/* two pulsing rings while listening */}
+        {/* pulsing rings while listening — match button radius, smoother */}
         <AnimatePresence>
           {listening && (
             <>
               <motion.span
                 key="ring1"
                 aria-hidden
-                initial={{ scale: 0.8, opacity: 0.5 }}
-                animate={{ scale: [0.9, 1.9], opacity: [0.5, 0] }}
+                initial={{ scale: 1, opacity: 0 }}
+                animate={{ scale: [1, 1.6], opacity: [0.5, 0] }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
-                className="absolute inset-0 rounded-full border border-rose-500/60"
+                transition={{ duration: 2.2, repeat: Infinity, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute inset-0 rounded-[inherit] border border-rose-500/55"
               />
               <motion.span
                 key="ring2"
                 aria-hidden
-                initial={{ scale: 0.8, opacity: 0.4 }}
-                animate={{ scale: [0.9, 2.2], opacity: [0.4, 0] }}
+                initial={{ scale: 1, opacity: 0 }}
+                animate={{ scale: [1, 1.9], opacity: [0.35, 0] }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut", delay: 0.5 }}
-                className="absolute inset-0 rounded-full border border-rose-500/40"
+                transition={{ duration: 2.2, repeat: Infinity, ease: [0.22, 1, 0.36, 1], delay: 1.0 }}
+                className="absolute inset-0 rounded-[inherit] border border-rose-500/35"
               />
             </>
           )}
@@ -1122,27 +1123,27 @@ function DictateButton({ ctx }: { ctx: Ctx }) {
 
         <AnimatePresence mode="wait" initial={false}>
           {listening ? (
-            // mic morphs into a live mini waveform (4 dancing bars)
+            // mic morphs into a live mini waveform (4 gently dancing bars)
             <motion.span
               key="wave"
               initial={{ scale: 0.6, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.6, opacity: 0 }}
               transition={{ type: "spring", stiffness: 520, damping: 24 }}
-              className="flex h-4 items-end gap-[2px]"
+              className="flex h-4 items-center gap-[2px]"
               aria-hidden
             >
               {[0, 1, 2, 3].map((i) => (
                 <motion.span
                   key={i}
-                  className="block w-[2px] rounded-[1px] bg-rose-500 origin-bottom"
-                  animate={{ scaleY: [0.3, 1, 0.5, 0.85, 0.3] }}
+                  className="block w-[2px] rounded-[1px] bg-rose-500/85 origin-center"
                   style={{ height: "100%" }}
+                  animate={{ scaleY: [0.4, 0.85, 0.55, 0.95, 0.45] }}
                   transition={{
-                    duration: 0.9,
+                    duration: 2.0,
                     repeat: Infinity,
                     ease: "easeInOut",
-                    delay: i * 0.09,
+                    delay: i * 0.18,
                   }}
                 />
               ))}
