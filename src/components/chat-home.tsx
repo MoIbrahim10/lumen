@@ -13,7 +13,8 @@ export type Variant =
   | "dot"
   | "emboss"
   | "etch"
-  | "stack";
+  | "stack"
+  | "clean";
 
 type Cfg = {
   name: string;
@@ -131,6 +132,15 @@ const CFG: Record<Variant, Omit<Cfg, "name" | "number" | "variant">> = {
     bg: { background: "#f4f4f4" },
     headline: "font-grotesk",
     micro: "Stacked · layered cards.",
+  },
+  clean: {
+    mode: "light",
+    btnClass: "btn-clean",
+    sendClass: "btn-clean-primary",
+    chipClass: "btn-clean-soft",
+    bg: { background: "#ebebed" },
+    headline: "font-light tracking-tight",
+    micro: "Cupertino · clean nested cards.",
   },
 };
 
