@@ -1753,50 +1753,47 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                     <span className="h-px flex-1 bg-border/40" />
                     <span className="tabular-nums opacity-70">{conns.size}/{CONN_DEFS.length}</span>
                   </div>
-                  <div className="grid grid-cols-6 gap-1">
+                  <div className="grid grid-cols-6 gap-1.5">
                     {CONN_DEFS.map((c, i) => {
                       const on = conns.has(c.id);
                       const linked = c.status === "linked";
                       const Icon = c.icon;
                       return (
-                        <motion.button
+                        <HoverTip
                           key={c.id}
-                          type="button"
-                          initial={{ opacity: 0, y: 4 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.04 + i * 0.025, duration: 0.22 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => { if (linked) toolsStore.toggleConn(c.id); }}
-                          aria-pressed={on}
-                          title={
-                            on ? `${c.label} · active`
-                              : linked ? `${c.label} · tap to enable`
-                              : `${c.label} · authenticate to connect`
-                          }
-                          className={`group/conn relative flex aspect-square items-center justify-center rounded-md border transition-all ${
-                            on
-                              ? "border-emerald-500/60 bg-emerald-500/[0.12] text-emerald-600 dark:text-emerald-400"
-                              : "border-border/50 bg-foreground/[0.02] text-foreground/75 hover:bg-foreground/[0.06]"
-                          }`}
+                          label={c.label}
+                          desc={on ? "Active · tap to disable" : linked ? "Linked · tap to enable" : "Authenticate to connect"}
                         >
-                          {on && (
-                            <motion.span
-                              aria-hidden
-                              animate={{ scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }}
-                              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                              className="absolute right-0.5 top-0.5 h-1 w-1 rounded-full bg-emerald-500"
-                            />
-                          )}
-                          {!linked && (
-                            <span
-                              aria-hidden
-                              className="absolute right-0 top-0 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400"
-                            >
-                              <span className="font-mono text-[7px] font-bold leading-none">!</span>
-                            </span>
-                          )}
-                          <Icon className="h-3.5 w-3.5" />
-                        </motion.button>
+                          <motion.button
+                            type="button"
+                            initial={{ opacity: 0, y: 4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.04 + i * 0.025, duration: 0.22 }}
+                            whileTap={{ scale: 0.92 }}
+                            onClick={() => { if (linked) toolsStore.toggleConn(c.id); }}
+                            aria-pressed={on}
+                            aria-label={c.label}
+                            className={`${ctx.light ? "btn-mech-light" : "btn-mech"} relative flex aspect-square w-full items-center justify-center ${on ? "ring-1 ring-emerald-500/60" : ""}`}
+                          >
+                            <Icon className={`h-3.5 w-3.5 transition-colors ${on ? "text-emerald-600 dark:text-emerald-400" : ""}`} />
+                            {on && (
+                              <motion.span
+                                aria-hidden
+                                animate={{ scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }}
+                                transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                                className="absolute right-1 top-1 h-1 w-1 rounded-full bg-emerald-500"
+                              />
+                            )}
+                            {!linked && (
+                              <span
+                                aria-hidden
+                                className="absolute right-0.5 top-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-amber-500 text-[7px] font-bold leading-none text-white"
+                              >
+                                !
+                              </span>
+                            )}
+                          </motion.button>
+                        </HoverTip>
                       );
                     })}
                   </div>
