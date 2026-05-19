@@ -973,6 +973,16 @@ function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
         rows={rows}
         value={value}
         onChange={(e) => composerStore.setValue(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            const v = composerStore.get().value.trim();
+            if (v.length > 0 && !composerStore.get().streaming) {
+              e.preventDefault();
+              // brief "sent" pulse via store reset
+              composerStore.setValue("");
+            }
+          }
+        }}
         placeholder="Type a prompt …"
         className="w-full resize-none bg-transparent text-[15px] leading-relaxed placeholder:opacity-40 focus:outline-none"
         style={{ color: "inherit" }}
