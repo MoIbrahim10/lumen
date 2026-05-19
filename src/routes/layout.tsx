@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ReactNode, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "motion/react";
 import {
-  Paperclip, Mic, Wrench, ArrowUp, Globe, Brain, ChevronDown, Sun, Moon,
+  Paperclip, Mic, Wrench, ArrowUp, Globe, Brain, ChevronDown, Sun, Moon, Eye,
   SlidersHorizontal, Menu, EyeOff, FileText, Mail, Code2, Search,
   ScanSearch, Lightbulb, Presentation, Image as ImageIcon,
   Plus, History, Library, FolderClosed, Cpu, Plug,
@@ -796,24 +796,64 @@ function Profile({ ctx, align = "right" }: { ctx: Ctx; align?: "left" | "right" 
   const [open, setOpen] = useState(false);
   return (
     <div className="relative">
-      <button
+      <motion.button
         onClick={() => setOpen(!open)}
-        className={`${ctx.btn} flex h-9 w-9 items-center justify-center p-0`}
+        whileTap={{ scale: 0.92 }}
+        transition={SPRING_TURN}
+        className={`${ctx.btn} flex h-[30px] w-[30px] items-center justify-center p-0`}
         aria-label="Profile"
       >
-        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-[10px] text-background">EM</span>
-      </button>
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className={`absolute top-full z-50 mt-1 min-w-[180px] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg ${align === "right" ? "right-0" : "left-0"}`}>
-            <div className="border-b border-border px-3 py-2 text-[11px] opacity-60">Emma · emma@lumen.app</div>
-            {["Account", "Billing", "Workspace", "Sign out"].map((o) => (
-              <div key={o} className="block px-3 py-2 text-xs hover:bg-muted cursor-pointer">{o}</div>
-            ))}
-          </div>
-        </>
-      )}
+        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-[9px] font-medium text-background">EM</span>
+      </motion.button>
+      <AnimatePresence>
+        {open && (
+          <>
+            <div className="fixed inset-0 z-40" onMouseDown={() => setOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: -6, scale: 0.96, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -6, scale: 0.96, filter: "blur(4px)" }}
+              transition={{ type: "spring", stiffness: 420, damping: 30, mass: 0.5 }}
+              style={{ transformOrigin: align === "right" ? "top right" : "top left" }}
+              className={`${ctx.panel} absolute top-full z-50 mt-2 w-[220px] overflow-hidden p-1 ${align === "right" ? "right-0" : "left-0"}`}
+            >
+              <div className={`${ctx.panelInner} flex flex-col`}>
+                <div className="flex items-center gap-2.5 border-b border-foreground/10 px-3 py-2.5">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-foreground text-[10px] font-medium text-background">EM</span>
+                  <div className="flex flex-col leading-tight">
+                    <span className="text-[12px] font-medium">Emma</span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.18em] opacity-50">emma@lumen.app</span>
+                  </div>
+                </div>
+                <div className="flex flex-col p-1">
+                  {[
+                    { label: "Account", icon: User },
+                    { label: "Billing", icon: FileText },
+                    { label: "Workspace", icon: FolderClosed },
+                  ].map((o) => (
+                    <button
+                      key={o.label}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-[11px] transition-colors hover:bg-foreground/[0.06]"
+                    >
+                      <o.icon className="h-3.5 w-3.5 opacity-60" />
+                      {o.label}
+                    </button>
+                  ))}
+                  <span aria-hidden className="my-1 h-px bg-foreground/10" />
+                  <button
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-[11px] text-red-500 transition-colors hover:bg-red-500/[0.08]"
+                  >
+                    <ArrowRight className="h-3.5 w-3.5 opacity-70" />
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -832,31 +872,35 @@ function LeftPill({ ctx, sideOpen, onSide, onSearch }: {
   ctx: Ctx; sideOpen: boolean; onSide?: () => void; onSearch: () => void;
 }) {
   return (
-    <div className={`${ctx.panel} fixed top-3 left-4 z-40 flex items-center gap-1 p-1`}>
+    <div className="fixed top-3 left-4 z-40 flex items-center gap-1.5">
       {onSide && (
+        <HoverTip label={sideOpen ? "Close menu" : "Open menu"} keys="⌘B">
+          <motion.button
+            onClick={onSide}
+            aria-label={sideOpen ? "Close menu" : "Open menu"}
+            whileTap={{ scale: 0.92 }}
+            transition={SPRING_TURN}
+            className={`${ctx.btn} flex h-[30px] w-[30px] items-center justify-center`}
+          >
+            <PanelLeft
+              className="h-[15px] w-[15px] transition-transform duration-300 ease-out"
+              strokeWidth={2}
+              style={{ transform: sideOpen ? "scaleX(-1)" : "scaleX(1)" }}
+            />
+          </motion.button>
+        </HoverTip>
+      )}
+      <HoverTip label="Search" keys="⌘K">
         <motion.button
-          onClick={onSide}
-          aria-label={sideOpen ? "Close menu" : "Open menu"}
+          onClick={onSearch}
+          aria-label="Search"
           whileTap={{ scale: 0.92 }}
           transition={SPRING_TURN}
-          className={`${ctx.btn} flex h-8 w-8 items-center justify-center`}
+          className={`${ctx.btn} flex h-[30px] w-[30px] items-center justify-center`}
         >
-          <PanelLeft
-            className="h-[15px] w-[15px] transition-transform duration-300 ease-out"
-            strokeWidth={2}
-            style={{ transform: sideOpen ? "scaleX(-1)" : "scaleX(1)" }}
-          />
+          <Search className="h-[15px] w-[15px]" strokeWidth={2} />
         </motion.button>
-      )}
-      <motion.button
-        onClick={onSearch}
-        aria-label="Search"
-        whileTap={{ scale: 0.92 }}
-        transition={SPRING_TURN}
-        className={`${ctx.btn} flex h-8 w-8 items-center justify-center`}
-      >
-        <Search className="h-[15px] w-[15px]" strokeWidth={2} />
-      </motion.button>
+      </HoverTip>
     </div>
   );
 }
@@ -904,34 +948,56 @@ function SideMenu({ ctx, open }: { ctx: Ctx; open: boolean; onToggle?: () => voi
   );
 }
 
-function SearchPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
+function SearchPalette({ open, onClose, ctx }: { open: boolean; onClose: () => void; ctx: Ctx }) {
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="overflow-hidden p-0 sm:max-w-[560px]">
-        <Command className="[&_[cmdk-input]]:h-12">
-          <CommandInput placeholder="Type a command or search your threads…" />
-          <CommandList>
-            <CommandEmpty>No results.</CommandEmpty>
-            <CommandGroup>
-              <CommandItem><Plus className="h-4 w-4" /> New chat <CommandShortcut>⌘N</CommandShortcut></CommandItem>
-            </CommandGroup>
-            <CommandSeparator />
-            <CommandGroup heading="Chat">
-              <CommandItem><History className="h-4 w-4" /> Manage chat history</CommandItem>
-              <CommandItem><Cpu className="h-4 w-4" /> View all available models</CommandItem>
-              <CommandItem><Paperclip className="h-4 w-4" /> View all uploaded attachments</CommandItem>
-            </CommandGroup>
-            <CommandSeparator />
-            <CommandGroup heading="Profiles">
-              <CommandItem>✓ Default</CommandItem>
-              <CommandItem><Plus className="h-4 w-4" /> Create new profile</CommandItem>
-            </CommandGroup>
-          </CommandList>
-          <div className="flex items-center justify-end gap-2 border-t border-border px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            <kbd className="rounded border border-border bg-muted/40 px-1.5 py-[1px] font-mono">↵</kbd>
-            <span>type to search or start a new chat</span>
-          </div>
-        </Command>
+      <DialogContent className={`${ctx.panel} overflow-hidden border-0 p-1 shadow-2xl sm:max-w-[560px]`}>
+        <div className={`${ctx.panelInner} overflow-hidden`}>
+          <Command className="bg-transparent [&_[cmdk-input]]:h-12 [&_[cmdk-input]]:bg-transparent [&_[cmdk-input-wrapper]]:border-foreground/10">
+            <CommandInput placeholder="Type a command or search your threads…" />
+            <CommandList className="px-1 py-1">
+              <CommandEmpty className="py-6 text-center font-mono text-[10px] uppercase tracking-[0.2em] opacity-50">
+                No results
+              </CommandEmpty>
+              <CommandGroup>
+                <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/[0.06]">
+                  <Plus className="h-3.5 w-3.5 opacity-70" /> New chat <CommandShortcut className="font-mono text-[9px] tracking-[0.18em] opacity-50">⌘N</CommandShortcut>
+                </CommandItem>
+              </CommandGroup>
+              <CommandSeparator className="my-1 bg-foreground/10" />
+              <CommandGroup heading="Chat" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-mono [&_[cmdk-group-heading]]:text-[9px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.22em] [&_[cmdk-group-heading]]:opacity-50">
+                <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/[0.06]">
+                  <History className="h-3.5 w-3.5 opacity-70" /> Manage chat history
+                </CommandItem>
+                <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/[0.06]">
+                  <Cpu className="h-3.5 w-3.5 opacity-70" /> View all available models
+                </CommandItem>
+                <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/[0.06]">
+                  <Paperclip className="h-3.5 w-3.5 opacity-70" /> View all uploaded attachments
+                </CommandItem>
+              </CommandGroup>
+              <CommandSeparator className="my-1 bg-foreground/10" />
+              <CommandGroup heading="Profiles" className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-mono [&_[cmdk-group-heading]]:text-[9px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.22em] [&_[cmdk-group-heading]]:opacity-50">
+                <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/[0.06]">
+                  <Check className="h-3.5 w-3.5 text-emerald-500" /> Default
+                </CommandItem>
+                <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/[0.06]">
+                  <Plus className="h-3.5 w-3.5 opacity-70" /> Create new profile
+                </CommandItem>
+              </CommandGroup>
+            </CommandList>
+            <div className="flex items-center justify-between gap-2 border-t border-foreground/10 px-3 py-2 font-mono text-[9px] uppercase tracking-[0.22em] opacity-50">
+              <span className="flex items-center gap-1.5">
+                <span aria-hidden className="h-1 w-1 rounded-full bg-foreground/50" />
+                <span>Search</span>
+              </span>
+              <span className="flex items-center gap-1.5">
+                <kbd className="rounded-sm border border-foreground/15 bg-foreground/[0.04] px-1.5 py-[1px]">↵</kbd>
+                <span className="normal-case tracking-normal">open</span>
+              </span>
+            </div>
+          </Command>
+        </div>
       </DialogContent>
     </Dialog>
   );
@@ -980,7 +1046,7 @@ function DepthMeter({ state }: { state: StatusState }) {
     // Wrapper tweens amplitude + opacity smoothly when state changes —
     // no keyframe restart, no timing jump.
     <motion.span
-      className="flex h-2.5 items-end gap-[2px] translate-y-[1px] origin-bottom"
+      className="flex h-2.5 items-end gap-[2px] -translate-x-[2px] translate-y-[1px] origin-bottom"
       animate={{ scaleY: profile.intensity, opacity: profile.opacity }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       aria-hidden
@@ -1753,50 +1819,47 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                     <span className="h-px flex-1 bg-border/40" />
                     <span className="tabular-nums opacity-70">{conns.size}/{CONN_DEFS.length}</span>
                   </div>
-                  <div className="grid grid-cols-6 gap-1">
+                  <div className="grid grid-cols-6 gap-1.5">
                     {CONN_DEFS.map((c, i) => {
                       const on = conns.has(c.id);
                       const linked = c.status === "linked";
                       const Icon = c.icon;
                       return (
-                        <motion.button
+                        <HoverTip
                           key={c.id}
-                          type="button"
-                          initial={{ opacity: 0, y: 4 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.04 + i * 0.025, duration: 0.22 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => { if (linked) toolsStore.toggleConn(c.id); }}
-                          aria-pressed={on}
-                          title={
-                            on ? `${c.label} · active`
-                              : linked ? `${c.label} · tap to enable`
-                              : `${c.label} · authenticate to connect`
-                          }
-                          className={`group/conn relative flex aspect-square items-center justify-center rounded-md border transition-all ${
-                            on
-                              ? "border-emerald-500/60 bg-emerald-500/[0.12] text-emerald-600 dark:text-emerald-400"
-                              : "border-border/50 bg-foreground/[0.02] text-foreground/75 hover:bg-foreground/[0.06]"
-                          }`}
+                          label={c.label}
+                          desc={on ? "Active · tap to disable" : linked ? "Linked · tap to enable" : "Authenticate to connect"}
                         >
-                          {on && (
-                            <motion.span
-                              aria-hidden
-                              animate={{ scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }}
-                              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                              className="absolute right-0.5 top-0.5 h-1 w-1 rounded-full bg-emerald-500"
-                            />
-                          )}
-                          {!linked && (
-                            <span
-                              aria-hidden
-                              className="absolute right-0 top-0 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400"
-                            >
-                              <span className="font-mono text-[7px] font-bold leading-none">!</span>
-                            </span>
-                          )}
-                          <Icon className="h-3.5 w-3.5" />
-                        </motion.button>
+                          <motion.button
+                            type="button"
+                            initial={{ opacity: 0, y: 4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.04 + i * 0.025, duration: 0.22 }}
+                            whileTap={{ scale: 0.92 }}
+                            onClick={() => { if (linked) toolsStore.toggleConn(c.id); }}
+                            aria-pressed={on}
+                            aria-label={c.label}
+                            className={`${ctx.light ? "btn-mech-light" : "btn-mech"} relative flex aspect-square w-full items-center justify-center ${on ? "ring-1 ring-emerald-500/60" : ""}`}
+                          >
+                            <Icon className={`h-3.5 w-3.5 transition-colors ${on ? "text-emerald-600 dark:text-emerald-400" : ""}`} />
+                            {on && (
+                              <motion.span
+                                aria-hidden
+                                animate={{ scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }}
+                                transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                                className="absolute right-1 top-1 h-1 w-1 rounded-full bg-emerald-500"
+                              />
+                            )}
+                            {!linked && (
+                              <span
+                                aria-hidden
+                                className="absolute right-0.5 top-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-amber-500 text-[7px] font-bold leading-none text-white"
+                              >
+                                !
+                              </span>
+                            )}
+                          </motion.button>
+                        </HoverTip>
                       );
                     })}
                   </div>
@@ -2217,7 +2280,7 @@ function Slider({ label, min, max, value, onChange, track }: {
 
 
 function TopBar({
-  ctx, sideOpen, onSide, onTemp, temp, right,
+  ctx, sideOpen, onSide, onTemp, temp,
 }: {
   ctx: Ctx; sideOpen?: boolean; onSide?: () => void; onTemp: () => void; temp: boolean;
   right?: ReactNode;
@@ -2246,26 +2309,21 @@ function TopBar({
       <LeftPill ctx={ctx} sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
       <div />
 
-      {/* right cluster — temp + preferences + profile, matches composer */}
-      <div className={`${ctx.panel} flex items-center gap-1 p-1`}>
-        <HoverTip label={temp ? "Temporary chat on" : "Temporary chat"} keys="⌘⇧T">
-          <motion.button
-            onClick={onTemp}
-            aria-label={temp ? "Temporary chat on" : "Temporary chat"}
-            aria-pressed={temp}
-            whileTap={{ scale: 0.92 }}
-            transition={SPRING_TURN}
-            className={`${ctx.btn} flex h-8 w-8 items-center justify-center ${temp ? "text-emerald-600 dark:text-emerald-400" : ""}`}
-          >
-            <EyeOff className="h-[15px] w-[15px]" strokeWidth={2} />
-          </motion.button>
-        </HoverTip>
+      {/* right cluster — individual floating controls, no group panel */}
+      <div className="flex items-center gap-1.5">
+        <TogglePill
+          ctx={ctx}
+          on={temp}
+          onClick={onTemp}
+          label={temp ? "Temporary chat · on" : "Temporary chat"}
+          desc="Hide this conversation from history and memory. Nothing is saved."
+          icon={temp ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+        />
         <PreferencesButton ctx={ctx} />
-        <span className="mx-0.5 h-4 w-px bg-foreground/10" aria-hidden />
-        {right ?? <Profile ctx={ctx} />}
+        <Profile ctx={ctx} />
       </div>
 
-      <SearchPalette open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <SearchPalette open={searchOpen} onClose={() => setSearchOpen(false)} ctx={ctx} />
     </div>
   );
 }
