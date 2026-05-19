@@ -319,7 +319,7 @@ function DepthGlyph({ index }: { index: number }) {
             y1={y}
             y2={y}
             stroke="currentColor"
-            strokeWidth="1"
+            strokeWidth="2"
             strokeLinecap="round"
             initial={false}
             animate={{ opacity: reached ? 0.9 : 0.25 }}
