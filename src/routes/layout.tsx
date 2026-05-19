@@ -127,11 +127,10 @@ const prettyBytes = (n: number) => {
 /* ───────── toolsStore — tools + connectors toggled by the user ───────── */
 type ToolDef = { id: string; label: string; desc: string; icon: typeof Globe };
 const TOOL_DEFS: ToolDef[] = [
-  { id: "web",    label: "Web search",   desc: "Live results from the open web.", icon: Globe },
   { id: "think",  label: "Deep think",   desc: "Slower, multi-step reasoning.",   icon: Brain },
   { id: "code",   label: "Code runner",  desc: "Run snippets in a sandbox.",      icon: Code2 },
   { id: "image",  label: "Image gen",    desc: "Generate images inline.",         icon: ImageIcon },
-  { id: "memory", label: "Memory",       desc: "Recall facts across chats.",      icon: Cpu },
+  { id: "scan",   label: "Vision scan",  desc: "Read screenshots and diagrams.",  icon: ScanSearch },
 ];
 
 type ConnDef = { id: string; label: string; icon: typeof Github; hue: string; status: "linked" | "available" };
