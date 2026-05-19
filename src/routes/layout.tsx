@@ -1062,6 +1062,7 @@ function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
 
   return (
     <div className="relative">
+      <AttachmentStrip />
       <textarea
         ref={ref}
         rows={rows}
@@ -1093,6 +1094,68 @@ function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
         />
       )}
     </div>
+  );
+}
+
+/* ───────── AttachmentStrip — animated chips above the input ───────── */
+function AttachmentStrip() {
+  const items = useAttachments();
+  return (
+    <AnimatePresence initial={false}>
+      {items.length > 0 && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          className="overflow-hidden"
+        >
+          <LayoutGroup id="att-strip">
+            <div className="flex flex-wrap gap-1.5 pb-2">
+              <AnimatePresence initial={false}>
+                {items.map((a) => (
+                  <motion.span
+                    layout
+                    key={a.id}
+                    initial={{ opacity: 0, y: -6, scale: 0.85, filter: "blur(4px)" }}
+                    animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, scale: 0.7, filter: "blur(4px)", transition: { duration: 0.18 } }}
+                    transition={{ type: "spring", stiffness: 480, damping: 28, mass: 0.5 }}
+                    className="group/chip relative inline-flex max-w-[220px] items-center gap-1.5 overflow-hidden rounded-full border border-border/60 bg-foreground/[0.04] py-1 pl-2 pr-1 text-[10.5px] backdrop-blur-sm"
+                  >
+                    {/* scan shimmer */}
+                    <motion.span
+                      aria-hidden
+                      initial={{ x: "-120%" }}
+                      animate={{ x: "120%" }}
+                      transition={{ duration: 1.6, ease: "easeInOut", repeat: 0 }}
+                      className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-foreground/10 to-transparent"
+                    />
+                    <span className="relative flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-foreground/10 text-foreground/80">
+                      {kindIcon(a.kind)}
+                    </span>
+                    <span className="relative min-w-0 truncate font-mono tracking-tight text-foreground/85">{a.name}</span>
+                    {a.meta && (
+                      <span className="relative shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] opacity-50">
+                        {a.meta}
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => attachmentsStore.remove(a.id)}
+                      aria-label="Remove attachment"
+                      className="relative ml-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-foreground/50 transition hover:bg-foreground/10 hover:text-foreground"
+                    >
+                      <X className="h-2.5 w-2.5" />
+                    </button>
+                  </motion.span>
+                ))}
+              </AnimatePresence>
+            </div>
+          </LayoutGroup>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
