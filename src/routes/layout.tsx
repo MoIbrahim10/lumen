@@ -117,30 +117,17 @@ function TogglePill({
         aria-label={`${label} ${on ? "on" : "off"}`}
         whileTap={{ scale: 0.92 }}
         transition={{ type: "spring", stiffness: 500, damping: 28 }}
-        className={`${ctx.btn} relative flex h-[30px] w-[30px] items-center justify-center overflow-hidden`}
+        className={`${ctx.btn} relative flex h-[30px] w-[30px] items-center justify-center`}
       >
-        <AnimatePresence initial={false}>
-          {on && (
-            <motion.span
-              key="on-bg"
-              initial={{ opacity: 0, scale: 0.6 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.6 }}
-              transition={{ type: "spring", stiffness: 460, damping: 28 }}
-              className="absolute inset-0 bg-foreground"
-            />
-          )}
-        </AnimatePresence>
         <motion.span
-          animate={{
-            color: on ? "var(--background)" : "var(--muted-foreground)",
-          }}
+          animate={{ color: on ? "#10b981" : "var(--muted-foreground)" }}
           transition={{ duration: 0.2 }}
-          className="relative z-10 inline-flex"
+          className="inline-flex"
         >
           {icon}
         </motion.span>
       </motion.button>
+
     </HoverTip>
   );
 }
@@ -332,7 +319,7 @@ function DepthGlyph({ index }: { index: number }) {
             y1={y}
             y2={y}
             stroke="currentColor"
-            strokeWidth="1"
+            strokeWidth="2"
             strokeLinecap="round"
             initial={false}
             animate={{ opacity: reached ? 0.9 : 0.25 }}
