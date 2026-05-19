@@ -726,7 +726,7 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
         ctx={ctx} label="Depth" value={depth} onChange={setDepth}
         options={["Quick", "Standard", "Deep"] as const}
         glyph={(i) => <DepthGlyph index={i} />}
-        showLabel={false}
+        
         descriptions={{
           Quick: "Fast surface-level answer with minimal reasoning.",
           Standard: "Balanced analysis — the default reasoning depth.",
