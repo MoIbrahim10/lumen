@@ -122,7 +122,7 @@ function TogglePill({
         aria-pressed={on}
         aria-label={`${label} ${on ? "on" : "off"}`}
         whileTap={{ scale: 0.92 }}
-        transition={{ type: "spring", stiffness: 500, damping: 28 }}
+        transition={SPRING_TURN}
         className={`${ctx.btn} relative flex h-[30px] w-[30px] items-center justify-center`}
       >
         <motion.span
