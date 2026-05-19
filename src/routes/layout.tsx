@@ -2867,19 +2867,20 @@ function LayoutGallery() {
 
   const style = BUTTON_STYLES.find((s) => s.id === buttonStyleId) ?? BUTTON_STYLES[0];
   const btnClass = light ? style.lightClass : style.darkClass;
+  const panelClass = light ? style.panelLight : style.panelDarkClass;
+  const panelInnerClass = light ? style.panelInnerLight : style.panelInnerDark;
   const preset = THEME_PRESETS.find((p) => p.id === themeId) ?? THEME_PRESETS[1];
+  const mode = light ? preset.light : preset.dark;
 
   const ctx: Ctx = {
     light,
     btn: btnClass,
-    panel: light ? "panel-mech-light" : "panel-mech",
-    panelInner: light ? "panel-inner-mech-light" : "panel-inner-mech",
+    panel: panelClass,
+    panelInner: panelInnerClass,
   };
 
-  const bg = light ? (themeId === "graphite" ? "#ededeb" : preset.bg) : preset.bg;
-  const fg = light ? "#111111" : preset.fg;
-  const wrap = light ? "" : "dark";
   const accent = `hsl(${hue} ${saturation}% ${lightness}%)`;
+  const wrap = light ? "" : "dark";
   const v12 = LAYOUTS.find((l) => l.id === "12") ?? LAYOUTS[0];
 
   return (
@@ -2887,10 +2888,11 @@ function LayoutGallery() {
       <div
         className="relative min-h-screen text-foreground transition-colors duration-500"
         style={{
-          background: bg,
-          color: fg,
+          background: mode.bg,
+          color: mode.fg,
           ["--lumen-accent" as any]: accent,
-          ["--lumen-preset-accent" as any]: preset.accent,
+          ["--lumen-preset-accent" as any]: mode.accent,
+          ["--lumen-panel" as any]: mode.panel,
         }}
       >
         {v12.render(ctx)}
