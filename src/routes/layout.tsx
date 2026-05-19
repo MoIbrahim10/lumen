@@ -19,6 +19,12 @@ export const Route = createFileRoute("/layout")({ component: LayoutGallery });
 
 /* ───────────────────────── shared bits ───────────────────────── */
 
+// Unified spring presets — all icon feedback uses these for consistent feel.
+const SPRING_POP = { type: "spring" as const, stiffness: 500, damping: 18, mass: 0.6 };
+const SPRING_TURN = { type: "spring" as const, stiffness: 500, damping: 22 };
+const SPRING_SETTLE = { type: "spring" as const, stiffness: 360, damping: 26 };
+
+
 type Ctx = {
   light: boolean;
   btn: string;
@@ -116,7 +122,7 @@ function TogglePill({
         aria-pressed={on}
         aria-label={`${label} ${on ? "on" : "off"}`}
         whileTap={{ scale: 0.92 }}
-        transition={{ type: "spring", stiffness: 500, damping: 28 }}
+        transition={SPRING_TURN}
         className={`${ctx.btn} relative flex h-[30px] w-[30px] items-center justify-center`}
       >
         <motion.span
@@ -128,10 +134,11 @@ function TogglePill({
             color: on ? "#10b981" : "var(--muted-foreground)",
           }}
           transition={{
-            scale: { type: "spring", stiffness: 520, damping: 16, mass: 0.6 },
-            rotate: { type: "spring", stiffness: 480, damping: 18 },
+            scale: SPRING_POP,
+            rotate: SPRING_POP,
             color: { duration: 0.2 },
           }}
+
           className="inline-flex"
         >
           {icon}
@@ -305,7 +312,7 @@ function LengthGlyph({ index }: { index: number }) {
               width: active ? w : 3,
               opacity: active ? 1 : 0.3,
             }}
-            transition={{ type: "spring", stiffness: 380, damping: 28, delay: i * 0.04 }}
+            transition={{ ...SPRING_SETTLE, delay: i * 0.04 }}
             fill="currentColor"
           />
         );
@@ -344,7 +351,7 @@ function DepthGlyph({ index }: { index: number }) {
         fill="currentColor"
         initial={false}
         animate={{ cy: probeY }}
-        transition={{ type: "spring", stiffness: 360, damping: 22 }}
+        transition={SPRING_SETTLE}
       />
     </svg>
   );
@@ -390,9 +397,10 @@ function CycleButton({
           initial={{ rotate: -14, scale: 0.7 }}
           animate={{ rotate: [-14, 8, 0], scale: [0.7, 1.18, 1] }}
           transition={{
-            scale: { type: "spring", stiffness: 520, damping: 16, mass: 0.6 },
-            rotate: { type: "spring", stiffness: 480, damping: 18 },
+            scale: SPRING_POP,
+            rotate: SPRING_POP,
           }}
+
           className="inline-flex"
         >
           {glyph(index)}
