@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "motion/react";
 import {
   Paperclip, Mic, Wrench, ArrowUp, Globe, Brain, ChevronDown, Sun, Moon,
@@ -55,6 +55,27 @@ const promptBus = (() => {
     },
   };
 })();
+
+/* ───────── composerStore — shared input state across InputBlock + PrimaryRow ───────── */
+const composerStore = (() => {
+  let snap = { value: "", streaming: false, listening: false };
+  const listeners = new Set<() => void>();
+  const notify = () => listeners.forEach((l) => l());
+  return {
+    get: () => snap,
+    subscribe: (cb: () => void) => {
+      listeners.add(cb);
+      return () => { listeners.delete(cb); };
+    },
+    setValue: (v: string) => { snap = { ...snap, value: v }; notify(); },
+    setStreaming: (v: boolean) => { snap = { ...snap, streaming: v }; notify(); },
+    setListening: (v: boolean) => { snap = { ...snap, listening: v }; notify(); },
+  };
+})();
+
+function useComposer() {
+  return useSyncExternalStore(composerStore.subscribe, composerStore.get, composerStore.get);
+}
 
 
 function HoverTip({ label, keys, desc, children, side = "bottom" }: {
@@ -914,34 +935,36 @@ function Greeting({ className = "" }: { className?: string }) {
 }
 
 
+/* helper — stream text into the composer (used by Send + promptBus) */
+function streamText(text: string) {
+  composerStore.setValue("");
+  composerStore.setStreaming(true);
+  let i = 0;
+  const tick = () => {
+    i += 1;
+    composerStore.setValue(text.slice(0, i));
+    if (i < text.length) {
+      const ch = text[i - 1];
+      const delay = ch === " " ? 14 : 18 + Math.random() * 22;
+      window.setTimeout(tick, delay);
+    } else {
+      composerStore.setStreaming(false);
+    }
+  };
+  tick();
+}
+
 function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
-  const [value, setValue] = useState("");
-  const [streaming, setStreaming] = useState(false);
+  const { value, streaming } = useComposer();
   const ref = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     const unsub = promptBus.subscribe((text) => {
-      setValue("");
-      setStreaming(true);
       ref.current?.focus();
-      let i = 0;
-      const tick = () => {
-        i += 1;
-        setValue(text.slice(0, i));
-        if (i < text.length) {
-          // variable speed: faster for spaces, slight jitter for life
-          const ch = text[i - 1];
-          const delay = ch === " " ? 14 : 18 + Math.random() * 22;
-          window.setTimeout(tick, delay);
-        } else {
-          setStreaming(false);
-        }
-      };
-      tick();
+      streamText(text);
     });
     return () => { unsub(); };
   }, []);
-
 
   return (
     <div className="relative">
@@ -949,7 +972,17 @@ function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
         ref={ref}
         rows={rows}
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => composerStore.setValue(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            const v = composerStore.get().value.trim();
+            if (v.length > 0 && !composerStore.get().streaming) {
+              e.preventDefault();
+              // brief "sent" pulse via store reset
+              composerStore.setValue("");
+            }
+          }
+        }}
         placeholder="Type a prompt …"
         className="w-full resize-none bg-transparent text-[15px] leading-relaxed placeholder:opacity-40 focus:outline-none"
         style={{ color: "inherit" }}
@@ -965,8 +998,170 @@ function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
           className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-emerald-500/70 to-transparent"
         />
       )}
-
     </div>
+  );
+}
+
+/* ───────── SendButton — disabled when empty; "launch" interaction on send ───────── */
+function SendButton({ ctx }: { ctx: Ctx }) {
+  const { value, streaming } = useComposer();
+  const [sent, setSent] = useState(false);
+  const disabled = streaming || sent || value.trim().length === 0;
+
+  const onSend = () => {
+    if (disabled) return;
+    setSent(true);
+    // emit a brief success state, then clear and reset
+    window.setTimeout(() => {
+      composerStore.setValue("");
+      setSent(false);
+    }, 720);
+  };
+
+  return (
+    <HoverTip label={disabled && !sent ? "Type to send" : sent ? "Sent" : "Send"} keys="↵">
+      <motion.button
+        type="button"
+        onClick={onSend}
+        disabled={disabled}
+        aria-label="Send"
+        whileHover={disabled ? undefined : { scale: 1.06 }}
+        whileTap={disabled ? undefined : { scale: 0.9 }}
+        transition={{ type: "spring", stiffness: 500, damping: 22 }}
+        className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center overflow-hidden transition-opacity ${
+          disabled && !sent ? "opacity-35 cursor-not-allowed" : "cursor-pointer"
+        }`}
+      >
+        {/* aura ring on send */}
+        <AnimatePresence>
+          {sent && (
+            <motion.span
+              key="aura"
+              aria-hidden
+              initial={{ scale: 0.4, opacity: 0.6 }}
+              animate={{ scale: 2.2, opacity: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              className="absolute inset-0 rounded-full border border-foreground/50"
+            />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence mode="wait" initial={false}>
+          {sent ? (
+            <motion.span
+              key="check"
+              initial={{ scale: 0.4, opacity: 0, rotate: -30 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              exit={{ scale: 0.4, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 520, damping: 22 }}
+              className="inline-flex"
+            >
+              <Check className="h-4 w-4" strokeWidth={2.6} />
+            </motion.span>
+          ) : (
+            <motion.span
+              key="arrow"
+              initial={{ y: 18, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -22, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 520, damping: 26 }}
+              className="inline-flex"
+            >
+              <ArrowUp className="h-4 w-4" />
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </motion.button>
+    </HoverTip>
+  );
+}
+
+/* ───────── DictateButton — pulsing rings + animated waveform when listening ───────── */
+function DictateButton({ ctx }: { ctx: Ctx }) {
+  const { listening } = useComposer();
+  const toggle = () => composerStore.setListening(!listening);
+
+  return (
+    <HoverTip label={listening ? "Listening — tap to stop" : "Dictate"} keys="⌘⇧V">
+      <motion.button
+        type="button"
+        onClick={toggle}
+        aria-pressed={listening}
+        aria-label={listening ? "Stop dictation" : "Start dictation"}
+        whileHover={{ scale: 1.06 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ type: "spring", stiffness: 500, damping: 22 }}
+        className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center overflow-visible`}
+      >
+        {/* two pulsing rings while listening */}
+        <AnimatePresence>
+          {listening && (
+            <>
+              <motion.span
+                key="ring1"
+                aria-hidden
+                initial={{ scale: 0.8, opacity: 0.5 }}
+                animate={{ scale: [0.9, 1.9], opacity: [0.5, 0] }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut" }}
+                className="absolute inset-0 rounded-full border border-rose-500/60"
+              />
+              <motion.span
+                key="ring2"
+                aria-hidden
+                initial={{ scale: 0.8, opacity: 0.4 }}
+                animate={{ scale: [0.9, 2.2], opacity: [0.4, 0] }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: "easeOut", delay: 0.5 }}
+                className="absolute inset-0 rounded-full border border-rose-500/40"
+              />
+            </>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence mode="wait" initial={false}>
+          {listening ? (
+            // mic morphs into a live mini waveform (4 dancing bars)
+            <motion.span
+              key="wave"
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.6, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 520, damping: 24 }}
+              className="flex h-4 items-end gap-[2px]"
+              aria-hidden
+            >
+              {[0, 1, 2, 3].map((i) => (
+                <motion.span
+                  key={i}
+                  className="block w-[2px] rounded-[1px] bg-rose-500 origin-bottom"
+                  animate={{ scaleY: [0.3, 1, 0.5, 0.85, 0.3] }}
+                  style={{ height: "100%" }}
+                  transition={{
+                    duration: 0.9,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: i * 0.09,
+                  }}
+                />
+              ))}
+            </motion.span>
+          ) : (
+            <motion.span
+              key="mic"
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.6, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 520, damping: 24 }}
+              className="inline-flex"
+            >
+              <Mic className="h-4 w-4" />
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </motion.button>
+    </HoverTip>
   );
 }
 
@@ -992,8 +1187,8 @@ function PrimaryRow({ ctx }: { ctx: Ctx }) {
         />
       </div>
       <div className="flex items-center gap-1.5">
-        <IconBtn ctx={ctx} tip="Dictate" keys="⌘⇧V"><Mic className="h-4 w-4" /></IconBtn>
-        <IconBtn ctx={ctx} tip="Send" keys="↵"><ArrowUp className="h-4 w-4" /></IconBtn>
+        <DictateButton ctx={ctx} />
+        <SendButton ctx={ctx} />
       </div>
     </div>
   );
@@ -1563,10 +1758,10 @@ function MinimalConsole({ ctx }: { ctx: Ctx }) {
               <div className="flex items-center gap-1.5">
                 <IconBtn ctx={ctx} size={8}><Paperclip className="h-3.5 w-3.5" /></IconBtn>
                 <IconBtn ctx={ctx} size={8}><Wrench className="h-3.5 w-3.5" /></IconBtn>
-                <IconBtn ctx={ctx} size={8}><Mic className="h-3.5 w-3.5" /></IconBtn>
+                <DictateButton ctx={ctx} />
                 <IconBtn ctx={ctx} size={8} onClick={() => setShowOpts(!showOpts)}><ChevronDown className={`h-3.5 w-3.5 transition-transform ${showOpts ? "rotate-180" : ""}`} /></IconBtn>
               </div>
-              <IconBtn ctx={ctx} size={8}><ArrowUp className="h-3.5 w-3.5" /></IconBtn>
+              <SendButton ctx={ctx} />
             </div>
             {showOpts && (
               <div className="mt-3 border-t border-border/40 pt-3"><SecondaryRow ctx={ctx} /></div>
@@ -1661,12 +1856,12 @@ function TrayStrip({ ctx }: { ctx: Ctx }) {
                 <div className="flex items-center gap-1.5">
                   <IconBtn ctx={ctx} size={8}><Paperclip className="h-3.5 w-3.5" /></IconBtn>
                   <IconBtn ctx={ctx} size={8}><Wrench className="h-3.5 w-3.5" /></IconBtn>
-                  <IconBtn ctx={ctx} size={8}><Mic className="h-3.5 w-3.5" /></IconBtn>
+                  <DictateButton ctx={ctx} />
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Pill ctx={ctx}><Brain className="h-3.5 w-3.5" /> Memory</Pill>
                   <Pill ctx={ctx}><Globe className="h-3.5 w-3.5" /> Web</Pill>
-                  <IconBtn ctx={ctx} size={8}><ArrowUp className="h-3.5 w-3.5" /></IconBtn>
+                  <SendButton ctx={ctx} />
                 </div>
               </div>
             </div>
