@@ -24,6 +24,7 @@ import { Route as StylePillsRouteImport } from './routes/style-pills'
 import { Route as StudioRouteImport } from './routes/studio'
 import { Route as LayoutRouteImport } from './routes/layout'
 import { Route as InteractionsRouteImport } from './routes/interactions'
+import { Route as ConnectorsRouteImport } from './routes/connectors'
 import { Route as ColorsRouteImport } from './routes/colors'
 import { Route as ButtonsRouteImport } from './routes/buttons'
 import { Route as IndexRouteImport } from './routes/index'
@@ -103,6 +104,11 @@ const InteractionsRoute = InteractionsRouteImport.update({
   path: '/interactions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConnectorsRoute = ConnectorsRouteImport.update({
+  id: '/connectors',
+  path: '/connectors',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ColorsRoute = ColorsRouteImport.update({
   id: '/colors',
   path: '/colors',
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/buttons': typeof ButtonsRoute
   '/colors': typeof ColorsRoute
+  '/connectors': typeof ConnectorsRoute
   '/interactions': typeof InteractionsRoute
   '/layout': typeof LayoutRoute
   '/studio': typeof StudioRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/buttons': typeof ButtonsRoute
   '/colors': typeof ColorsRoute
+  '/connectors': typeof ConnectorsRoute
   '/interactions': typeof InteractionsRoute
   '/layout': typeof LayoutRoute
   '/studio': typeof StudioRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/buttons': typeof ButtonsRoute
   '/colors': typeof ColorsRoute
+  '/connectors': typeof ConnectorsRoute
   '/interactions': typeof InteractionsRoute
   '/layout': typeof LayoutRoute
   '/studio': typeof StudioRoute
@@ -186,6 +195,7 @@ export interface FileRouteTypes {
     | '/'
     | '/buttons'
     | '/colors'
+    | '/connectors'
     | '/interactions'
     | '/layout'
     | '/studio'
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/'
     | '/buttons'
     | '/colors'
+    | '/connectors'
     | '/interactions'
     | '/layout'
     | '/studio'
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/'
     | '/buttons'
     | '/colors'
+    | '/connectors'
     | '/interactions'
     | '/layout'
     | '/studio'
@@ -247,6 +259,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ButtonsRoute: typeof ButtonsRoute
   ColorsRoute: typeof ColorsRoute
+  ConnectorsRoute: typeof ConnectorsRoute
   InteractionsRoute: typeof InteractionsRoute
   LayoutRoute: typeof LayoutRoute
   StudioRoute: typeof StudioRoute
@@ -371,6 +384,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InteractionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/connectors': {
+      id: '/connectors'
+      path: '/connectors'
+      fullPath: '/connectors'
+      preLoaderRoute: typeof ConnectorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/colors': {
       id: '/colors'
       path: '/colors'
@@ -399,6 +419,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ButtonsRoute: ButtonsRoute,
   ColorsRoute: ColorsRoute,
+  ConnectorsRoute: ConnectorsRoute,
   InteractionsRoute: InteractionsRoute,
   LayoutRoute: LayoutRoute,
   StudioRoute: StudioRoute,
