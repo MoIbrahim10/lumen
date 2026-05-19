@@ -72,17 +72,27 @@ function HoverTip({ label, keys, desc, children, side = "bottom" }: {
       <AnimatePresence>
         {hover && (
           <motion.span
-            initial={{ opacity: 0, y: side === "top" ? 4 : -4, scale: 0.92 }}
+            initial={{ opacity: 0, y: side === "top" ? 6 : -6, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: side === "top" ? 4 : -4, scale: 0.92 }}
-            transition={{ type: "spring", stiffness: 520, damping: 32, mass: 0.5 }}
-            className={`pointer-events-none absolute left-1/2 z-[60] -translate-x-1/2 ${pos} ${desc ? "flex-col items-start max-w-[200px] whitespace-normal" : "flex items-center gap-2 whitespace-nowrap"} flex rounded-md border border-border bg-popover px-2.5 py-1.5 text-popover-foreground shadow-lg`}
+            exit={{ opacity: 0, y: side === "top" ? 6 : -6, scale: 0.94 }}
+            transition={{ type: "spring", stiffness: 480, damping: 30, mass: 0.5 }}
+            className={`pointer-events-none absolute left-1/2 z-[60] -translate-x-1/2 ${pos} ${
+              desc
+                ? "w-[240px] flex-col items-start"
+                : "flex items-center gap-2 whitespace-nowrap"
+            } flex rounded-lg border border-border/60 bg-popover/95 px-3 py-2 text-popover-foreground shadow-xl backdrop-blur-sm`}
           >
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] opacity-80">{label}</span>
+            <span className="flex w-full items-center gap-1.5">
+              <span aria-hidden className="h-1 w-1 rounded-full bg-foreground/50" />
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] opacity-80">{label}</span>
+            </span>
             {desc && (
-              <span className="mt-0.5 text-[11px] leading-snug opacity-60 normal-case tracking-normal">
-                {desc}
-              </span>
+              <>
+                <span aria-hidden className="my-1.5 h-px w-full bg-border/60" />
+                <span className="text-[11px] leading-relaxed opacity-70 normal-case tracking-normal">
+                  {desc}
+                </span>
+              </>
             )}
             {keys && !desc && (
               <kbd className="rounded-sm border border-border bg-muted/40 px-1.5 py-[1px] font-mono text-[9px] tracking-[0.1em]">
@@ -248,6 +258,132 @@ function ModelGlyph({ index }: { index: number }) {
   );
 }
 
+
+/* ───────── FancyPicker — creative dropdown for multi-option selectors ───────── */
+
+type PickerOption = { id: string; desc?: string; glyph: ReactNode };
+
+function FancyPicker({
+  ctx, label, value, options, onChange, align = "left",
+}: {
+  ctx: Ctx;
+  label: string;
+  value: string;
+  options: PickerOption[];
+  onChange: (v: string) => void;
+  align?: "left" | "right";
+}) {
+  const [open, setOpen] = useState(false);
+  const current = options.find((o) => o.id === value) ?? options[0];
+  const longest = options.reduce((a, b) => (a.id.length >= b.id.length ? a : b)).id;
+
+  return (
+    <div className="relative">
+      <motion.button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        whileTap={{ scale: 0.97 }}
+        className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px] cursor-pointer select-none`}
+      >
+        <span className="opacity-60">{label}</span>
+        <span className="relative inline-block text-left">
+          <span className="invisible">{longest}</span>
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={current.id}
+              initial={{ y: -8, opacity: 0, filter: "blur(2px)" }}
+              animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+              exit={{ y: 8, opacity: 0, filter: "blur(2px)" }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0"
+            >
+              {current.id}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ type: "spring", stiffness: 380, damping: 28 }}
+          className="ml-0.5 inline-flex"
+        >
+          <ChevronDown className="h-3 w-3 opacity-60" />
+        </motion.span>
+      </motion.button>
+
+      <AnimatePresence>
+        {open && (
+          <>
+            <div
+              className="fixed inset-0 z-40"
+              onMouseDown={(e) => { e.preventDefault(); setOpen(false); }}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -6, scale: 0.96, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -6, scale: 0.96, filter: "blur(4px)" }}
+              transition={{ type: "spring", stiffness: 420, damping: 32, mass: 0.6 }}
+              style={{ transformOrigin: align === "right" ? "top right" : "top left" }}
+              className={`absolute top-full z-50 mt-2 w-[240px] overflow-hidden rounded-lg border border-border/60 bg-popover/95 p-1 text-popover-foreground shadow-xl backdrop-blur-sm ${align === "right" ? "right-0" : "left-0"}`}
+            >
+              <div className="px-2 pb-1 pt-1.5 font-mono text-[9px] uppercase tracking-[0.22em] opacity-50">
+                {label}
+              </div>
+              <LayoutGroup id={`picker-${label}`}>
+                {options.map((o, i) => {
+                  const selected = o.id === value;
+                  return (
+                    <motion.button
+                      key={o.id}
+                      type="button"
+                      initial={{ opacity: 0, x: -6 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        delay: 0.04 + i * 0.035,
+                        duration: 0.24,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                      onClick={() => { onChange(o.id); setOpen(false); }}
+                      className="group/row relative flex w-full items-start gap-2.5 rounded-md px-2 py-1.5 text-left hover:bg-muted/50"
+                    >
+                      {selected && (
+                        <motion.span
+                          layoutId={`picker-rail-${label}`}
+                          transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.5 }}
+                          className="absolute left-0 top-1.5 bottom-1.5 w-[2px] rounded-full bg-foreground"
+                        />
+                      )}
+                      <span className={`mt-[2px] flex h-4 w-4 shrink-0 items-center justify-center ${selected ? "opacity-100" : "opacity-60 group-hover/row:opacity-90"}`}>
+                        {o.glyph}
+                      </span>
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <span className={`text-[11px] ${selected ? "text-foreground" : "text-foreground/80"}`}>
+                          {o.id}
+                        </span>
+                        {o.desc && (
+                          <span className="mt-0.5 text-[10px] leading-snug opacity-55">
+                            {o.desc}
+                          </span>
+                        )}
+                      </span>
+                      {selected && (
+                        <motion.span
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ type: "spring", stiffness: 500, damping: 28 }}
+                          className="mt-[3px] inline-flex h-1.5 w-1.5 shrink-0 rounded-full bg-foreground"
+                        />
+                      )}
+                    </motion.button>
+                  );
+                })}
+              </LayoutGroup>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 /* ───────── CycleButton — click to cycle, animated SVG indicator ───────── */
 
@@ -693,16 +829,17 @@ function PrimaryRow({ ctx }: { ctx: Ctx }) {
       <div className="flex items-center gap-1.5">
         <IconBtn ctx={ctx} tip="Attach file" keys="⌘U"><Paperclip className="h-4 w-4" /></IconBtn>
         <IconBtn ctx={ctx} tip="Tools & connectors" keys="⌘T"><Wrench className="h-4 w-4" /></IconBtn>
-        <CycleButton
+        <FancyPicker
           ctx={ctx} label="Model" value={model}
           onChange={(v) => setModel(v as (typeof MODEL_OPTIONS)[number])}
-          options={MODEL_OPTIONS}
-          glyph={(i) => <ModelGlyph index={i} />}
-          descriptions={{
-            "Lumen 4 Mini": "Fastest, lightest tier — best for quick chats.",
-            "Lumen 4": "Balanced default — good for most tasks.",
-            "Lumen 4 Pro": "Highest reasoning tier — slower, deeper answers.",
-          }}
+          options={MODEL_OPTIONS.map((id, i) => ({
+            id,
+            glyph: <ModelGlyph index={i} />,
+            desc:
+              id === "Lumen 4 Mini" ? "Fastest, lightest tier — quick chats."
+              : id === "Lumen 4" ? "Balanced default — good for most tasks."
+              : "Highest reasoning tier — slower, deeper.",
+          }))}
         />
       </div>
       <div className="flex items-center gap-1.5">
@@ -721,17 +858,18 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
   const [memory, setMemory] = useState(true);
   return (
     <div className={`flex ${vertical ? "flex-col items-stretch" : "flex-wrap items-center"} gap-1.5`}>
-      <CycleButton
+      <FancyPicker
         ctx={ctx} label="Style" value={style} onChange={setStyle}
-        options={STYLE_OPTIONS}
-        glyph={(i) => <StyleGlyph index={i} />}
-        descriptions={{
-          Auto: "Lumen picks the best tone for your prompt automatically.",
-          Formal: "Polished, professional phrasing — good for work writing.",
-          Friendly: "Warm, conversational tone — great for casual replies.",
-          Concise: "Trim filler — get to the point in fewer words.",
-          Creative: "More vivid, playful language and unexpected angles.",
-        }}
+        options={STYLE_OPTIONS.map((id, i) => {
+          const descs: Record<string, string> = {
+            Auto: "Lumen picks the best tone automatically.",
+            Formal: "Polished, professional phrasing.",
+            Friendly: "Warm, conversational tone.",
+            Concise: "Trim filler — fewer words.",
+            Creative: "Vivid, playful, unexpected angles.",
+          };
+          return { id, glyph: <StyleGlyph index={i} />, desc: descs[id] };
+        })}
       />
       <CycleButton
         ctx={ctx} label="Length" value={length} onChange={setLength}
