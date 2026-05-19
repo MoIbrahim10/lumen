@@ -1201,8 +1201,9 @@ function FramedConsole({ ctx }: { ctx: Ctx }) {
             <div className={`${ctx.panel} mt-6 p-4`}>
               <div className="flex items-center justify-between px-2 pb-3">
                 <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">Compose</span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-40">Lumen 4 · ready</span>
+                <StatusTicker model="Lumen 4" />
               </div>
+
               <div className={`${ctx.panelInner} p-4`}>
                 <InputBlock ctx={ctx} rows={4} />
                 <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
