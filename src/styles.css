@@ -694,3 +694,49 @@
   border-radius: 18px;
   box-shadow: 0 1px 2px rgba(16,24,40,0.03);
 }
+
+/* PAPER — handmade letterpress card, soft cream */
+.btn-paper {
+  background: #f6f1e6;
+  color: #2a2418;
+  font-family: var(--font-serif, Georgia, serif);
+  border: 1px solid #d9cfb8;
+  border-radius: 4px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    inset 0 -1px 0 rgba(120,90,30,0.08),
+    0 1px 2px rgba(80,60,20,0.10);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+.btn-paper:hover { background: #fbf6ea; transform: translateY(-0.5px); }
+.btn-paper:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 1px 3px rgba(120,90,30,0.18);
+}
+
+/* Lumen range slider — minimal thumb, transparent track */
+.lumen-range { -webkit-appearance: none; appearance: none; height: 16px; }
+.lumen-range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  height: 14px; width: 14px; border-radius: 50%;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.25);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25), 0 0 0 2px rgba(255,255,255,0.6) inset;
+  cursor: pointer;
+  margin-top: 0;
+  transition: transform 0.12s ease;
+}
+.lumen-range::-webkit-slider-thumb:active { transform: scale(0.9); }
+.lumen-range::-webkit-slider-thumb:hover  { transform: scale(1.08); }
+.lumen-range::-moz-range-thumb {
+  height: 14px; width: 14px; border-radius: 50%;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.25);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  cursor: pointer;
+}
+.dark .lumen-range::-webkit-slider-thumb {
+  background: #1a1a1a;
+  border-color: rgba(255,255,255,0.35);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
