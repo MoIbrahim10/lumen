@@ -1589,9 +1589,9 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
               exit={{ opacity: 0, y: 8, scale: 0.95, filter: "blur(6px)" }}
               transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
               style={{ transformOrigin: "bottom left" }}
-              className={`${ctx.panel} absolute bottom-full left-0 z-50 mb-2 w-[320px] overflow-hidden p-1`}
+              className={`${ctx.panel} absolute bottom-full left-0 z-50 mb-2 flex max-h-[min(80vh,560px)] w-[320px] flex-col overflow-hidden p-1`}
             >
-              <div className={`${ctx.panelInner} relative overflow-hidden`}>
+              <div className={`${ctx.panelInner} relative flex min-h-0 flex-1 flex-col overflow-y-auto`}>
                 {/* header */}
                 <div className="flex items-center justify-between border-b border-border/40 px-3 py-2">
                   <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] opacity-70">
