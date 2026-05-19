@@ -552,12 +552,17 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
         options={["Quick", "Standard", "Deep"] as const}
         glyph={(i) => <DepthGlyph index={i} />}
       />
-      <Pill ctx={ctx} onClick={() => setMemory(!memory)}>
-        <Brain className="h-3.5 w-3.5" /> Memory {memory ? "on" : "off"}
-      </Pill>
-      <Pill ctx={ctx} onClick={() => setWeb(!web)}>
-        <Globe className="h-3.5 w-3.5" /> Web {web ? "on" : "off"}
-      </Pill>
+      <TogglePill
+        ctx={ctx} on={memory} onClick={() => setMemory(!memory)}
+        label="Memory" desc="Recall facts across chats"
+        icon={<Brain className="h-3.5 w-3.5" />}
+      />
+      <TogglePill
+        ctx={ctx} on={web} onClick={() => setWeb(!web)}
+        label="Web" desc="Search the live web for answers"
+        icon={<Globe className="h-3.5 w-3.5" />}
+      />
+
     </div>
   );
 }
