@@ -8,7 +8,8 @@ import {
   Plus, History, Library, FolderClosed, Cpu, Plug,
   Settings, User, ChevronRight, PanelLeft, X, ArrowRight, Check,
   Sparkles, Feather, Smile, Scissors, Wand2,
-
+  Upload, Link2, ClipboardPaste, Github, Database, Calendar,
+  Hash, Film, FileAudio,
 } from "lucide-react";
 import {
   Command, CommandInput, CommandList, CommandEmpty, CommandGroup,
@@ -75,6 +76,99 @@ const composerStore = (() => {
 
 function useComposer() {
   return useSyncExternalStore(composerStore.subscribe, composerStore.get, composerStore.get);
+}
+
+/* ───────── attachmentsStore — files + links + pasted snippets in the composer ───────── */
+type AttachKind = "file" | "image" | "audio" | "video" | "url" | "text";
+type Attachment = { id: string; kind: AttachKind; name: string; meta?: string };
+
+const attachmentsStore = (() => {
+  let snap: Attachment[] = [];
+  const listeners = new Set<() => void>();
+  const notify = () => listeners.forEach((l) => l());
+  let counter = 0;
+  return {
+    get: () => snap,
+    subscribe: (cb: () => void) => { listeners.add(cb); return () => { listeners.delete(cb); }; },
+    add: (a: Omit<Attachment, "id">) => { snap = [...snap, { ...a, id: `att-${++counter}` }]; notify(); },
+    remove: (id: string) => { snap = snap.filter((a) => a.id !== id); notify(); },
+    clear: () => { snap = []; notify(); },
+  };
+})();
+
+function useAttachments() {
+  return useSyncExternalStore(attachmentsStore.subscribe, attachmentsStore.get, attachmentsStore.get);
+}
+
+const kindIcon = (k: AttachKind) => {
+  switch (k) {
+    case "image": return <ImageIcon className="h-3 w-3" />;
+    case "audio": return <FileAudio className="h-3 w-3" />;
+    case "video": return <Film className="h-3 w-3" />;
+    case "url": return <Link2 className="h-3 w-3" />;
+    case "text": return <ClipboardPaste className="h-3 w-3" />;
+    default: return <FileText className="h-3 w-3" />;
+  }
+};
+
+const kindFromFile = (f: File): AttachKind => {
+  if (f.type.startsWith("image/")) return "image";
+  if (f.type.startsWith("audio/")) return "audio";
+  if (f.type.startsWith("video/")) return "video";
+  return "file";
+};
+
+const prettyBytes = (n: number) => {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${(n / 1024 / 1024).toFixed(1)} MB`;
+};
+
+/* ───────── toolsStore — tools + connectors toggled by the user ───────── */
+type ToolDef = { id: string; label: string; desc: string; icon: typeof Globe };
+const TOOL_DEFS: ToolDef[] = [
+  { id: "web",    label: "Web search",   desc: "Live results from the open web.", icon: Globe },
+  { id: "think",  label: "Deep think",   desc: "Slower, multi-step reasoning.",   icon: Brain },
+  { id: "code",   label: "Code runner",  desc: "Run snippets in a sandbox.",      icon: Code2 },
+  { id: "image",  label: "Image gen",    desc: "Generate images inline.",         icon: ImageIcon },
+  { id: "memory", label: "Memory",       desc: "Recall facts across chats.",      icon: Cpu },
+];
+
+type ConnDef = { id: string; label: string; icon: typeof Github; hue: string; status: "linked" | "available" };
+const CONN_DEFS: ConnDef[] = [
+  { id: "github",   label: "GitHub",          icon: Github,       hue: "#a78bfa", status: "linked" },
+  { id: "notion",   label: "Notion",          icon: FileText,     hue: "#94a3b8", status: "linked" },
+  { id: "slack",    label: "Slack",           icon: Hash,         hue: "#ec4899", status: "available" },
+  { id: "drive",    label: "Google Drive",    icon: FolderClosed, hue: "#60a5fa", status: "linked" },
+  { id: "calendar", label: "Calendar",        icon: Calendar,     hue: "#f59e0b", status: "available" },
+  { id: "db",       label: "Postgres",        icon: Database,     hue: "#34d399", status: "available" },
+];
+
+const toolsStore = (() => {
+  let snap: { tools: Set<string>; conns: Set<string> } = {
+    tools: new Set(["web"]),
+    conns: new Set<string>(),
+  };
+  const listeners = new Set<() => void>();
+  const notify = () => listeners.forEach((l) => l());
+  return {
+    get: () => snap,
+    subscribe: (cb: () => void) => { listeners.add(cb); return () => { listeners.delete(cb); }; },
+    toggleTool: (id: string) => {
+      const t = new Set(snap.tools);
+      t.has(id) ? t.delete(id) : t.add(id);
+      snap = { ...snap, tools: t }; notify();
+    },
+    toggleConn: (id: string) => {
+      const c = new Set(snap.conns);
+      c.has(id) ? c.delete(id) : c.add(id);
+      snap = { ...snap, conns: c }; notify();
+    },
+  };
+})();
+
+function useTools() {
+  return useSyncExternalStore(toolsStore.subscribe, toolsStore.get, toolsStore.get);
 }
 
 
@@ -968,6 +1062,7 @@ function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
 
   return (
     <div className="relative">
+      <AttachmentStrip />
       <textarea
         ref={ref}
         rows={rows}
@@ -999,6 +1094,68 @@ function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
         />
       )}
     </div>
+  );
+}
+
+/* ───────── AttachmentStrip — animated chips above the input ───────── */
+function AttachmentStrip() {
+  const items = useAttachments();
+  return (
+    <AnimatePresence initial={false}>
+      {items.length > 0 && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          className="overflow-hidden"
+        >
+          <LayoutGroup id="att-strip">
+            <div className="flex flex-wrap gap-1.5 pb-2">
+              <AnimatePresence initial={false}>
+                {items.map((a) => (
+                  <motion.span
+                    layout
+                    key={a.id}
+                    initial={{ opacity: 0, y: -6, scale: 0.85, filter: "blur(4px)" }}
+                    animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, scale: 0.7, filter: "blur(4px)", transition: { duration: 0.18 } }}
+                    transition={{ type: "spring", stiffness: 480, damping: 28, mass: 0.5 }}
+                    className="group/chip relative inline-flex max-w-[220px] items-center gap-1.5 overflow-hidden rounded-full border border-border/60 bg-foreground/[0.04] py-1 pl-2 pr-1 text-[10.5px] backdrop-blur-sm"
+                  >
+                    {/* scan shimmer */}
+                    <motion.span
+                      aria-hidden
+                      initial={{ x: "-120%" }}
+                      animate={{ x: "120%" }}
+                      transition={{ duration: 1.6, ease: "easeInOut", repeat: 0 }}
+                      className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-foreground/10 to-transparent"
+                    />
+                    <span className="relative flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-foreground/10 text-foreground/80">
+                      {kindIcon(a.kind)}
+                    </span>
+                    <span className="relative min-w-0 truncate font-mono tracking-tight text-foreground/85">{a.name}</span>
+                    {a.meta && (
+                      <span className="relative shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] opacity-50">
+                        {a.meta}
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => attachmentsStore.remove(a.id)}
+                      aria-label="Remove attachment"
+                      className="relative ml-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-foreground/50 transition hover:bg-foreground/10 hover:text-foreground"
+                    >
+                      <X className="h-2.5 w-2.5" />
+                    </button>
+                  </motion.span>
+                ))}
+              </AnimatePresence>
+            </div>
+          </LayoutGroup>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -1167,13 +1324,391 @@ function DictateButton({ ctx }: { ctx: Ctx }) {
 }
 
 
+/* ───────── AttachButton — popover "switchboard" for sources ───────── */
+function AttachButton({ ctx }: { ctx: Ctx }) {
+  const items = useAttachments();
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<"menu" | "url" | "text">("menu");
+  const [urlValue, setUrlValue] = useState("");
+  const [textValue, setTextValue] = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
+  const imageRef = useRef<HTMLInputElement>(null);
+
+  const ingest = (files: FileList | null) => {
+    if (!files) return;
+    Array.from(files).forEach((f) =>
+      attachmentsStore.add({ kind: kindFromFile(f), name: f.name, meta: prettyBytes(f.size) }),
+    );
+  };
+
+  const sources = [
+    { id: "upload", label: "Upload", glyph: <Upload className="h-3.5 w-3.5" />, hint: "From device",
+      onClick: () => fileRef.current?.click() },
+    { id: "image",  label: "Image",  glyph: <ImageIcon className="h-3.5 w-3.5" />, hint: "PNG · JPG · WEBP",
+      onClick: () => imageRef.current?.click() },
+    { id: "url",    label: "Link",   glyph: <Link2 className="h-3.5 w-3.5" />, hint: "Paste a URL",
+      onClick: () => setMode("url") },
+    { id: "text",   label: "Snippet",glyph: <ClipboardPaste className="h-3.5 w-3.5" />, hint: "Paste text",
+      onClick: () => setMode("text") },
+  ];
+
+  const close = () => { setOpen(false); setMode("menu"); setUrlValue(""); setTextValue(""); };
+
+  return (
+    <div className="relative">
+      <input ref={fileRef} type="file" multiple hidden onChange={(e) => { ingest(e.target.files); e.target.value = ""; }} />
+      <input ref={imageRef} type="file" accept="image/*" multiple hidden onChange={(e) => { ingest(e.target.files); e.target.value = ""; }} />
+
+      <HoverTip label="Attach" keys="⌘U">
+        <motion.button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-label="Attach"
+          aria-expanded={open}
+          whileTap={{ scale: 0.92 }}
+          animate={{ rotate: open ? -35 : 0 }}
+          transition={SPRING_TURN}
+          className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center`}
+        >
+          <Paperclip className="h-4 w-4" />
+          {items.length > 0 && (
+            <motion.span
+              key={items.length}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={SPRING_POP}
+              className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-[14px] items-center justify-center rounded-full bg-foreground px-1 font-mono text-[8px] font-semibold leading-none text-background"
+            >
+              {items.length}
+            </motion.span>
+          )}
+        </motion.button>
+      </HoverTip>
+
+      <AnimatePresence>
+        {open && (
+          <>
+            <div className="fixed inset-0 z-40" onMouseDown={close} />
+            <motion.div
+              initial={{ opacity: 0, y: 8, scale: 0.95, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: 8, scale: 0.95, filter: "blur(6px)" }}
+              transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
+              style={{ transformOrigin: "bottom left" }}
+              className={`${ctx.panel} absolute bottom-full left-0 z-50 mb-2 w-[280px] overflow-hidden p-1`}
+            >
+              <div className={`${ctx.panelInner} relative overflow-hidden`}>
+                <div className="relative flex items-center justify-between border-b border-border/40 px-3 py-2">
+                  <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] opacity-70">
+                    <span aria-hidden className="inline-block h-1 w-1 rounded-full bg-foreground/60" />
+                    Attach
+                  </span>
+                  <span className="font-mono text-[9px] tabular-nums uppercase tracking-[0.18em] opacity-45">
+                    {String(items.length).padStart(2, "0")} queued
+                  </span>
+                </div>
+
+                <AnimatePresence mode="wait">
+                  {mode === "menu" && (
+                    <motion.div
+                      key="menu"
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 8 }}
+                      transition={{ duration: 0.18 }}
+                      className="grid grid-cols-2 gap-1 p-1.5"
+                    >
+                      {sources.map((s, i) => (
+                        <motion.button
+                          key={s.id}
+                          type="button"
+                          onClick={() => { s.onClick(); if (s.id === "upload" || s.id === "image") close(); }}
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.04 + i * 0.04, duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+                          whileHover={{ y: -1 }}
+                          whileTap={{ scale: 0.96 }}
+                          className="group/src relative flex flex-col items-start gap-1 overflow-hidden rounded-md border border-border/40 bg-foreground/[0.02] p-2.5 text-left transition-colors hover:bg-foreground/[0.06]"
+                        >
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground/10 text-foreground/85">
+                            {s.glyph}
+                          </span>
+                          <span className="text-[11px] font-medium leading-tight text-foreground/90">{s.label}</span>
+                          <span className="font-mono text-[9px] uppercase tracking-[0.14em] opacity-55">{s.hint}</span>
+                        </motion.button>
+                      ))}
+                    </motion.div>
+                  )}
+
+                  {mode === "url" && (
+                    <motion.div
+                      key="url"
+                      initial={{ opacity: 0, x: 8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -8 }}
+                      transition={{ duration: 0.2 }}
+                      className="space-y-2 p-2.5"
+                    >
+                      <div className="flex items-center gap-2 rounded-md border border-border/50 bg-foreground/[0.03] px-2">
+                        <Link2 className="h-3.5 w-3.5 opacity-60" />
+                        <input
+                          autoFocus
+                          value={urlValue}
+                          onChange={(e) => setUrlValue(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && urlValue.trim()) {
+                              try {
+                                const u = new URL(urlValue.trim());
+                                attachmentsStore.add({ kind: "url", name: u.hostname + u.pathname, meta: u.protocol.replace(":", "") });
+                                close();
+                              } catch {
+                                attachmentsStore.add({ kind: "url", name: urlValue.trim(), meta: "link" });
+                                close();
+                              }
+                            }
+                          }}
+                          placeholder="https://…"
+                          className="flex-1 bg-transparent py-2 text-[11px] placeholder:opacity-40 focus:outline-none"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.18em] opacity-55">
+                        <button onClick={() => setMode("menu")} className="hover:opacity-100">← back</button>
+                        <span>↵ to attach</span>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {mode === "text" && (
+                    <motion.div
+                      key="text"
+                      initial={{ opacity: 0, x: 8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -8 }}
+                      transition={{ duration: 0.2 }}
+                      className="space-y-2 p-2.5"
+                    >
+                      <textarea
+                        autoFocus
+                        rows={3}
+                        value={textValue}
+                        onChange={(e) => setTextValue(e.target.value)}
+                        placeholder="Paste a snippet…"
+                        className="w-full resize-none rounded-md border border-border/50 bg-foreground/[0.03] px-2 py-1.5 text-[11px] placeholder:opacity-40 focus:outline-none"
+                      />
+                      <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.18em] opacity-55">
+                        <button onClick={() => setMode("menu")} className="hover:opacity-100">← back</button>
+                        <button
+                          onClick={() => {
+                            const t = textValue.trim();
+                            if (!t) return;
+                            const first = t.split(/\s+/).slice(0, 4).join(" ");
+                            attachmentsStore.add({ kind: "text", name: first || "snippet", meta: `${t.length} ch` });
+                            close();
+                          }}
+                          className="rounded border border-border/60 px-2 py-0.5 hover:bg-foreground/10"
+                        >
+                          attach
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ───────── ToolsButton — tools + connectors with live toggle ───────── */
+function ToolsButton({ ctx }: { ctx: Ctx }) {
+  const { tools, conns } = useTools();
+  const [open, setOpen] = useState(false);
+  const activeCount = tools.size + conns.size;
+
+  return (
+    <div className="relative">
+      <HoverTip label="Tools & Connectors" keys="⌘T">
+        <motion.button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-label="Tools and Connectors"
+          aria-expanded={open}
+          whileTap={{ scale: 0.92 }}
+          animate={{ rotate: open ? 90 : 0 }}
+          transition={SPRING_TURN}
+          className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center`}
+        >
+          <Wrench className="h-4 w-4" />
+          {activeCount > 0 && (
+            <motion.span
+              key={activeCount}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={SPRING_POP}
+              className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-[14px] items-center justify-center rounded-full bg-emerald-500 px-1 font-mono text-[8px] font-semibold leading-none text-background"
+            >
+              {activeCount}
+            </motion.span>
+          )}
+        </motion.button>
+      </HoverTip>
+
+      <AnimatePresence>
+        {open && (
+          <>
+            <div className="fixed inset-0 z-40" onMouseDown={() => setOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: 8, scale: 0.95, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: 8, scale: 0.95, filter: "blur(6px)" }}
+              transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
+              style={{ transformOrigin: "bottom left" }}
+              className={`${ctx.panel} absolute bottom-full left-0 z-50 mb-2 w-[320px] overflow-hidden p-1`}
+            >
+              <div className={`${ctx.panelInner} relative overflow-hidden`}>
+                {/* header */}
+                <div className="flex items-center justify-between border-b border-border/40 px-3 py-2">
+                  <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] opacity-70">
+                    <span aria-hidden className="inline-block h-1 w-1 rounded-full bg-foreground/60" />
+                    Capabilities
+                  </span>
+                  <span className="font-mono text-[9px] tabular-nums uppercase tracking-[0.18em] opacity-45">
+                    {String(activeCount).padStart(2, "0")} on
+                  </span>
+                </div>
+
+                {/* Tools */}
+                <div className="px-2 pb-1 pt-2">
+                  <div className="mb-1 flex items-center gap-1.5 px-1 font-mono text-[9px] uppercase tracking-[0.2em] opacity-50">
+                    <span>Tools</span>
+                    <span className="h-px flex-1 bg-border/40" />
+                  </div>
+                  <div className="space-y-0.5">
+                    {TOOL_DEFS.map((t, i) => {
+                      const on = tools.has(t.id);
+                      const Icon = t.icon;
+                      return (
+                        <motion.button
+                          key={t.id}
+                          type="button"
+                          initial={{ opacity: 0, x: -6 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.04 + i * 0.03, duration: 0.22 }}
+                          onClick={() => toolsStore.toggleTool(t.id)}
+                          aria-pressed={on}
+                          className="group/tool relative flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-foreground/[0.05]"
+                        >
+                          <motion.span
+                            animate={{
+                              backgroundColor: on ? "rgba(16,185,129,0.18)" : "rgba(127,127,127,0.10)",
+                              color: on ? "rgb(16,185,129)" : "var(--muted-foreground)",
+                            }}
+                            transition={{ duration: 0.2 }}
+                            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
+                          >
+                            <Icon className="h-3.5 w-3.5" />
+                          </motion.span>
+                          <span className="flex min-w-0 flex-1 flex-col">
+                            <span className="text-[11px] leading-tight text-foreground/90">{t.label}</span>
+                            <span className="truncate text-[10px] leading-tight opacity-55">{t.desc}</span>
+                          </span>
+                          {/* mini toggle dot */}
+                          <span className={`relative h-3.5 w-6 shrink-0 rounded-full transition-colors ${on ? "bg-emerald-500/80" : "bg-foreground/15"}`}>
+                            <motion.span
+                              animate={{ x: on ? 12 : 2 }}
+                              transition={{ type: "spring", stiffness: 520, damping: 30 }}
+                              className="absolute top-0.5 inline-block h-2.5 w-2.5 rounded-full bg-background shadow"
+                            />
+                          </span>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Connectors */}
+                <div className="border-t border-border/40 px-2 pb-2 pt-2">
+                  <div className="mb-1 flex items-center gap-1.5 px-1 font-mono text-[9px] uppercase tracking-[0.2em] opacity-50">
+                    <span>Connectors</span>
+                    <span className="h-px flex-1 bg-border/40" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-1">
+                    {CONN_DEFS.map((c, i) => {
+                      const on = conns.has(c.id);
+                      const Icon = c.icon;
+                      return (
+                        <motion.button
+                          key={c.id}
+                          type="button"
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.08 + i * 0.025, duration: 0.22 }}
+                          onClick={() => toolsStore.toggleConn(c.id)}
+                          aria-pressed={on}
+                          className="group/conn relative flex items-center gap-2 overflow-hidden rounded-md border border-border/40 bg-foreground/[0.02] px-2 py-1.5 text-left transition-all hover:bg-foreground/[0.06]"
+                          style={{ borderColor: on ? `${c.hue}55` : undefined }}
+                        >
+                          <motion.span
+                            aria-hidden
+                            initial={false}
+                            animate={{ opacity: on ? 0.18 : 0 }}
+                            transition={{ duration: 0.25 }}
+                            className="pointer-events-none absolute inset-0"
+                            style={{ background: `radial-gradient(circle at 0% 50%, ${c.hue}, transparent 70%)` }}
+                          />
+                          <span
+                            className="relative flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+                            style={{ background: on ? c.hue : "rgba(127,127,127,0.12)", color: on ? "#fff" : "var(--muted-foreground)" }}
+                          >
+                            <Icon className="h-3 w-3" />
+                          </span>
+                          <span className="relative flex min-w-0 flex-1 flex-col">
+                            <span className="truncate text-[10.5px] leading-tight text-foreground/90">{c.label}</span>
+                            <span className="font-mono text-[8.5px] uppercase tracking-[0.16em] opacity-55">
+                              {on ? "active" : c.status === "linked" ? "linked" : "connect"}
+                            </span>
+                          </span>
+                          {/* status dot */}
+                          <motion.span
+                            animate={{ scale: on ? [1, 1.6, 1] : 1, opacity: on ? 1 : 0.4 }}
+                            transition={{ duration: on ? 1.4 : 0.2, repeat: on ? Infinity : 0, ease: "easeInOut" }}
+                            className="relative h-1.5 w-1.5 shrink-0 rounded-full"
+                            style={{ background: on ? c.hue : "currentColor" }}
+                          />
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* footer */}
+                <div className="flex items-center justify-between border-t border-border/40 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] opacity-45">
+                  <span className="flex items-center gap-1">
+                    <Plug className="h-2.5 w-2.5" />
+                    <span>tap to toggle</span>
+                  </span>
+                  <span>{conns.size}/{CONN_DEFS.length} linked</span>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+
 function PrimaryRow({ ctx }: { ctx: Ctx }) {
   const [model, setModel] = useState<(typeof MODEL_OPTIONS)[number]>("Lumen 4");
   return (
     <div className="flex items-center justify-between gap-2">
       <div className="flex items-center gap-1.5">
-        <IconBtn ctx={ctx} tip="Attach file" keys="⌘U"><Paperclip className="h-4 w-4" /></IconBtn>
-        <IconBtn ctx={ctx} tip="Tools & connectors" keys="⌘T"><Wrench className="h-4 w-4" /></IconBtn>
+        <AttachButton ctx={ctx} />
+        <ToolsButton ctx={ctx} />
         <FancyPicker
           ctx={ctx} label="Model" value={model}
           onChange={(v) => setModel(v as (typeof MODEL_OPTIONS)[number])}
