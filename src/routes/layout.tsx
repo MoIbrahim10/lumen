@@ -96,6 +96,50 @@ function Pill({ ctx, children, onClick }: { ctx: Ctx; children: ReactNode; onCli
   );
 }
 
+function TogglePill({
+  ctx, on, onClick, label, desc, icon,
+}: {
+  ctx: Ctx; on: boolean; onClick: () => void;
+  label: string; desc: string; icon: ReactNode;
+}) {
+  return (
+    <HoverTip label={label} keys={desc}>
+      <motion.button
+        type="button"
+        onClick={onClick}
+        aria-pressed={on}
+        aria-label={`${label} ${on ? "on" : "off"}`}
+        whileTap={{ scale: 0.92 }}
+        transition={{ type: "spring", stiffness: 500, damping: 28 }}
+        className={`${ctx.btn} relative flex h-[30px] w-[30px] items-center justify-center overflow-hidden`}
+      >
+        <AnimatePresence initial={false}>
+          {on && (
+            <motion.span
+              key="on-bg"
+              initial={{ opacity: 0, scale: 0.6 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.6 }}
+              transition={{ type: "spring", stiffness: 460, damping: 28 }}
+              className="absolute inset-0 bg-foreground"
+            />
+          )}
+        </AnimatePresence>
+        <motion.span
+          animate={{
+            color: on ? "var(--background)" : "var(--muted-foreground)",
+          }}
+          transition={{ duration: 0.2 }}
+          className="relative z-10 inline-flex"
+        >
+          {icon}
+        </motion.span>
+      </motion.button>
+    </HoverTip>
+  );
+}
+
+
 function Dropdown({
   ctx, value, options, label, onChange, align = "left",
 }: {
