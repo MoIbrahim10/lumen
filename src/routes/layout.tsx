@@ -170,6 +170,96 @@ function useTools() {
   return useSyncExternalStore(toolsStore.subscribe, toolsStore.get, toolsStore.get);
 }
 
+/* ───────── settingsStore — theme, accent, button style (persisted) ───────── */
+
+export type ButtonStyleId =
+  | "mech" | "clean" | "emboss" | "depth3d" | "penrose"
+  | "squircle" | "liquid" | "pebble" | "inflated" | "paper";
+
+export type ThemePresetId = "obsidian" | "graphite" | "ocean" | "plasma";
+
+type Settings = {
+  light: boolean;
+  themeId: ThemePresetId;
+  hue: number;        // 0-360
+  saturation: number; // 0-100
+  lightness: number;  // 0-100 (accent lightness)
+  buttonStyleId: ButtonStyleId;
+};
+
+const DEFAULT_SETTINGS: Settings = {
+  light: true,
+  themeId: "graphite",
+  hue: 220,
+  saturation: 12,
+  lightness: 92,
+  buttonStyleId: "mech",
+};
+
+const SETTINGS_KEY = "lumen:settings:v1";
+
+const loadSettings = (): Settings => {
+  if (typeof window === "undefined") return DEFAULT_SETTINGS;
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (!raw) return DEFAULT_SETTINGS;
+    return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+  } catch { return DEFAULT_SETTINGS; }
+};
+
+const settingsStore = (() => {
+  let snap: Settings = DEFAULT_SETTINGS;
+  let hydrated = false;
+  const listeners = new Set<() => void>();
+  const notify = () => listeners.forEach((l) => l());
+  const persist = () => {
+    if (typeof window !== "undefined") {
+      try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(snap)); } catch {}
+    }
+  };
+  return {
+    get: () => snap,
+    hydrate: () => {
+      if (hydrated) return;
+      hydrated = true;
+      snap = loadSettings();
+      notify();
+    },
+    subscribe: (cb: () => void) => { listeners.add(cb); return () => { listeners.delete(cb); }; },
+    set: <K extends keyof Settings>(key: K, value: Settings[K]) => {
+      snap = { ...snap, [key]: value };
+      persist(); notify();
+    },
+    reset: () => { snap = DEFAULT_SETTINGS; persist(); notify(); },
+  };
+})();
+
+function useSettings() {
+  return useSyncExternalStore(settingsStore.subscribe, settingsStore.get, () => DEFAULT_SETTINGS);
+}
+
+export const BUTTON_STYLES: { id: ButtonStyleId; name: string; lightClass: string; darkClass: string }[] = [
+  { id: "mech",     name: "Mechanical",  lightClass: "btn-mech-light",  darkClass: "btn-mech" },
+  { id: "clean",    name: "Cupertino",   lightClass: "btn-clean",       darkClass: "btn-clean" },
+  { id: "emboss",   name: "Embossed",    lightClass: "btn-emboss",      darkClass: "btn-emboss" },
+  { id: "depth3d",  name: "Soft 3D",     lightClass: "btn-3d",          darkClass: "btn-3d" },
+  { id: "penrose",  name: "Penrose",     lightClass: "btn-penrose",     darkClass: "btn-penrose" },
+  { id: "squircle", name: "Squircle",    lightClass: "btn-squircle",    darkClass: "btn-squircle" },
+  { id: "liquid",   name: "Liquid",      lightClass: "btn-liquid",      darkClass: "btn-liquid" },
+  { id: "pebble",   name: "Pebble",      lightClass: "btn-pebble",      darkClass: "btn-pebble" },
+  { id: "inflated", name: "Inflated",    lightClass: "btn-inflated",    darkClass: "btn-inflated" },
+  { id: "paper",    name: "Paper",       lightClass: "btn-paper",       darkClass: "btn-paper" },
+];
+
+export const THEME_PRESETS: { id: ThemePresetId; name: string; bg: string; fg: string; accent: string; tagline: string }[] = [
+  { id: "obsidian", name: "Obsidian",     bg: "#0a0a0a", fg: "#f0f0f0", accent: "#a78bfa", tagline: "Pure black · violet pulse" },
+  { id: "graphite", name: "Graphite Ink", bg: "#ededeb", fg: "#111111", accent: "#3b3b3b", tagline: "Newsprint · soft graphite" },
+  { id: "ocean",    name: "Ocean Deep",   bg: "#0c1f2e", fg: "#e6f1ff", accent: "#5cbdb9", tagline: "Submarine indigo · teal" },
+  { id: "plasma",   name: "Plasma Violet",bg: "#15101f", fg: "#f3eaff", accent: "#e879f9", tagline: "Midnight · neon plasma" },
+];
+
+
+
 
 function HoverTip({ label, keys, desc, children, side = "bottom" }: {
   label: string; keys?: string; desc?: string; children: ReactNode; side?: "top" | "bottom";
@@ -738,40 +828,39 @@ const NAV_ITEMS = [
   { label: "History", icon: History, keys: "⌘H" },
 ];
 
-function LeftPill({ sideOpen, onSide, onSearch }: {
-  sideOpen: boolean; onSide?: () => void; onSearch: () => void;
+function LeftPill({ ctx, sideOpen, onSide, onSearch }: {
+  ctx: Ctx; sideOpen: boolean; onSide?: () => void; onSearch: () => void;
 }) {
   return (
-    <div
-      className="fixed top-3 left-4 z-40 flex items-center p-1 bg-[#f1f1ef] border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.04)] rounded-lg"
-      style={{ height: 40 }}
-    >
+    <div className={`${ctx.panel} fixed top-3 left-4 z-40 flex items-center gap-1 p-1`}>
       {onSide && (
-        <>
-          <button
-            onClick={onSide}
-            aria-label={sideOpen ? "Close menu" : "Open menu"}
-            className="p-2 hover:bg-black/[0.04] text-zinc-500 hover:text-zinc-900 rounded-md transition-colors duration-150 cursor-pointer"
-          >
-            <PanelLeft
-              className="h-[18px] w-[18px] transition-transform duration-300 ease-out"
-              strokeWidth={2}
-              style={{ transform: sideOpen ? "scaleX(-1)" : "scaleX(1)" }}
-            />
-          </button>
-          <span className="w-px h-4 bg-zinc-300/60 mx-1" aria-hidden />
-        </>
+        <motion.button
+          onClick={onSide}
+          aria-label={sideOpen ? "Close menu" : "Open menu"}
+          whileTap={{ scale: 0.92 }}
+          transition={SPRING_TURN}
+          className={`${ctx.btn} flex h-8 w-8 items-center justify-center`}
+        >
+          <PanelLeft
+            className="h-[15px] w-[15px] transition-transform duration-300 ease-out"
+            strokeWidth={2}
+            style={{ transform: sideOpen ? "scaleX(-1)" : "scaleX(1)" }}
+          />
+        </motion.button>
       )}
-      <button
+      <motion.button
         onClick={onSearch}
         aria-label="Search"
-        className="p-2 hover:bg-black/[0.04] text-zinc-500 hover:text-zinc-900 rounded-md transition-colors duration-150 cursor-pointer"
+        whileTap={{ scale: 0.92 }}
+        transition={SPRING_TURN}
+        className={`${ctx.btn} flex h-8 w-8 items-center justify-center`}
       >
-        <Search className="h-[18px] w-[18px]" strokeWidth={2} />
-      </button>
+        <Search className="h-[15px] w-[15px]" strokeWidth={2} />
+      </motion.button>
     </div>
   );
 }
+
 
 function SideMenu({ ctx, open }: { ctx: Ctx; open: boolean; onToggle?: () => void; placement?: "left" | "right" }) {
   return (
@@ -1186,14 +1275,14 @@ function SendButton({ ctx }: { ctx: Ctx }) {
         onClick={onSend}
         disabled={disabled}
         aria-label="Send"
-        whileHover={disabled ? undefined : { scale: 1.06 }}
-        whileTap={disabled ? undefined : { scale: 0.9 }}
-        animate={{ opacity: disabled && !sent ? 0.55 : 1 }}
+        whileHover={disabled ? undefined : { scale: 1.04 }}
+        whileTap={disabled ? undefined : { scale: 0.92 }}
         transition={{ type: "spring", stiffness: 500, damping: 22 }}
-        className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center overflow-hidden ${
-          disabled && !sent ? "cursor-default" : "cursor-pointer"
+        className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center overflow-visible transition-opacity ${
+          disabled && !sent ? "cursor-default opacity-50" : "cursor-pointer opacity-100"
         }`}
       >
+
         {/* aura on send — matches button radius */}
         <AnimatePresence>
           {sent && (
@@ -1251,10 +1340,11 @@ function DictateButton({ ctx }: { ctx: Ctx }) {
         onClick={toggle}
         aria-pressed={listening}
         aria-label={listening ? "Stop dictation" : "Start dictation"}
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.92 }}
         transition={{ type: "spring", stiffness: 500, damping: 22 }}
         className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center overflow-visible`}
+
       >
         {/* pulsing rings while listening — match button radius, smoother */}
         <AnimatePresence>
@@ -1886,7 +1976,245 @@ function QuickChips({ ctx, limit = 8 }: { ctx: Ctx; limit?: number }) {
 }
 
 
+/* ───────────────────────── PreferencesButton + Panel ───────────────────────── */
+
+function PreferencesButton({ ctx }: { ctx: Ctx }) {
+  const [open, setOpen] = useState(false);
+  const settings = useSettings();
+  return (
+    <div className="relative">
+      <HoverTip label="Preferences" keys="⌘,">
+        <motion.button
+          onClick={() => setOpen((o) => !o)}
+          aria-label="Preferences"
+          aria-expanded={open}
+          whileTap={{ scale: 0.92 }}
+          transition={SPRING_TURN}
+          className={`${ctx.btn} flex h-8 w-8 items-center justify-center`}
+        >
+          <SlidersHorizontal className="h-[15px] w-[15px]" strokeWidth={2} />
+        </motion.button>
+      </HoverTip>
+
+      <AnimatePresence>
+        {open && (
+          <>
+            <div className="fixed inset-0 z-40" onMouseDown={() => setOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: -8, scale: 0.96, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -8, scale: 0.96, filter: "blur(6px)" }}
+              transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
+              style={{ transformOrigin: "top right" }}
+              className={`${ctx.panel} absolute top-full right-0 z-50 mt-2 w-[360px] overflow-hidden p-1`}
+            >
+              <PreferencesPanel ctx={ctx} settings={settings} />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function PreferencesPanel({ ctx, settings }: { ctx: Ctx; settings: Settings }) {
+  return (
+    <div className={`${ctx.panelInner} flex max-h-[min(80vh,640px)] flex-col overflow-y-auto`}>
+      {/* header */}
+      <div className="flex items-center justify-between border-b border-foreground/10 px-3 py-2">
+        <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] opacity-70">
+          <span aria-hidden className="inline-block h-1 w-1 rounded-full bg-foreground/60" />
+          Preferences
+        </span>
+        <button
+          onClick={() => settingsStore.reset()}
+          className="font-mono text-[9px] uppercase tracking-[0.18em] opacity-50 transition-opacity hover:opacity-90"
+        >
+          Reset
+        </button>
+      </div>
+
+      {/* Mode (light / dark) segmented */}
+      <SectionHeader label="Mode" />
+      <div className="px-3 pb-2">
+        <div className="relative grid grid-cols-2 gap-1 rounded-md border border-foreground/10 bg-foreground/[0.03] p-1">
+          {[
+            { id: "light", label: "Light", icon: Sun },
+            { id: "dark",  label: "Dark",  icon: Moon },
+          ].map((m) => {
+            const active = (m.id === "light") === settings.light;
+            return (
+              <button
+                key={m.id}
+                onClick={() => settingsStore.set("light", m.id === "light")}
+                className={`relative flex items-center justify-center gap-1.5 rounded-[5px] py-1.5 text-[11px] transition-colors ${
+                  active ? "text-foreground" : "text-foreground/55 hover:text-foreground/80"
+                }`}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="mode-active"
+                    className="absolute inset-0 rounded-[5px] bg-foreground/[0.08]"
+                    transition={{ type: "spring", stiffness: 480, damping: 32 }}
+                  />
+                )}
+                <m.icon className="relative h-3 w-3" />
+                <span className="relative">{m.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Theme presets */}
+      <SectionHeader label="Theme" />
+      <div className="grid grid-cols-2 gap-1.5 px-3 pb-2">
+        {THEME_PRESETS.map((p) => {
+          const active = settings.themeId === p.id;
+          return (
+            <motion.button
+              key={p.id}
+              onClick={() => settingsStore.set("themeId", p.id)}
+              whileTap={{ scale: 0.97 }}
+              transition={SPRING_TURN}
+              className={`group relative overflow-hidden rounded-md border p-2 text-left transition-all ${
+                active
+                  ? "border-emerald-500/60 bg-emerald-500/[0.05]"
+                  : "border-foreground/10 hover:border-foreground/25"
+              }`}
+              aria-pressed={active}
+            >
+              <div
+                className="mb-1.5 h-6 w-full rounded-sm border border-foreground/10"
+                style={{ background: `linear-gradient(135deg, ${p.bg} 0%, ${p.bg} 55%, ${p.accent} 55%, ${p.accent} 100%)` }}
+              />
+              <div className="flex items-center justify-between">
+                <span className="text-[10.5px] font-medium leading-none text-foreground">{p.name}</span>
+                {active && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={SPRING_POP}
+                    className="flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 text-background"
+                  >
+                    <Check className="h-2 w-2" strokeWidth={3} />
+                  </motion.span>
+                )}
+              </div>
+              <span className="mt-0.5 block text-[9px] leading-tight opacity-55">{p.tagline}</span>
+            </motion.button>
+          );
+        })}
+      </div>
+
+      {/* HSL sliders */}
+      <SectionHeader label="Accent · custom" />
+      <div className="space-y-2.5 px-3 pb-3">
+        <Slider label="Hue"        min={0}   max={360} value={settings.hue}        onChange={(v) => settingsStore.set("hue", v)}
+                track={`linear-gradient(90deg, #ff5a5a, #ffd000, #5aff5a, #5addff, #5a5aff, #ff5aff, #ff5a5a)`} />
+        <Slider label="Saturation" min={0}   max={100} value={settings.saturation} onChange={(v) => settingsStore.set("saturation", v)}
+                track={`linear-gradient(90deg, hsl(${settings.hue} 0% 60%), hsl(${settings.hue} 100% 55%))`} />
+        <Slider label="Lightness"  min={20}  max={95}  value={settings.lightness}  onChange={(v) => settingsStore.set("lightness", v)}
+                track={`linear-gradient(90deg, hsl(${settings.hue} ${settings.saturation}% 25%), hsl(${settings.hue} ${settings.saturation}% 95%))`} />
+        <div className="flex items-center justify-between rounded-md border border-foreground/10 bg-foreground/[0.03] px-2 py-1.5">
+          <span className="font-mono text-[9px] uppercase tracking-[0.18em] opacity-55">Preview</span>
+          <div className="flex items-center gap-1.5">
+            <span
+              className="h-4 w-4 rounded-full border border-foreground/15"
+              style={{ background: `hsl(${settings.hue} ${settings.saturation}% ${settings.lightness}%)` }}
+            />
+            <span className="font-mono text-[9px] tabular-nums opacity-65">
+              {Math.round(settings.hue)}·{Math.round(settings.saturation)}·{Math.round(settings.lightness)}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Button style picker */}
+      <SectionHeader label="Button style" right={<span className="font-mono text-[9px] tabular-nums opacity-50">10</span>} />
+      <div className="grid grid-cols-2 gap-1.5 px-3 pb-3">
+        {BUTTON_STYLES.map((s) => {
+          const active = settings.buttonStyleId === s.id;
+          const cls = settings.light ? s.lightClass : s.darkClass;
+          return (
+            <button
+              key={s.id}
+              onClick={() => settingsStore.set("buttonStyleId", s.id)}
+              aria-pressed={active}
+              className={`group relative flex items-center gap-2 rounded-md border p-1.5 pr-2 text-left transition-all ${
+                active
+                  ? "border-emerald-500/60 bg-emerald-500/[0.04]"
+                  : "border-foreground/10 hover:border-foreground/25"
+              }`}
+            >
+              <span className={`${cls} flex h-7 w-7 shrink-0 items-center justify-center text-[11px]`}>
+                <span>Aa</span>
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span className="truncate text-[10.5px] leading-tight text-foreground">{s.name}</span>
+                <span className="truncate text-[9px] leading-tight opacity-50">{s.id}</span>
+              </span>
+              {active && (
+                <span className="flex h-3 w-3 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-background">
+                  <Check className="h-2 w-2" strokeWidth={3} />
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* footer */}
+      <div className="flex items-center justify-between border-t border-foreground/10 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] opacity-50">
+        <span>auto-saved</span>
+        <Link to="/connectors" className="underline-offset-4 hover:underline">connectors lab →</Link>
+      </div>
+    </div>
+  );
+}
+
+function SectionHeader({ label, right }: { label: string; right?: ReactNode }) {
+  return (
+    <div className="flex items-center gap-1.5 px-3 pb-1 pt-2.5 font-mono text-[9px] uppercase tracking-[0.2em] opacity-50">
+      <span>{label}</span>
+      <span className="h-px flex-1 bg-foreground/10" />
+      {right}
+    </div>
+  );
+}
+
+function Slider({ label, min, max, value, onChange, track }: {
+  label: string; min: number; max: number; value: number; onChange: (v: number) => void; track: string;
+}) {
+  return (
+    <label className="block">
+      <div className="mb-1 flex items-center justify-between text-[10px]">
+        <span className="opacity-70">{label}</span>
+        <span className="font-mono tabular-nums opacity-50">{Math.round(value)}</span>
+      </div>
+      <div className="relative h-4">
+        <span
+          aria-hidden
+          className="pointer-events-none absolute left-0 right-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full border border-foreground/10"
+          style={{ background: track }}
+        />
+        <input
+          type="range"
+          min={min}
+          max={max}
+          value={value}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="lumen-range absolute inset-0 w-full appearance-none bg-transparent"
+          aria-label={label}
+        />
+      </div>
+    </label>
+  );
+}
+
 /* ───────────────────────── chrome ───────────────────────── */
+
+
 
 function TopBar({
   ctx, sideOpen, onSide, onTemp, temp, right,
@@ -1915,27 +2243,25 @@ function TopBar({
 
   return (
     <div className="flex h-14 items-center justify-between gap-3 px-4">
-      {/* fixed pill stays in same place; menu bg expands from behind it */}
-      <LeftPill sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
+      <LeftPill ctx={ctx} sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
       <div />
 
-
-      {/* right cluster — temp + preferences + profile */}
-      <div className="flex items-center bg-white border border-zinc-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.02)] rounded-lg p-1 gap-0.5">
-        <button
-          onClick={onTemp}
-          aria-label={temp ? "Temporary chat on" : "Temporary chat"}
-          className={`p-2 hover:bg-zinc-50 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer ${temp ? "text-zinc-900" : "text-zinc-400"}`}
-        >
-          <EyeOff className="h-[18px] w-[18px]" strokeWidth={2} />
-        </button>
-        <button
-          aria-label="Preferences"
-          className="p-2 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-900 rounded-md transition-all duration-200 cursor-pointer"
-        >
-          <SlidersHorizontal className="h-[18px] w-[18px]" strokeWidth={2} />
-        </button>
-        <span className="w-px h-4 bg-zinc-200/60 mx-1" aria-hidden />
+      {/* right cluster — temp + preferences + profile, matches composer */}
+      <div className={`${ctx.panel} flex items-center gap-1 p-1`}>
+        <HoverTip label={temp ? "Temporary chat on" : "Temporary chat"} keys="⌘⇧T">
+          <motion.button
+            onClick={onTemp}
+            aria-label={temp ? "Temporary chat on" : "Temporary chat"}
+            aria-pressed={temp}
+            whileTap={{ scale: 0.92 }}
+            transition={SPRING_TURN}
+            className={`${ctx.btn} flex h-8 w-8 items-center justify-center ${temp ? "text-emerald-600 dark:text-emerald-400" : ""}`}
+          >
+            <EyeOff className="h-[15px] w-[15px]" strokeWidth={2} />
+          </motion.button>
+        </HoverTip>
+        <PreferencesButton ctx={ctx} />
+        <span className="mx-0.5 h-4 w-px bg-foreground/10" aria-hidden />
         {right ?? <Profile ctx={ctx} />}
       </div>
 
@@ -1943,6 +2269,7 @@ function TopBar({
     </div>
   );
 }
+
 
 /* ───────────────────────── 10 layouts ───────────────────────── */
 
@@ -2441,37 +2768,39 @@ function TrayStrip({ ctx }: { ctx: Ctx }) {
 /* ───────────────────────── gallery shell ───────────────────────── */
 
 function LayoutGallery() {
-  const [light, setLight] = useState(true);
-  const [active, setActive] = useState(0);
+  useEffect(() => { settingsStore.hydrate(); }, []);
+  const settings = useSettings();
+  const { light, themeId, hue, saturation, lightness, buttonStyleId } = settings;
+
+  const style = BUTTON_STYLES.find((s) => s.id === buttonStyleId) ?? BUTTON_STYLES[0];
+  const btnClass = light ? style.lightClass : style.darkClass;
+  const preset = THEME_PRESETS.find((p) => p.id === themeId) ?? THEME_PRESETS[1];
 
   const ctx: Ctx = {
     light,
-    btn: light ? "btn-mech-light" : "btn-mech",
+    btn: btnClass,
     panel: light ? "panel-mech-light" : "panel-mech",
     panelInner: light ? "panel-inner-mech-light" : "panel-inner-mech",
   };
 
-  const bg = light ? "#ededeb" : "#0a0a0a";
-  const fg = light ? "#111" : "#f0f0f0";
+  const bg = light ? (themeId === "graphite" ? "#ededeb" : preset.bg) : preset.bg;
+  const fg = light ? "#111111" : preset.fg;
   const wrap = light ? "" : "dark";
-  const current = LAYOUTS[active];
-
+  const accent = `hsl(${hue} ${saturation}% ${lightness}%)`;
   const v12 = LAYOUTS.find((l) => l.id === "12") ?? LAYOUTS[0];
-  void active; void setActive;
 
   return (
     <div className={wrap}>
-      <div className="relative min-h-screen text-foreground" style={{ background: bg, color: fg }}>
+      <div
+        className="relative min-h-screen text-foreground transition-colors duration-500"
+        style={{
+          background: bg,
+          color: fg,
+          ["--lumen-accent" as any]: accent,
+          ["--lumen-preset-accent" as any]: preset.accent,
+        }}
+      >
         {v12.render(ctx)}
-
-        {/* floating theme toggle */}
-        <button
-          onClick={() => setLight(!light)}
-          className={`${ctx.btn} fixed bottom-5 right-5 z-50 flex h-9 w-9 items-center justify-center`}
-          aria-label="Toggle theme"
-        >
-          {light ? <Moon className="h-3.5 w-3.5" /> : <Sun className="h-3.5 w-3.5" />}
-        </button>
       </div>
     </div>
   );
