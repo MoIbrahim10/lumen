@@ -687,13 +687,23 @@ function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
 
 
 function PrimaryRow({ ctx }: { ctx: Ctx }) {
-  const [model, setModel] = useState("Lumen 4");
+  const [model, setModel] = useState<(typeof MODEL_OPTIONS)[number]>("Lumen 4");
   return (
     <div className="flex items-center justify-between gap-2">
       <div className="flex items-center gap-1.5">
         <IconBtn ctx={ctx} tip="Attach file" keys="⌘U"><Paperclip className="h-4 w-4" /></IconBtn>
         <IconBtn ctx={ctx} tip="Tools & connectors" keys="⌘T"><Wrench className="h-4 w-4" /></IconBtn>
-        <Dropdown ctx={ctx} value={model} onChange={setModel} options={["Lumen 4", "Lumen 4 Mini", "Lumen 4 Pro"]} label="Model" />
+        <CycleButton
+          ctx={ctx} label="Model" value={model}
+          onChange={(v) => setModel(v as (typeof MODEL_OPTIONS)[number])}
+          options={MODEL_OPTIONS}
+          glyph={(i) => <ModelGlyph index={i} />}
+          descriptions={{
+            "Lumen 4 Mini": "Fastest, lightest tier — best for quick chats.",
+            "Lumen 4": "Balanced default — good for most tasks.",
+            "Lumen 4 Pro": "Highest reasoning tier — slower, deeper answers.",
+          }}
+        />
       </div>
       <div className="flex items-center gap-1.5">
         <IconBtn ctx={ctx} tip="Dictate" keys="⌘⇧V"><Mic className="h-4 w-4" /></IconBtn>
