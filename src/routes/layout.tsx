@@ -120,12 +120,23 @@ function TogglePill({
         className={`${ctx.btn} relative flex h-[30px] w-[30px] items-center justify-center`}
       >
         <motion.span
-          animate={{ color: on ? "#10b981" : "var(--muted-foreground)" }}
-          transition={{ duration: 0.2 }}
+          key={`t-${on}`}
+          initial={{ scale: 0.7, rotate: on ? -16 : 16 }}
+          animate={{
+            scale: [0.7, 1.18, 1],
+            rotate: [on ? -16 : 16, on ? 6 : -6, 0],
+            color: on ? "#10b981" : "var(--muted-foreground)",
+          }}
+          transition={{
+            scale: { type: "spring", stiffness: 520, damping: 16, mass: 0.6 },
+            rotate: { type: "spring", stiffness: 480, damping: 18 },
+            color: { duration: 0.2 },
+          }}
           className="inline-flex"
         >
           {icon}
         </motion.span>
+
       </motion.button>
 
     </HoverTip>
