@@ -259,6 +259,132 @@ function ModelGlyph({ index }: { index: number }) {
 }
 
 
+/* ───────── FancyPicker — creative dropdown for multi-option selectors ───────── */
+
+type PickerOption = { id: string; desc?: string; glyph: ReactNode };
+
+function FancyPicker({
+  ctx, label, value, options, onChange, align = "left",
+}: {
+  ctx: Ctx;
+  label: string;
+  value: string;
+  options: PickerOption[];
+  onChange: (v: string) => void;
+  align?: "left" | "right";
+}) {
+  const [open, setOpen] = useState(false);
+  const current = options.find((o) => o.id === value) ?? options[0];
+  const longest = options.reduce((a, b) => (a.id.length >= b.id.length ? a : b)).id;
+
+  return (
+    <div className="relative">
+      <motion.button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        whileTap={{ scale: 0.97 }}
+        className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px] cursor-pointer select-none`}
+      >
+        <span className="opacity-60">{label}</span>
+        <span className="relative inline-block text-left">
+          <span className="invisible">{longest}</span>
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={current.id}
+              initial={{ y: -8, opacity: 0, filter: "blur(2px)" }}
+              animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+              exit={{ y: 8, opacity: 0, filter: "blur(2px)" }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0"
+            >
+              {current.id}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ type: "spring", stiffness: 380, damping: 28 }}
+          className="ml-0.5 inline-flex"
+        >
+          <ChevronDown className="h-3 w-3 opacity-60" />
+        </motion.span>
+      </motion.button>
+
+      <AnimatePresence>
+        {open && (
+          <>
+            <div
+              className="fixed inset-0 z-40"
+              onMouseDown={(e) => { e.preventDefault(); setOpen(false); }}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -6, scale: 0.96, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -6, scale: 0.96, filter: "blur(4px)" }}
+              transition={{ type: "spring", stiffness: 420, damping: 32, mass: 0.6 }}
+              style={{ transformOrigin: align === "right" ? "top right" : "top left" }}
+              className={`absolute top-full z-50 mt-2 w-[240px] overflow-hidden rounded-lg border border-border/60 bg-popover/95 p-1 text-popover-foreground shadow-xl backdrop-blur-sm ${align === "right" ? "right-0" : "left-0"}`}
+            >
+              <div className="px-2 pb-1 pt-1.5 font-mono text-[9px] uppercase tracking-[0.22em] opacity-50">
+                {label}
+              </div>
+              <LayoutGroup id={`picker-${label}`}>
+                {options.map((o, i) => {
+                  const selected = o.id === value;
+                  return (
+                    <motion.button
+                      key={o.id}
+                      type="button"
+                      initial={{ opacity: 0, x: -6 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        delay: 0.04 + i * 0.035,
+                        duration: 0.24,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                      onClick={() => { onChange(o.id); setOpen(false); }}
+                      className="group/row relative flex w-full items-start gap-2.5 rounded-md px-2 py-1.5 text-left hover:bg-muted/50"
+                    >
+                      {selected && (
+                        <motion.span
+                          layoutId={`picker-rail-${label}`}
+                          transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.5 }}
+                          className="absolute left-0 top-1.5 bottom-1.5 w-[2px] rounded-full bg-foreground"
+                        />
+                      )}
+                      <span className={`mt-[2px] flex h-4 w-4 shrink-0 items-center justify-center ${selected ? "opacity-100" : "opacity-60 group-hover/row:opacity-90"}`}>
+                        {o.glyph}
+                      </span>
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <span className={`text-[11px] ${selected ? "text-foreground" : "text-foreground/80"}`}>
+                          {o.id}
+                        </span>
+                        {o.desc && (
+                          <span className="mt-0.5 text-[10px] leading-snug opacity-55">
+                            {o.desc}
+                          </span>
+                        )}
+                      </span>
+                      {selected && (
+                        <motion.span
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ type: "spring", stiffness: 500, damping: 28 }}
+                          className="mt-[3px] inline-flex h-1.5 w-1.5 shrink-0 rounded-full bg-foreground"
+                        />
+                      )}
+                    </motion.button>
+                  );
+                })}
+              </LayoutGroup>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 /* ───────── CycleButton — click to cycle, animated SVG indicator ───────── */
 
 function LengthGlyph({ index }: { index: number }) {
