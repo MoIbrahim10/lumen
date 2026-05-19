@@ -607,17 +607,26 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
         ctx={ctx} label="Depth" value={depth} onChange={setDepth}
         options={["Quick", "Standard", "Deep"] as const}
         glyph={(i) => <DepthGlyph index={i} />}
+        showLabel={false}
+        descriptions={{
+          Quick: "Fast surface-level answer with minimal reasoning.",
+          Standard: "Balanced analysis — the default reasoning depth.",
+          Deep: "Slower, multi-step reasoning for harder problems.",
+        }}
       />
       <TogglePill
         ctx={ctx} on={memory} onClick={() => setMemory(!memory)}
-        label="Memory" desc="Recall facts across chats"
+        label={memory ? "Memory · on" : "Memory · off"}
+        desc="Remember details about you across conversations and use them to personalize replies."
         icon={<Brain className="h-3.5 w-3.5" />}
       />
       <TogglePill
         ctx={ctx} on={web} onClick={() => setWeb(!web)}
-        label="Web" desc="Search the live web for answers"
+        label={web ? "Web · on" : "Web · off"}
+        desc="Let the model search the live web for fresh information and cite sources."
         icon={<Globe className="h-3.5 w-3.5" />}
       />
+
 
     </div>
   );
