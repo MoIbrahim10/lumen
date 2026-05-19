@@ -577,7 +577,7 @@ function SearchPalette({ open, onClose }: { open: boolean; onClose: () => void }
 
 const STATUS_STATES = ["ready", "listening", "thinking", "composing"] as const;
 
-function StatusTicker({ model = "Lumen 4" }: { model?: string }) {
+function StatusTicker() {
   const [idx, setIdx] = useState(0);
   useEffect(() => {
     const t = setInterval(() => setIdx((i) => (i + 1) % STATUS_STATES.length), 3200);
@@ -589,8 +589,6 @@ function StatusTicker({ model = "Lumen 4" }: { model?: string }) {
 
   return (
     <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">
-      <span>{model}</span>
-      <span className="opacity-40">·</span>
       <motion.span
         animate={{ backgroundColor: dotColor, boxShadow: `0 0 6px ${dotColor}` }}
         transition={{ duration: 0.4 }}
