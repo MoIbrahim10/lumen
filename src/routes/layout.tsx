@@ -201,109 +201,53 @@ function Dropdown({
   );
 }
 
-/* ───────── Style picker — horizontal ribbon unfurl ───────── */
+/* ───────── Style + Model glyphs (cycle button style) ───────── */
 
-const STYLE_OPTIONS = [
-  { id: "Auto", icon: Sparkles },
-  { id: "Formal", icon: Feather },
-  { id: "Friendly", icon: Smile },
-  { id: "Concise", icon: Scissors },
-  { id: "Creative", icon: Wand2 },
-];
+const STYLE_OPTIONS = ["Auto", "Formal", "Friendly", "Concise", "Creative"] as const;
+const STYLE_ICONS: Record<(typeof STYLE_OPTIONS)[number], typeof Sparkles> = {
+  Auto: Sparkles,
+  Formal: Feather,
+  Friendly: Smile,
+  Concise: Scissors,
+  Creative: Wand2,
+};
 
-function StylePicker({ ctx, value, onChange }: {
-  ctx: Ctx; value: string; onChange: (v: string) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const [hover, setHover] = useState<string | null>(null);
-  const longest = STYLE_OPTIONS.reduce((a, b) => (a.id.length >= b.id.length ? a : b)).id;
-  const indicatorId = hover ?? value;
+function StyleGlyph({ index }: { index: number }) {
+  const name = STYLE_OPTIONS[index] ?? "Auto";
+  const Icon = STYLE_ICONS[name];
+  return <Icon className="h-3.5 w-3.5" />;
+}
 
+const MODEL_OPTIONS = ["Lumen 4 Mini", "Lumen 4", "Lumen 4 Pro"] as const;
+
+function ModelGlyph({ index }: { index: number }) {
+  // signal-strength style — 3 vertical bars of growing height
+  const heights = [4, 8, 12];
   return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px]`}
-      >
-        <span className="opacity-60">Style</span>
-        <span className="relative inline-block text-left">
-          <span className="invisible">{longest}</span>
-          <span className="absolute inset-0">{value}</span>
-        </span>
-        <motion.span
-          animate={{ rotate: open ? 180 : 0 }}
-          transition={{ type: "spring", stiffness: 380, damping: 28 }}
-          className="inline-flex"
-        >
-          <ChevronDown className="h-3 w-3 opacity-60" />
-        </motion.span>
-      </button>
-
-      <AnimatePresence>
-        {open && (
-          <>
-            <div
-              className="fixed inset-0 z-40"
-              onMouseDown={(e) => { e.preventDefault(); setOpen(false); }}
-            />
-            <motion.div
-              initial={{ clipPath: "inset(0 100% 0 0)", opacity: 0 }}
-              animate={{ clipPath: "inset(0 0% 0 0)", opacity: 1 }}
-              exit={{ clipPath: "inset(0 100% 0 0)", opacity: 0 }}
-              transition={{
-                clipPath: { duration: 0.42, ease: [0.22, 1, 0.36, 1] },
-                opacity: { duration: 0.18 },
-              }}
-              style={{ transformOrigin: "left center" }}
-              onMouseLeave={() => setHover(null)}
-              className="absolute left-0 top-full z-50 mt-2 flex items-center gap-0.5 rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-lg"
-            >
-              <LayoutGroup id="style-picker">
-                {STYLE_OPTIONS.map((s, i) => {
-                  const lit = indicatorId === s.id;
-                  const selected = value === s.id;
-                  return (
-                    <motion.button
-                      key={s.id}
-                      type="button"
-                      initial={{ opacity: 0, x: -6 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{
-                        delay: 0.06 + i * 0.035,
-                        duration: 0.28,
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
-                      onClick={() => { onChange(s.id); setOpen(false); }}
-                      onMouseEnter={() => setHover(s.id)}
-                      className="relative flex items-center gap-1.5 rounded-[4px] px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider"
-                    >
-                      {lit && (
-                        <motion.span
-                          layoutId="style-indicator"
-                          transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.5 }}
-                          className="absolute inset-0 rounded-[4px] bg-foreground"
-                        />
-                      )}
-                      <span
-                        className={`relative z-10 flex items-center gap-1.5 transition-colors duration-150 ${
-                          lit ? "text-background" : selected ? "text-foreground" : "text-muted-foreground"
-                        }`}
-                      >
-                        <s.icon className="h-3 w-3" />
-                        {s.id}
-                      </span>
-                    </motion.button>
-                  );
-                })}
-              </LayoutGroup>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </div>
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+      {heights.map((h, i) => {
+        const active = i <= index;
+        return (
+          <motion.rect
+            key={i}
+            x={1 + i * 4.5}
+            width="2.5"
+            rx="1"
+            initial={false}
+            animate={{
+              height: active ? h : 2,
+              y: active ? 13 - h : 11,
+              opacity: active ? 1 : 0.3,
+            }}
+            transition={{ ...SPRING_SETTLE, delay: i * 0.04 }}
+            fill="currentColor"
+          />
+        );
+      })}
+    </svg>
   );
 }
+
 
 /* ───────── CycleButton — click to cycle, animated SVG indicator ───────── */
 
@@ -743,13 +687,23 @@ function InputBlock({ ctx, rows = 3 }: { ctx: Ctx; rows?: number }) {
 
 
 function PrimaryRow({ ctx }: { ctx: Ctx }) {
-  const [model, setModel] = useState("Lumen 4");
+  const [model, setModel] = useState<(typeof MODEL_OPTIONS)[number]>("Lumen 4");
   return (
     <div className="flex items-center justify-between gap-2">
       <div className="flex items-center gap-1.5">
         <IconBtn ctx={ctx} tip="Attach file" keys="⌘U"><Paperclip className="h-4 w-4" /></IconBtn>
         <IconBtn ctx={ctx} tip="Tools & connectors" keys="⌘T"><Wrench className="h-4 w-4" /></IconBtn>
-        <Dropdown ctx={ctx} value={model} onChange={setModel} options={["Lumen 4", "Lumen 4 Mini", "Lumen 4 Pro"]} label="Model" />
+        <CycleButton
+          ctx={ctx} label="Model" value={model}
+          onChange={(v) => setModel(v as (typeof MODEL_OPTIONS)[number])}
+          options={MODEL_OPTIONS}
+          glyph={(i) => <ModelGlyph index={i} />}
+          descriptions={{
+            "Lumen 4 Mini": "Fastest, lightest tier — best for quick chats.",
+            "Lumen 4": "Balanced default — good for most tasks.",
+            "Lumen 4 Pro": "Highest reasoning tier — slower, deeper answers.",
+          }}
+        />
       </div>
       <div className="flex items-center gap-1.5">
         <IconBtn ctx={ctx} tip="Dictate" keys="⌘⇧V"><Mic className="h-4 w-4" /></IconBtn>
@@ -767,7 +721,18 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
   const [memory, setMemory] = useState(true);
   return (
     <div className={`flex ${vertical ? "flex-col items-stretch" : "flex-wrap items-center"} gap-1.5`}>
-      <StylePicker ctx={ctx} value={style} onChange={setStyle} />
+      <CycleButton
+        ctx={ctx} label="Style" value={style} onChange={setStyle}
+        options={STYLE_OPTIONS}
+        glyph={(i) => <StyleGlyph index={i} />}
+        descriptions={{
+          Auto: "Lumen picks the best tone for your prompt automatically.",
+          Formal: "Polished, professional phrasing — good for work writing.",
+          Friendly: "Warm, conversational tone — great for casual replies.",
+          Concise: "Trim filler — get to the point in fewer words.",
+          Creative: "More vivid, playful language and unexpected angles.",
+        }}
+      />
       <CycleButton
         ctx={ctx} label="Length" value={length} onChange={setLength}
         options={["Short", "Balanced", "Long"] as const}
