@@ -306,7 +306,7 @@ function FancyPicker({
           </AnimatePresence>
         </span>
         <motion.span
-          animate={{ rotate: open ? 180 : 0 }}
+          animate={{ rotate: open ? -180 : 0 }}
           transition={{ type: "spring", stiffness: 380, damping: 28 }}
           className="ml-0.5 inline-flex"
         >
