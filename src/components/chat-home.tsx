@@ -13,7 +13,8 @@ export type Variant =
   | "dot"
   | "emboss"
   | "etch"
-  | "stack";
+  | "stack"
+  | "clean";
 
 type Cfg = {
   name: string;
