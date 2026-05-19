@@ -1652,15 +1652,15 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                   </div>
                 </div>
 
-                {/* Connectors — same row style as tools for consistency */}
-                <div className="border-t border-border/40 px-2 pb-1 pt-2">
-                  <div className="mb-1 flex items-center gap-1.5 px-1 font-mono text-[9px] uppercase tracking-[0.2em] opacity-50">
+                {/* Connectors — compact icon-card grid */}
+                <div className="border-t border-border/40 px-2 pb-2 pt-2">
+                  <div className="mb-1.5 flex items-center gap-1.5 px-1 font-mono text-[9px] uppercase tracking-[0.2em] opacity-50">
                     <span>Connectors</span>
                     <span className="h-px flex-1 bg-border/40" />
                     <span className="tabular-nums opacity-70">{conns.size}/{CONN_DEFS.length}</span>
                   </div>
-                  <div className="space-y-0.5">
-                    {(showAllConns ? CONN_DEFS : CONN_DEFS.slice(0, 3)).map((c, i) => {
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {CONN_DEFS.map((c, i) => {
                       const on = conns.has(c.id);
                       const linked = c.status === "linked";
                       const Icon = c.icon;
@@ -1668,59 +1668,45 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                         <motion.button
                           key={c.id}
                           type="button"
-                          initial={{ opacity: 0, x: -6 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.04 + i * 0.03, duration: 0.22 }}
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.04 + i * 0.025, duration: 0.22 }}
+                          whileTap={{ scale: 0.94 }}
                           onClick={() => { if (linked) toolsStore.toggleConn(c.id); }}
                           aria-pressed={on}
-                          disabled={!linked}
-                          className="group/conn relative flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-foreground/[0.05] disabled:cursor-default disabled:hover:bg-transparent"
+                          title={
+                            on ? `${c.label} · active`
+                              : linked ? `${c.label} · tap to enable`
+                              : `${c.label} · authenticate to connect`
+                          }
+                          className={`group/conn relative flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border transition-all ${
+                            on
+                              ? "border-emerald-500/50 bg-emerald-500/[0.10] text-emerald-600 dark:text-emerald-400"
+                              : "border-border/50 bg-foreground/[0.02] text-foreground/75 hover:bg-foreground/[0.06]"
+                          }`}
                         >
-                          <motion.span
-                            animate={{
-                              backgroundColor: on ? `${c.hue}2e` : "rgba(127,127,127,0.10)",
-                              color: on ? c.hue : "var(--muted-foreground)",
-                            }}
-                            transition={{ duration: 0.2 }}
-                            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
-                          >
-                            <Icon className="h-3.5 w-3.5" />
-                          </motion.span>
-                          <span className="flex min-w-0 flex-1 flex-col">
-                            <span className="text-[11px] leading-tight text-foreground/90">{c.label}</span>
-                            <span className="truncate text-[10px] leading-tight opacity-55">
-                              {linked ? (on ? "Active in this chat" : "Linked — tap to enable") : "Not connected"}
-                            </span>
-                          </span>
-                          {linked ? (
-                            <span className={`relative h-3.5 w-6 shrink-0 rounded-full transition-colors ${on ? "" : "bg-foreground/15"}`} style={on ? { background: c.hue } : undefined}>
-                              <motion.span
-                                animate={{ x: on ? 12 : 2 }}
-                                transition={{ type: "spring", stiffness: 520, damping: 30 }}
-                                className="absolute top-0.5 inline-block h-2.5 w-2.5 rounded-full bg-background shadow"
-                              />
-                            </span>
-                          ) : (
-                            <span className="font-mono text-[8.5px] uppercase tracking-[0.16em] opacity-55 group-hover/conn:opacity-90">
-                              connect →
+                          {on && (
+                            <motion.span
+                              aria-hidden
+                              animate={{ scale: [1, 1.6, 1], opacity: [1, 0.4, 1] }}
+                              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                              className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500"
+                            />
+                          )}
+                          {!linked && (
+                            <span
+                              aria-hidden
+                              className="absolute right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400"
+                            >
+                              <span className="font-mono text-[8px] font-bold leading-none">!</span>
                             </span>
                           )}
+                          <Icon className="h-4 w-4" />
+                          <span className="text-[9.5px] leading-tight opacity-80">{c.label}</span>
                         </motion.button>
                       );
                     })}
                   </div>
-                  {CONN_DEFS.length > 3 && (
-                    <button
-                      type="button"
-                      onClick={() => setShowAllConns((s) => !s)}
-                      className="mt-1 flex w-full items-center justify-center gap-1 rounded-md px-2 py-1 font-mono text-[9px] uppercase tracking-[0.2em] opacity-55 transition-colors hover:bg-foreground/[0.05] hover:opacity-90"
-                    >
-                      <motion.span animate={{ rotate: showAllConns ? 180 : 0 }} transition={SPRING_TURN}>
-                        <ChevronDown className="h-3 w-3" />
-                      </motion.span>
-                      {showAllConns ? "show less" : `show ${CONN_DEFS.length - 3} more`}
-                    </button>
-                  )}
                 </div>
 
                 {/* footer */}
