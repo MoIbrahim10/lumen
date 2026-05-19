@@ -56,6 +56,27 @@ const promptBus = (() => {
   };
 })();
 
+/* ───────── composerStore — shared input state across InputBlock + PrimaryRow ───────── */
+const composerStore = (() => {
+  let snap = { value: "", streaming: false, listening: false };
+  const listeners = new Set<() => void>();
+  const notify = () => listeners.forEach((l) => l());
+  return {
+    get: () => snap,
+    subscribe: (cb: () => void) => {
+      listeners.add(cb);
+      return () => { listeners.delete(cb); };
+    },
+    setValue: (v: string) => { snap = { ...snap, value: v }; notify(); },
+    setStreaming: (v: boolean) => { snap = { ...snap, streaming: v }; notify(); },
+    setListening: (v: boolean) => { snap = { ...snap, listening: v }; notify(); },
+  };
+})();
+
+function useComposer() {
+  return useSyncExternalStore(composerStore.subscribe, composerStore.get, composerStore.get);
+}
+
 
 function HoverTip({ label, keys, desc, children, side = "bottom" }: {
   label: string; keys?: string; desc?: string; children: ReactNode; side?: "top" | "bottom";
