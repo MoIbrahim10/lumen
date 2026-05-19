@@ -784,14 +784,17 @@ function StatusTicker() {
     return () => clearInterval(t);
   }, []);
   const word = STATUS_STATES[idx];
+  // Reserve width for the longest state so bars never shift.
+  // Account for tracking by adding a small character buffer.
+  const longest = STATUS_STATES.reduce((a, b) => (a.length >= b.length ? a : b));
 
   return (
-    <motion.span
-      layout
-      className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] opacity-70"
-    >
+    <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] opacity-70">
       <DepthMeter state={word} />
-      <span className="relative inline-flex overflow-hidden" style={{ height: "1em" }}>
+      <span
+        className="relative inline-flex justify-end overflow-hidden"
+        style={{ height: "1em", minWidth: `${longest.length + 0.5}ch` }}
+      >
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
             key={word}
@@ -799,13 +802,13 @@ function StatusTicker() {
             animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
             exit={{ y: "100%", opacity: 0, filter: "blur(3px)" }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-            className="inline-block leading-none"
+            className="inline-block whitespace-nowrap leading-none"
           >
             {word}
           </motion.span>
         </AnimatePresence>
       </span>
-    </motion.span>
+    </span>
   );
 }
 
