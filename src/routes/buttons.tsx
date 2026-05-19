@@ -102,6 +102,22 @@ const STYLES: Style[] = [
     inner: true,
     bg: "bg-[#ebe7dc]",
   },
+  {
+    id: "clean",
+    name: "Cupertino Clean",
+    tagline: "Soft nested cards",
+    mood: "iOS · white pills · faint borders · micro-shadow",
+    mode: "light",
+    btn: "btn-clean",
+    send: "btn-clean-primary",
+    chip: "btn-clean-soft",
+    sendClass: "btn-clean-primary",
+    chipClass: "btn-clean-soft",
+    bg: "bg-[#ebebed]",
+    route: "/v11",
+    panel: "panel-clean",
+    panelInner: "panel-inner-clean",
+  },
 ];
 
 function Btn({
