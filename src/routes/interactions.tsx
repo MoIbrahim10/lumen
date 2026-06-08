@@ -13,7 +13,7 @@ import {
   ArrowRight, Star, X, Menu as MenuIcon, Sparkles, Volume2,
 } from "lucide-react";
 
-export const Route = createFileRoute("/interactions")({ component: InteractionsPage });
+// export const Route = createFileRoute("/interactions")({ component: InteractionsPage });
 
 /* shared spring presets — physics that feels alive but not bouncy */
 const spring = { type: "spring" as const, stiffness: 380, damping: 32, mass: 0.6 };
@@ -621,7 +621,7 @@ function InteractionsPage() {
           </div>
           <div className="flex gap-2">
             <Link to="/studio" className="rounded-md border border-neutral-800 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em]">Studio</Link>
-            <Link to="/layout" className="rounded-md border border-neutral-800 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em]">Layouts</Link>
+            <Link to="/" className="rounded-md border border-neutral-800 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em]">Layouts</Link>
           </div>
         </header>
 

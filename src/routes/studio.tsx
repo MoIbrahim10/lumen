@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
-export const Route = createFileRoute("/studio")({ component: StudioPage });
+// export const Route = createFileRoute("/studio")({ component: StudioPage });
 
 /* ---------- color math (OKLCH-ish via CSS) ----------
    We build the whole palette from 4 inputs:

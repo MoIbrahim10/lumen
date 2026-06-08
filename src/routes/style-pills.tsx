@@ -3,7 +3,7 @@ import { useState, useRef, useLayoutEffect } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "motion/react";
 import { Sparkles, Feather, Smile, Scissors, Wand2 } from "lucide-react";
 
-export const Route = createFileRoute("/style-pills")({ component: StylePillsPage });
+// export const Route = createFileRoute("/style-pills")({ component: StylePillsPage });
 
 const STYLES = [
   { id: "auto", label: "Auto", icon: Sparkles },

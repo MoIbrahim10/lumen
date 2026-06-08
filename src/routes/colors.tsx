@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 
-export const Route = createFileRoute("/colors")({ component: ColorsPage });
+// export const Route = createFileRoute("/colors")({ component: ColorsPage });
 
 type Palette = {
   id: string;
@@ -232,7 +232,7 @@ function ColorsPage() {
             Page · {dark ? "Dark" : "Light"}
           </button>
           <Link
-            to="/layout"
+            to="/"
             className="rounded-md border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em]"
             style={{ borderColor: dark ? "#333" : "#c2c2c2" }}
           >

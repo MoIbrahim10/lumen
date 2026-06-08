@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 
 
-export const Route = createFileRoute("/connectors")({ component: ConnectorsLab });
+// export const Route = createFileRoute("/connectors")({ component: ConnectorsLab });
 
 type Status = "active" | "linked" | "needs_auth";
 type Conn = { id: string; label: string; icon: LucideIcon; status: Status };
@@ -415,7 +415,7 @@ function ConnectorsLab() {
             </h1>
           </div>
           <Link
-            to="/layout"
+            to="/"
             className="font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-500 hover:text-neutral-900"
           >
             ← Layout

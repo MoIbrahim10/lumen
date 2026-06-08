@@ -1,8 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Instrument+Serif&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
+
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
-
-@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Instrument+Serif&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
@@ -82,6 +82,37 @@
   --ring: oklch(0.5 0 0);
 }
 
+/* ============ Theme-driven material palette ============
+   Seeds (--mat-surface / --mat-fg / --mat-accent) are set inline per active
+   theme by the app (see buildThemeVars in routes/index.tsx). Everything below
+   derives lighter/darker shades so every .btn-* / .panel-* material tints to
+   the current theme while keeping its own texture + geometry. Fallbacks here
+   match the default graphite-light preset so the gallery renders pre-hydration. */
+:root {
+  --mat-surface: #e2e0dc;
+  --mat-fg: #111111;
+  --mat-accent: #3b3b3b;
+  --lumen-accent: #3b3b3b;
+  --lumen-accent-contrast: #ffffff;
+
+  --mat-hi:        color-mix(in srgb, var(--mat-surface), #fff 16%);
+  --mat-hi-2:      color-mix(in srgb, var(--mat-surface), #fff 32%);
+  --mat-lo:        color-mix(in srgb, var(--mat-surface), #000 14%);
+  --mat-lo-2:      color-mix(in srgb, var(--mat-surface), #000 30%);
+  --mat-edge:      color-mix(in srgb, var(--mat-surface) 70%, var(--mat-fg) 30%);
+  --mat-edge-soft: color-mix(in srgb, var(--mat-surface) 86%, var(--mat-fg) 14%);
+  --mat-inner:     color-mix(in srgb, var(--mat-surface), #000 8%);
+  --mat-stack:     color-mix(in srgb, var(--mat-surface), #000 26%);
+}
+
+/* Accent helpers — consume the live accent color (hue/sat/lightness sliders) */
+.accent-solid { background: var(--lumen-accent); color: var(--lumen-accent-contrast); }
+.accent-soft  {
+  border-color: color-mix(in srgb, var(--lumen-accent) 55%, transparent);
+  background: color-mix(in srgb, var(--lumen-accent) 9%, transparent);
+}
+.accent-text { color: var(--lumen-accent); }
+
 @layer base {
   * { border-color: var(--color-border); }
   body {
@@ -149,36 +180,36 @@
 
 /* 3D DEPTH — extruded chunky soft shadow */
 .btn-3d {
-  background: linear-gradient(180deg, #fff 0%, #e8e8e8 100%);
-  color: #111;
-  border: 1px solid #cfcfcf;
+  background: linear-gradient(180deg, var(--mat-hi) 0%, var(--mat-lo) 100%);
+  color: var(--mat-fg);
+  border: 1px solid var(--mat-edge);
   border-radius: 10px;
   box-shadow:
-    0 1px 0 #fff inset,
-    0 -2px 0 rgba(0,0,0,0.04) inset,
-    0 6px 0 -2px #d8d8d8,
+    0 1px 0 rgba(255,255,255,0.5) inset,
+    0 -2px 0 rgba(0,0,0,0.06) inset,
+    0 6px 0 -2px var(--mat-stack),
     0 10px 18px -8px rgba(0,0,0,0.25);
   transition: all 0.12s;
 }
 .btn-3d:hover { transform: translateY(-1px); }
-.btn-3d:active { transform: translateY(3px); box-shadow: 0 1px 0 #fff inset, 0 2px 0 -1px #d8d8d8, 0 4px 8px -4px rgba(0,0,0,0.25); }
+.btn-3d:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset, 0 2px 0 -1px var(--mat-stack), 0 4px 8px -4px rgba(0,0,0,0.25); }
 
 /* MECHANICAL — keycap, etched mono label */
 .btn-mech {
   background:
-    radial-gradient(ellipse at 50% 0%, #2c2c2c 0%, #181818 60%, #0e0e0e 100%);
-  color: #f0f0f0;
+    radial-gradient(ellipse at 50% 0%, var(--mat-hi) 0%, var(--mat-surface) 60%, var(--mat-lo) 100%);
+  color: var(--mat-fg);
   font-family: var(--font-mono);
-  border: 1px solid #000;
+  border: 1px solid var(--mat-edge);
   border-radius: 6px;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.12),
-    inset 0 -2px 0 rgba(0,0,0,0.6),
-    0 4px 0 #000,
-    0 6px 12px rgba(0,0,0,0.5);
+    inset 0 -2px 0 rgba(0,0,0,0.35),
+    0 4px 0 var(--mat-stack),
+    0 6px 12px rgba(0,0,0,0.4);
   transition: all 0.07s;
 }
-.btn-mech:active { transform: translateY(3px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 0 #000; }
+.btn-mech:active { transform: translateY(3px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 1px 0 var(--mat-stack); }
 
 /* GLASS — soft glassmorphism dark */
 .btn-glass {
@@ -207,12 +238,12 @@
 
 /* EMBOSSED — minimal carved metal */
 .btn-emboss {
-  background: linear-gradient(180deg, #efefef 0%, #d8d8d8 100%);
-  color: #2a2a2a;
-  border: 1px solid #b5b5b5;
+  background: linear-gradient(180deg, var(--mat-hi) 0%, var(--mat-lo) 100%);
+  color: var(--mat-fg);
+  border: 1px solid var(--mat-edge);
   border-radius: 999px;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.7);
-  box-shadow: inset 0 1px 0 #fff, inset 0 -1px 0 rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.1);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.12);
   transition: all 0.1s;
 }
 .btn-emboss:active { box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
@@ -243,19 +274,30 @@
 /* ============ Geometric exploration buttons ============
    Some use inner: true (children wrapped in <span>).                  */
 
-/* PENROSE — rhombic skew. inner: true */
+/* PENROSE — slanted parallelogram chip. The slant lives on a skewed ::before so
+   the label/icons stay upright and the button keeps its normal padding. */
 .btn-penrose {
-  background: #fafaf6;
-  color: #111;
-  border: 1px solid #111;
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+  color: var(--mat-fg);
+  border: 0;
   border-radius: 0;
-  transform: skewX(-18deg);
-  padding: 0 22px;
-  transition: all 0.15s;
-  box-shadow: 3px 3px 0 #111;
+  transition: color 0.15s;
 }
-.btn-penrose > span { display: inline-flex; align-items: center; gap: 6px; transform: skewX(18deg); }
-.btn-penrose:hover { background: #ffd86b; transform: skewX(-18deg) translate(-1px,-1px); box-shadow: 4px 4px 0 #111; }
+.btn-penrose::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, var(--mat-hi) 0%, var(--mat-surface) 55%, var(--mat-lo) 100%);
+  border: 1px solid var(--mat-edge);
+  box-shadow: 3px 3px 0 var(--mat-edge), inset 0 1px 0 rgba(255,255,255,0.4);
+  transform: skewX(-12deg);
+  transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.btn-penrose:hover::before { background: linear-gradient(180deg, var(--mat-hi-2) 0%, var(--mat-hi) 100%); transform: skewX(-12deg) translate(-1px,-1px); box-shadow: 4px 4px 0 var(--mat-edge), inset 0 1px 0 rgba(255,255,255,0.5); }
+.btn-penrose:active::before { transform: skewX(-12deg) translate(1px,1px); box-shadow: 1px 1px 0 var(--mat-edge), inset 0 1px 0 rgba(255,255,255,0.3); }
 
 /* NOTCH — scalloped wavy edge (4 circular bites top + bottom) */
 .btn-notch {
@@ -376,189 +418,127 @@
 }
 .btn-tape:hover { background: repeating-linear-gradient(135deg, #d4a017 0 6px, #b8870f 6px 12px); }
 
-/* SQUIRCLE — iridescent superellipse, 3D extruded with chunky soft shadow. inner: true */
+/* SQUIRCLE — superellipse, soft extruded 3D. Single layer so it keeps the
+   button's own padding and needs no inner <span>. */
 .btn-squircle {
-  background:
-    conic-gradient(from 210deg at 50% 50%,
-      #eceaf0 0deg, #cfd6df 60deg, #f6f2ea 120deg,
-      #d9cfc2 200deg, #e8e1d2 280deg, #eceaf0 360deg);
-  color: #111;
-  border: 1px solid #c2bdb2;
-  padding: 1.5px;
-  border-radius: 16px / 20px;
+  background: linear-gradient(180deg, var(--mat-hi) 0%, var(--mat-lo) 100%);
+  color: var(--mat-fg);
+  border: 1px solid var(--mat-edge);
+  border-radius: 16px / 22px;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.95),
+    inset 0 1px 0 rgba(255,255,255,0.6),
     inset 0 -2px 0 rgba(0,0,0,0.06),
-    0 6px 0 -2px #d8d2c4,
+    0 5px 0 -2px var(--mat-stack),
     0 11px 20px -8px rgba(0,0,0,0.3);
-  transition: all 0.18s cubic-bezier(.2,.8,.2,1);
+  transition: transform 0.18s cubic-bezier(.2,.8,.2,1), box-shadow 0.18s;
 }
-.btn-squircle > span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  height: 100%;
-  width: 100%;
-  padding: 0 18px;
-  background: linear-gradient(180deg, #fbfaf6 0%, #ece7dc 100%);
-  border-radius: 15px / 19px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
-}
-.btn-squircle:hover { transform: translateY(-1px); filter: hue-rotate(10deg) saturate(1.1); }
+.btn-squircle:hover { transform: translateY(-1px); }
 .btn-squircle:active {
-  transform: translateY(3px);
+  transform: translateY(2px);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.9),
-    0 2px 0 -1px #d8d2c4,
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    0 2px 0 -1px var(--mat-stack),
     0 4px 8px -4px rgba(0,0,0,0.3);
 }
 
-/* LIQUID GLASS — glossy 3D acrylic, full rounded silhouette,
-   decorative molded ripple accents on top-right + bottom-left corners only.
-   inner: true */
+/* LIQUID GLASS — glossy 3D acrylic. Single layer (gloss baked into the
+   button background) so content keeps its padding and needs no inner <span>. */
 .btn-liquid {
   position: relative;
   isolation: isolate;
   background:
-    /* top sheen */
-    linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 45%),
-    /* base acrylic tint */
-    linear-gradient(160deg, #f3f6fb 0%, #d9dee7 55%, #c4cad6 100%);
-  color: #1b2230;
-  border: 1px solid rgba(255,255,255,0.7);
-  border-radius: 8px;
-  padding: 2px;
+    linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0) 55%),
+    linear-gradient(160deg, var(--mat-hi) 0%, var(--mat-surface) 55%, var(--mat-lo) 100%);
+  color: var(--mat-fg);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 12px;
   box-shadow:
-    /* outer rim light */
-    inset 0 1px 0 rgba(255,255,255,0.95),
-    /* bottom inner shadow giving depth */
-    inset 0 -2px 6px rgba(40,55,80,0.18),
-    /* faint side rim */
-    inset 1px 0 0 rgba(255,255,255,0.3),
-    inset -1px 0 0 rgba(40,55,80,0.08),
-    /* raised stack */
-    0 4px 0 -2px #b6bdcb,
-    /* soft cast shadow */
-    0 16px 26px -10px rgba(20,30,50,0.35),
-    0 28px 40px -20px rgba(20,30,50,0.25);
-  transition: all 0.25s cubic-bezier(.2,.8,.2,1);
-  overflow: hidden;
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    inset 0 -2px 6px rgba(0,0,0,0.16),
+    0 4px 0 -2px var(--mat-stack),
+    0 14px 24px -10px rgba(0,0,0,0.35);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+  transition: transform 0.25s cubic-bezier(.2,.8,.2,1), box-shadow 0.25s;
 }
-
-/* Inner glass face with gloss */
-.btn-liquid > span {
-  position: relative;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  height: 100%;
-  width: 100%;
-  padding: 0 22px;
-  border-radius: 6px;
-  background:
-    /* top glossy reflection */
-    linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.05) 38%, rgba(255,255,255,0) 50%),
-    /* bottom subtle reflection */
-    linear-gradient(0deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 30%),
-    linear-gradient(160deg, #fafbfd 0%, #e3e7ee 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.95),
-    inset 0 -1px 0 rgba(40,55,80,0.1);
-  font-weight: 600;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.7);
-}
-
-
 .btn-liquid:hover {
   transform: translateY(-2px);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.95),
-    inset 0 -2px 6px rgba(40,55,80,0.18),
-    inset 1px 0 0 rgba(255,255,255,0.3),
-    inset -1px 0 0 rgba(40,55,80,0.08),
-    0 6px 0 -2px #b6bdcb,
-    0 22px 32px -10px rgba(20,30,50,0.4),
-    0 36px 48px -20px rgba(20,30,50,0.3);
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    inset 0 -2px 6px rgba(0,0,0,0.16),
+    0 6px 0 -2px var(--mat-stack),
+    0 20px 30px -10px rgba(0,0,0,0.4);
 }
 .btn-liquid:active {
-  transform: translateY(2px);
+  transform: translateY(1px);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.95),
-    inset 0 -2px 6px rgba(40,55,80,0.18),
-    0 1px 0 -2px #b6bdcb,
-    0 6px 12px -6px rgba(20,30,50,0.35);
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    inset 0 -2px 6px rgba(0,0,0,0.16),
+    0 2px 6px -3px rgba(0,0,0,0.35);
 }
 
-/* PEBBLE — organic asymmetric blob, polished river-stone */
+/* PEBBLE — polished river-stone. Smooth radius that reads well on both wide
+   pills and square icon buttons; no padding override. */
 .btn-pebble {
   background:
-    radial-gradient(ellipse 60% 40% at 25% 15%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 60%),
-    radial-gradient(ellipse 80% 60% at 70% 80%, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0) 60%),
-    linear-gradient(155deg, #ebe7de 0%, #c8c2b3 100%);
-  color: #1f1f1f;
+    radial-gradient(ellipse 70% 50% at 30% 20%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 60%),
+    linear-gradient(155deg, var(--mat-hi) 0%, var(--mat-lo) 100%);
+  color: var(--mat-fg);
   border: 0;
-  padding: 0 24px;
-  border-radius: 60% 40% 55% 45% / 50% 55% 45% 50%;
+  border-radius: 999px / 60%;
   font-weight: 600;
   box-shadow:
-    inset 0 2px 1px rgba(255,255,255,0.95),
-    inset 0 -2px 1px rgba(0,0,0,0.12),
-    0 4px 0 -1px #b6b0a1,
-    0 14px 24px -8px rgba(0,0,0,0.3);
-  text-shadow: 0 1px 0 rgba(255,255,255,0.7);
-  transition: all 0.4s cubic-bezier(.2,.8,.2,1);
+    inset 0 2px 1px rgba(255,255,255,0.5),
+    inset 0 -2px 1px rgba(0,0,0,0.1),
+    0 4px 0 -1px var(--mat-stack),
+    0 12px 20px -8px rgba(0,0,0,0.28);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+  transition: transform 0.3s cubic-bezier(.2,.8,.2,1);
 }
-.btn-pebble:hover {
-  border-radius: 45% 55% 40% 60% / 55% 45% 55% 45%;
-  transform: translateY(-2px);
-}
+.btn-pebble:hover { transform: translateY(-2px); }
 .btn-pebble:active { transform: translateY(2px); }
 
-/* INFLATED — vinyl pillow, glossy strip highlight, double-stacked base. inner: true */
+/* INFLATED — glossy vinyl pillow on a tall depth stack. Recreates the nested
+   /buttons look with pseudo-elements (raised face + gloss), so it needs no
+   inner <span> and keeps the button's own padding. */
 .btn-inflated {
   position: relative;
-  background: linear-gradient(180deg, #d8d2c4 0%, #b8b1a0 100%);
-  color: #1a1a1a;
+  isolation: isolate;
+  background: linear-gradient(180deg, var(--mat-lo) 0%, var(--mat-lo-2) 100%);
+  color: var(--mat-fg);
   border: 0;
-  padding: 4px;
-  border-radius: 22px;
+  border-radius: 16px;
+  font-weight: 600;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
   box-shadow:
-    0 6px 0 -1px #a39c8c,
-    0 12px 0 -2px #8d8676,
-    0 20px 30px -10px rgba(0,0,0,0.4);
-  transition: all 0.18s cubic-bezier(.2,.8,.2,1);
+    0 5px 0 -1px var(--mat-stack),
+    0 9px 0 -2px color-mix(in srgb, var(--mat-surface), #000 38%),
+    0 16px 24px -10px rgba(0,0,0,0.38);
+  transition: transform 0.18s cubic-bezier(.2,.8,.2,1), box-shadow 0.18s;
 }
-.btn-inflated > span {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  height: 100%;
-  width: 100%;
-  padding: 0 26px;
-  background: linear-gradient(180deg, #fdfdfb 0%, #ece7da 50%, #d8d1c0 100%);
-  border-radius: 18px;
-  font-weight: 700;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.85);
-  overflow: hidden;
-  box-shadow: inset 0 2px 1px rgba(255,255,255,0.95), inset 0 -2px 1px rgba(0,0,0,0.08);
-}
-.btn-inflated > span::before {
+/* raised pillow face — leaves a soft edge of the darker base around it */
+.btn-inflated::before {
   content: "";
   position: absolute;
-  top: 4px; left: 10%; right: 10%;
-  height: 35%;
-  background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 100%);
+  inset: 2px;
+  z-index: -1;
+  border-radius: 13px;
+  background: linear-gradient(180deg, var(--mat-hi-2) 0%, var(--mat-surface) 55%, var(--mat-lo) 100%);
+  box-shadow: inset 0 2px 1px rgba(255,255,255,0.65), inset 0 -2px 1px rgba(0,0,0,0.08);
+}
+/* glossy top strip */
+.btn-inflated::after {
+  content: "";
+  position: absolute;
+  top: 4px; left: 14%; right: 14%;
+  height: 32%;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%);
   border-radius: 50%;
-  filter: blur(2px);
+  filter: blur(1.5px);
   pointer-events: none;
 }
-.btn-inflated:hover { transform: translateY(-2px); box-shadow: 0 8px 0 -1px #a39c8c, 0 16px 0 -2px #8d8676, 0 26px 36px -10px rgba(0,0,0,0.45); }
-.btn-inflated:active { transform: translateY(8px); box-shadow: 0 1px 0 -1px #a39c8c, 0 2px 0 -2px #8d8676, 0 4px 8px -4px rgba(0,0,0,0.4); }
+.btn-inflated:hover { transform: translateY(-2px); box-shadow: 0 7px 0 -1px var(--mat-stack), 0 12px 0 -2px color-mix(in srgb, var(--mat-surface), #000 38%), 0 20px 28px -10px rgba(0,0,0,0.42); }
+.btn-inflated:active { transform: translateY(3px); box-shadow: 0 2px 0 -1px var(--mat-stack), 0 4px 0 -2px color-mix(in srgb, var(--mat-surface), #000 38%), 0 6px 12px -6px rgba(0,0,0,0.4); }
 
 
 
@@ -588,130 +568,119 @@
   margin: 0 -10px;
 }
 
-/* MECH — light variant: machined aluminum keycap */
+/* MECH — light variant: machined aluminum keycap (now theme-driven like .btn-mech) */
 .btn-mech-light {
   background:
-    radial-gradient(ellipse at 50% 0%, #ffffff 0%, #ececec 60%, #dcdcdc 100%);
-  color: #111;
+    radial-gradient(ellipse at 50% 0%, var(--mat-hi) 0%, var(--mat-surface) 60%, var(--mat-lo) 100%);
+  color: var(--mat-fg);
   font-family: var(--font-mono);
-  border: 1px solid #b8b8b8;
+  border: 1px solid var(--mat-edge);
   border-radius: 6px;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.9),
-    inset 0 -2px 0 rgba(0,0,0,0.08),
-    0 4px 0 #b8b8b8,
+    inset 0 1px 0 rgba(255,255,255,0.4),
+    inset 0 -2px 0 rgba(0,0,0,0.12),
+    0 4px 0 var(--mat-stack),
     0 6px 12px rgba(0,0,0,0.18);
   transition: all 0.07s;
 }
 .btn-mech-light:active {
   transform: translateY(3px);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 0 #b8b8b8;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 1px 0 var(--mat-stack);
 }
 
-/* MECH PANELS — static wrappers (no press animation) */
-.panel-mech {
-  background: radial-gradient(ellipse at 50% 0%, #232323 0%, #161616 70%, #0d0d0d 100%);
-  color: #f0f0f0;
-  border: 1px solid #000;
-  border-radius: 14px;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    inset 0 -2px 0 rgba(0,0,0,0.6),
-    0 6px 0 #000,
-    0 10px 22px rgba(0,0,0,0.55);
-}
+/* MECH PANELS — static wrappers (no press animation). Light + dark share the
+   same theme-driven body; the active theme seed decides how light/dark it reads. */
+.panel-mech,
 .panel-mech-light {
-  background: radial-gradient(ellipse at 50% 0%, #fafafa 0%, #ececec 70%, #dcdcdc 100%);
-  color: #111;
-  border: 1px solid #c2c2c2;
+  background: radial-gradient(ellipse at 50% 0%, var(--mat-hi) 0%, var(--mat-surface) 70%, var(--mat-lo) 100%);
+  color: var(--mat-fg);
+  border: 1px solid var(--mat-edge);
   border-radius: 14px;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.9),
-    inset 0 -2px 0 rgba(0,0,0,0.06),
-    0 6px 0 #c2c2c2,
-    0 10px 22px rgba(0,0,0,0.16);
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    inset 0 -2px 0 rgba(0,0,0,0.25),
+    0 6px 0 var(--mat-stack),
+    0 10px 22px rgba(0,0,0,0.3);
 }
-.panel-inner-mech {
-  background: #0e0e0e;
-  border: 1px solid #000;
-  border-radius: 10px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.6);
-}
+.panel-inner-mech,
 .panel-inner-mech-light {
-  background: #f5f5f3;
-  border: 1px solid #cfcfcf;
+  background: var(--mat-inner);
+  color: var(--mat-fg);
+  border: 1px solid var(--mat-edge-soft);
   border-radius: 10px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.04);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.15);
 }
 
-/* CLEAN — Cupertino soft, iOS-style. White pill, faint border, micro shadow. */
+/* CLEAN — Cupertino soft, iOS-style. Flat pill, faint border, micro shadow. */
 .btn-clean {
-  background: #ffffff;
-  color: #1c1c1e;
-  border: 1px solid rgba(0,0,0,0.06);
+  background: var(--mat-surface);
+  color: var(--mat-fg);
+  border: 1px solid var(--mat-edge-soft);
   border-radius: 999px;
-  box-shadow: 0 1px 2px rgba(16,24,40,0.05);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
   transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
 }
-.btn-clean:hover { background: #f7f7f8; }
+.btn-clean:hover { background: var(--mat-hi); }
 .btn-clean:active {
-  background: #efeff1;
+  background: var(--mat-lo);
   transform: translateY(1px);
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
 }
-/* secondary fill — soft gray (for chips / quantity tracks) */
+/* secondary fill — soft recessed (for chips / quantity tracks) */
 .btn-clean-soft {
-  background: #f1f1f3;
-  color: #1c1c1e;
-  border: 1px solid rgba(0,0,0,0.04);
+  background: var(--mat-inner);
+  color: var(--mat-fg);
+  border: 1px solid var(--mat-edge-soft);
   border-radius: 999px;
   box-shadow: none;
   transition: background 0.15s;
 }
-.btn-clean-soft:hover { background: #eaeaec; }
-/* primary send — solid dark, iOS-style */
+.btn-clean-soft:hover { background: var(--mat-lo); }
+/* primary send — solid accent, iOS-style */
 .btn-clean-primary {
-  background: #1c1c1e;
-  color: #ffffff;
-  border: 1px solid #000;
+  background: var(--mat-accent);
+  color: var(--lumen-accent-contrast);
+  border: 1px solid color-mix(in srgb, var(--mat-accent), #000 18%);
   border-radius: 999px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.18);
   transition: background 0.15s, transform 0.1s;
 }
-.btn-clean-primary:hover { background: #2c2c2e; }
+.btn-clean-primary:hover { background: color-mix(in srgb, var(--mat-accent), #fff 12%); }
 .btn-clean-primary:active { transform: translateY(1px); }
 
-/* CLEAN panel — outer soft card + inner white card (iOS nested look) */
+/* CLEAN panel — outer soft card + inner raised card (iOS nested look) */
 .panel-clean {
-  background: #f2f2f4;
-  border: 1px solid rgba(0,0,0,0.05);
+  background: var(--mat-lo);
+  color: var(--mat-fg);
+  border: 1px solid var(--mat-edge-soft);
   border-radius: 24px;
-  box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
 }
 .panel-inner-clean {
-  background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.04);
+  background: var(--mat-surface);
+  color: var(--mat-fg);
+  border: 1px solid var(--mat-edge-soft);
   border-radius: 18px;
-  box-shadow: 0 1px 2px rgba(16,24,40,0.03);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 
-/* PAPER — handmade letterpress card, soft cream */
+/* PAPER — handmade letterpress card, theme-driven stock */
 .btn-paper {
-  background: #f6f1e6;
-  color: #2a2418;
+  background: var(--mat-surface);
+  color: var(--mat-fg);
   font-family: var(--font-serif, Georgia, serif);
-  border: 1px solid #d9cfb8;
+  border: 1px solid var(--mat-edge-soft);
   border-radius: 4px;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.6),
-    inset 0 -1px 0 rgba(120,90,30,0.08),
-    0 1px 2px rgba(80,60,20,0.10);
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -1px 0 rgba(0,0,0,0.06),
+    0 1px 2px rgba(0,0,0,0.1);
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 }
-.btn-paper:hover { background: #fbf6ea; transform: translateY(-0.5px); }
+.btn-paper:hover { background: var(--mat-hi); transform: translateY(-0.5px); }
 .btn-paper:active {
   transform: translateY(1px);
-  box-shadow: inset 0 1px 3px rgba(120,90,30,0.18);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
 }
 
 /* Lumen range slider — minimal thumb, transparent track */
@@ -746,170 +715,125 @@
    for both light and dark mode. Where appropriate, reuses existing
    mech panel as fallback chrome with a style-specific accent.        */
 
+/* All panels below share one theme-driven body per light/dark pair — the active
+   theme seed (--mat-surface) decides how light or dark each reads, so every
+   panel surface (including the prompt area) repaints with the selected theme. */
+
 /* EMBOSS panels */
-.panel-emboss {
-  background: linear-gradient(180deg, #f4f4f4 0%, #e2e2e2 100%);
-  border: 1px solid #c0c0c0;
-  border-radius: 14px;
-  box-shadow: inset 0 1px 0 #fff, inset 0 -1px 0 rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.08);
-}
+.panel-emboss,
 .panel-emboss-dark {
-  background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
-  border: 1px solid #0a0a0a;
+  background: linear-gradient(180deg, var(--mat-hi) 0%, var(--mat-lo) 100%);
+  color: var(--mat-fg);
+  border: 1px solid var(--mat-edge);
   border-radius: 14px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.6), 0 4px 10px rgba(0,0,0,0.5);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.12), 0 4px 10px rgba(0,0,0,0.18);
 }
-.panel-inner-emboss {
-  background: #ededed; border: 1px solid #c8c8c8; border-radius: 10px;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
-}
+.panel-inner-emboss,
 .panel-inner-emboss-dark {
-  background: #161616; border: 1px solid #050505; border-radius: 10px;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
+  background: var(--mat-inner); color: var(--mat-fg); border: 1px solid var(--mat-edge-soft); border-radius: 10px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.12);
 }
 
 /* 3D panels */
-.panel-3d {
-  background: linear-gradient(180deg, #fff 0%, #e8e8e8 100%);
-  border: 1px solid #cfcfcf;
-  border-radius: 16px;
-  box-shadow: 0 1px 0 #fff inset, 0 -2px 0 rgba(0,0,0,0.04) inset,
-              0 8px 0 -2px #d8d8d8, 0 14px 24px -10px rgba(0,0,0,0.25);
-}
+.panel-3d,
 .panel-3d-dark {
-  background: linear-gradient(180deg, #2a2a2a 0%, #181818 100%);
-  border: 1px solid #0a0a0a;
+  background: linear-gradient(180deg, var(--mat-hi) 0%, var(--mat-lo) 100%);
+  color: var(--mat-fg);
+  border: 1px solid var(--mat-edge);
   border-radius: 16px;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset,
-              0 8px 0 -2px #0a0a0a, 0 14px 24px -10px rgba(0,0,0,0.55);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset, 0 -2px 0 rgba(0,0,0,0.06) inset,
+              0 8px 0 -2px var(--mat-stack), 0 14px 24px -10px rgba(0,0,0,0.3);
 }
-.panel-inner-3d { background: #f8f8f8; border: 1px solid #d8d8d8; border-radius: 12px; }
-.panel-inner-3d-dark { background: #141414; border: 1px solid #050505; border-radius: 12px; }
+.panel-inner-3d,
+.panel-inner-3d-dark { background: var(--mat-inner); color: var(--mat-fg); border: 1px solid var(--mat-edge-soft); border-radius: 12px; }
 
 /* PENROSE panels — paper card with offset shadow */
-.panel-penrose {
-  background: #fafaf6; border: 1px solid #111; border-radius: 0;
-  box-shadow: 4px 4px 0 #111;
-}
+.panel-penrose,
 .panel-penrose-dark {
-  background: #1a1a1a; border: 1px solid #000; border-radius: 0;
-  box-shadow: 4px 4px 0 #000, 0 0 0 1px rgba(255,255,255,0.06) inset;
+  background: var(--mat-surface); color: var(--mat-fg); border: 1px solid var(--mat-edge); border-radius: 0;
+  box-shadow: 4px 4px 0 var(--mat-edge);
 }
-.panel-inner-penrose { background: #fff; border: 1px solid #111; border-radius: 0; }
-.panel-inner-penrose-dark { background: #0e0e0e; border: 1px solid #000; border-radius: 0; }
+.panel-inner-penrose,
+.panel-inner-penrose-dark { background: var(--mat-inner); color: var(--mat-fg); border: 1px solid var(--mat-edge); border-radius: 0; }
 
 /* SQUIRCLE panels — superellipse chrome */
-.panel-squircle {
-  background: linear-gradient(180deg, #f6f2ea 0%, #e8e1d2 100%);
-  border: 1px solid #c2bdb2;
-  border-radius: 22px / 26px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 8px 0 -3px #d8d2c4, 0 14px 24px -10px rgba(0,0,0,0.25);
-}
+.panel-squircle,
 .panel-squircle-dark {
-  background: linear-gradient(180deg, #2a2622 0%, #1a1714 100%);
-  border: 1px solid #0a0907;
+  background: linear-gradient(180deg, var(--mat-hi) 0%, var(--mat-lo) 100%);
+  color: var(--mat-fg);
+  border: 1px solid var(--mat-edge);
   border-radius: 22px / 26px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 0 -3px #0a0907, 0 14px 24px -10px rgba(0,0,0,0.6);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 8px 0 -3px var(--mat-stack), 0 14px 24px -10px rgba(0,0,0,0.3);
 }
-.panel-inner-squircle {
-  background: #fbfaf6; border: 1px solid #d8d2c4; border-radius: 18px / 22px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
-}
+.panel-inner-squircle,
 .panel-inner-squircle-dark {
-  background: #14110e; border: 1px solid #0a0907; border-radius: 18px / 22px;
+  background: var(--mat-inner); color: var(--mat-fg); border: 1px solid var(--mat-edge-soft); border-radius: 18px / 22px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
 }
 
 /* LIQUID panels — acrylic */
-.panel-liquid {
-  background: linear-gradient(160deg, #f3f6fb 0%, #d9dee7 100%);
-  border: 1px solid rgba(255,255,255,0.7);
-  border-radius: 14px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.95),
-              inset 0 -2px 6px rgba(40,55,80,0.12),
-              0 4px 0 -2px #b6bdcb, 0 18px 30px -12px rgba(20,30,50,0.3);
-}
+.panel-liquid,
 .panel-liquid-dark {
-  background: linear-gradient(160deg, #1a2030 0%, #0c1018 100%);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(160deg, var(--mat-hi) 0%, var(--mat-lo) 100%);
+  color: var(--mat-fg);
+  border: 1px solid rgba(255,255,255,0.25);
   border-radius: 14px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08),
-              0 4px 0 -2px #050810, 0 18px 30px -12px rgba(0,0,0,0.6);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5),
+              inset 0 -2px 6px rgba(0,0,0,0.12),
+              0 4px 0 -2px var(--mat-stack), 0 18px 30px -12px rgba(0,0,0,0.35);
 }
-.panel-inner-liquid {
-  background: linear-gradient(160deg, #fafbfd 0%, #eaecef 100%);
-  border: 1px solid rgba(255,255,255,0.7);
-  border-radius: 10px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.95);
-}
+.panel-inner-liquid,
 .panel-inner-liquid-dark {
-  background: linear-gradient(160deg, #161c28 0%, #0a0d14 100%);
-  border: 1px solid rgba(255,255,255,0.05);
+  background: linear-gradient(160deg, var(--mat-hi) 0%, var(--mat-surface) 100%);
+  color: var(--mat-fg);
+  border: 1px solid rgba(255,255,255,0.2);
   border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
 }
 
 /* PEBBLE panels — organic */
-.panel-pebble {
-  background: linear-gradient(155deg, #ebe7de 0%, #d4cebd 100%);
-  border: 0;
-  border-radius: 22px;
-  box-shadow: inset 0 2px 1px rgba(255,255,255,0.85),
-              inset 0 -2px 1px rgba(0,0,0,0.1),
-              0 6px 0 -2px #b6b0a1, 0 14px 24px -10px rgba(0,0,0,0.25);
-}
+.panel-pebble,
 .panel-pebble-dark {
-  background: linear-gradient(155deg, #2a2520 0%, #1a1712 100%);
+  background: linear-gradient(155deg, var(--mat-hi) 0%, var(--mat-lo) 100%);
+  color: var(--mat-fg);
   border: 0;
   border-radius: 22px;
-  box-shadow: inset 0 2px 1px rgba(255,255,255,0.06),
-              0 6px 0 -2px #0a0807, 0 14px 24px -10px rgba(0,0,0,0.55);
+  box-shadow: inset 0 2px 1px rgba(255,255,255,0.5),
+              inset 0 -2px 1px rgba(0,0,0,0.1),
+              0 6px 0 -2px var(--mat-stack), 0 14px 24px -10px rgba(0,0,0,0.3);
 }
-.panel-inner-pebble { background: #f5f1e7; border-radius: 16px; }
-.panel-inner-pebble-dark { background: #14110d; border-radius: 16px; }
+.panel-inner-pebble,
+.panel-inner-pebble-dark { background: var(--mat-inner); color: var(--mat-fg); border-radius: 16px; }
 
 /* INFLATED panels — vinyl pillow */
-.panel-inflated {
-  background: linear-gradient(180deg, #ece7da 0%, #c8c2b0 100%);
+.panel-inflated,
+.panel-inflated-dark {
+  background: linear-gradient(180deg, var(--mat-lo) 0%, var(--mat-lo-2) 100%);
+  color: var(--mat-fg);
   border: 0;
   border-radius: 24px;
-  box-shadow: 0 6px 0 -1px #a39c8c, 0 12px 0 -2px #8d8676,
+  box-shadow: 0 6px 0 -1px var(--mat-stack), 0 12px 0 -2px color-mix(in srgb, var(--mat-surface), #000 40%),
               0 20px 30px -12px rgba(0,0,0,0.35);
 }
-.panel-inflated-dark {
-  background: linear-gradient(180deg, #232018 0%, #14120c 100%);
-  border: 0;
-  border-radius: 24px;
-  box-shadow: 0 6px 0 -1px #0a0805, 0 12px 0 -2px #050402,
-              0 20px 30px -12px rgba(0,0,0,0.6);
-}
-.panel-inner-inflated {
-  background: linear-gradient(180deg, #fdfdfb 0%, #ece7da 100%);
-  border-radius: 18px;
-  box-shadow: inset 0 2px 1px rgba(255,255,255,0.9), inset 0 -2px 1px rgba(0,0,0,0.08);
-}
+.panel-inner-inflated,
 .panel-inner-inflated-dark {
-  background: linear-gradient(180deg, #1a1812 0%, #0e0c08 100%);
+  background: linear-gradient(180deg, var(--mat-hi-2) 0%, var(--mat-lo) 100%);
+  color: var(--mat-fg);
   border-radius: 18px;
-  box-shadow: inset 0 2px 1px rgba(255,255,255,0.05);
+  box-shadow: inset 0 2px 1px rgba(255,255,255,0.5), inset 0 -2px 1px rgba(0,0,0,0.08);
 }
 
 /* PAPER panels — letterpress card */
-.panel-paper {
-  background: #f6f1e6;
-  border: 1px solid #d9cfb8;
-  border-radius: 6px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6),
-              0 2px 4px rgba(80,60,20,0.1);
-}
+.panel-paper,
 .panel-paper-dark {
-  background: #1a1612;
-  border: 1px solid #2a241a;
+  background: var(--mat-surface);
+  color: var(--mat-fg);
+  border: 1px solid var(--mat-edge-soft);
   border-radius: 6px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05),
-              0 2px 6px rgba(0,0,0,0.5);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4),
+              0 2px 4px rgba(0,0,0,0.12);
 }
-.panel-inner-paper {
-  background: #fbf6ea; border: 1px solid #e6dcc4; border-radius: 4px;
-}
+.panel-inner-paper,
 .panel-inner-paper-dark {
-  background: #14110d; border: 1px solid #2a241a; border-radius: 4px;
+  background: var(--mat-hi); color: var(--mat-fg); border: 1px solid var(--mat-edge-soft); border-radius: 4px;
 }

@@ -9,111 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as V9RouteImport } from './routes/v9'
-import { Route as V8RouteImport } from './routes/v8'
-import { Route as V7RouteImport } from './routes/v7'
-import { Route as V6RouteImport } from './routes/v6'
-import { Route as V5RouteImport } from './routes/v5'
-import { Route as V4RouteImport } from './routes/v4'
-import { Route as V3RouteImport } from './routes/v3'
-import { Route as V2RouteImport } from './routes/v2'
-import { Route as V11RouteImport } from './routes/v11'
-import { Route as V10RouteImport } from './routes/v10'
-import { Route as V1RouteImport } from './routes/v1'
-import { Route as StylePillsRouteImport } from './routes/style-pills'
-import { Route as StudioRouteImport } from './routes/studio'
-import { Route as LayoutRouteImport } from './routes/layout'
-import { Route as InteractionsRouteImport } from './routes/interactions'
-import { Route as ConnectorsRouteImport } from './routes/connectors'
-import { Route as ColorsRouteImport } from './routes/colors'
 import { Route as ButtonsRouteImport } from './routes/buttons'
 import { Route as IndexRouteImport } from './routes/index'
 
-const V9Route = V9RouteImport.update({
-  id: '/v9',
-  path: '/v9',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const V8Route = V8RouteImport.update({
-  id: '/v8',
-  path: '/v8',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const V7Route = V7RouteImport.update({
-  id: '/v7',
-  path: '/v7',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const V6Route = V6RouteImport.update({
-  id: '/v6',
-  path: '/v6',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const V5Route = V5RouteImport.update({
-  id: '/v5',
-  path: '/v5',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const V4Route = V4RouteImport.update({
-  id: '/v4',
-  path: '/v4',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const V3Route = V3RouteImport.update({
-  id: '/v3',
-  path: '/v3',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const V2Route = V2RouteImport.update({
-  id: '/v2',
-  path: '/v2',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const V11Route = V11RouteImport.update({
-  id: '/v11',
-  path: '/v11',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const V10Route = V10RouteImport.update({
-  id: '/v10',
-  path: '/v10',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const V1Route = V1RouteImport.update({
-  id: '/v1',
-  path: '/v1',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StylePillsRoute = StylePillsRouteImport.update({
-  id: '/style-pills',
-  path: '/style-pills',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StudioRoute = StudioRouteImport.update({
-  id: '/studio',
-  path: '/studio',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LayoutRoute = LayoutRouteImport.update({
-  id: '/layout',
-  path: '/layout',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InteractionsRoute = InteractionsRouteImport.update({
-  id: '/interactions',
-  path: '/interactions',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ConnectorsRoute = ConnectorsRouteImport.update({
-  id: '/connectors',
-  path: '/connectors',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ColorsRoute = ColorsRouteImport.update({
-  id: '/colors',
-  path: '/colors',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ButtonsRoute = ButtonsRouteImport.update({
   id: '/buttons',
   path: '/buttons',
@@ -128,276 +26,31 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/buttons': typeof ButtonsRoute
-  '/colors': typeof ColorsRoute
-  '/connectors': typeof ConnectorsRoute
-  '/interactions': typeof InteractionsRoute
-  '/layout': typeof LayoutRoute
-  '/studio': typeof StudioRoute
-  '/style-pills': typeof StylePillsRoute
-  '/v1': typeof V1Route
-  '/v10': typeof V10Route
-  '/v11': typeof V11Route
-  '/v2': typeof V2Route
-  '/v3': typeof V3Route
-  '/v4': typeof V4Route
-  '/v5': typeof V5Route
-  '/v6': typeof V6Route
-  '/v7': typeof V7Route
-  '/v8': typeof V8Route
-  '/v9': typeof V9Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/buttons': typeof ButtonsRoute
-  '/colors': typeof ColorsRoute
-  '/connectors': typeof ConnectorsRoute
-  '/interactions': typeof InteractionsRoute
-  '/layout': typeof LayoutRoute
-  '/studio': typeof StudioRoute
-  '/style-pills': typeof StylePillsRoute
-  '/v1': typeof V1Route
-  '/v10': typeof V10Route
-  '/v11': typeof V11Route
-  '/v2': typeof V2Route
-  '/v3': typeof V3Route
-  '/v4': typeof V4Route
-  '/v5': typeof V5Route
-  '/v6': typeof V6Route
-  '/v7': typeof V7Route
-  '/v8': typeof V8Route
-  '/v9': typeof V9Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/buttons': typeof ButtonsRoute
-  '/colors': typeof ColorsRoute
-  '/connectors': typeof ConnectorsRoute
-  '/interactions': typeof InteractionsRoute
-  '/layout': typeof LayoutRoute
-  '/studio': typeof StudioRoute
-  '/style-pills': typeof StylePillsRoute
-  '/v1': typeof V1Route
-  '/v10': typeof V10Route
-  '/v11': typeof V11Route
-  '/v2': typeof V2Route
-  '/v3': typeof V3Route
-  '/v4': typeof V4Route
-  '/v5': typeof V5Route
-  '/v6': typeof V6Route
-  '/v7': typeof V7Route
-  '/v8': typeof V8Route
-  '/v9': typeof V9Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/buttons'
-    | '/colors'
-    | '/connectors'
-    | '/interactions'
-    | '/layout'
-    | '/studio'
-    | '/style-pills'
-    | '/v1'
-    | '/v10'
-    | '/v11'
-    | '/v2'
-    | '/v3'
-    | '/v4'
-    | '/v5'
-    | '/v6'
-    | '/v7'
-    | '/v8'
-    | '/v9'
+  fullPaths: '/' | '/buttons'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/buttons'
-    | '/colors'
-    | '/connectors'
-    | '/interactions'
-    | '/layout'
-    | '/studio'
-    | '/style-pills'
-    | '/v1'
-    | '/v10'
-    | '/v11'
-    | '/v2'
-    | '/v3'
-    | '/v4'
-    | '/v5'
-    | '/v6'
-    | '/v7'
-    | '/v8'
-    | '/v9'
-  id:
-    | '__root__'
-    | '/'
-    | '/buttons'
-    | '/colors'
-    | '/connectors'
-    | '/interactions'
-    | '/layout'
-    | '/studio'
-    | '/style-pills'
-    | '/v1'
-    | '/v10'
-    | '/v11'
-    | '/v2'
-    | '/v3'
-    | '/v4'
-    | '/v5'
-    | '/v6'
-    | '/v7'
-    | '/v8'
-    | '/v9'
+  to: '/' | '/buttons'
+  id: '__root__' | '/' | '/buttons'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ButtonsRoute: typeof ButtonsRoute
-  ColorsRoute: typeof ColorsRoute
-  ConnectorsRoute: typeof ConnectorsRoute
-  InteractionsRoute: typeof InteractionsRoute
-  LayoutRoute: typeof LayoutRoute
-  StudioRoute: typeof StudioRoute
-  StylePillsRoute: typeof StylePillsRoute
-  V1Route: typeof V1Route
-  V10Route: typeof V10Route
-  V11Route: typeof V11Route
-  V2Route: typeof V2Route
-  V3Route: typeof V3Route
-  V4Route: typeof V4Route
-  V5Route: typeof V5Route
-  V6Route: typeof V6Route
-  V7Route: typeof V7Route
-  V8Route: typeof V8Route
-  V9Route: typeof V9Route
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/v9': {
-      id: '/v9'
-      path: '/v9'
-      fullPath: '/v9'
-      preLoaderRoute: typeof V9RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/v8': {
-      id: '/v8'
-      path: '/v8'
-      fullPath: '/v8'
-      preLoaderRoute: typeof V8RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/v7': {
-      id: '/v7'
-      path: '/v7'
-      fullPath: '/v7'
-      preLoaderRoute: typeof V7RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/v6': {
-      id: '/v6'
-      path: '/v6'
-      fullPath: '/v6'
-      preLoaderRoute: typeof V6RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/v5': {
-      id: '/v5'
-      path: '/v5'
-      fullPath: '/v5'
-      preLoaderRoute: typeof V5RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/v4': {
-      id: '/v4'
-      path: '/v4'
-      fullPath: '/v4'
-      preLoaderRoute: typeof V4RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/v3': {
-      id: '/v3'
-      path: '/v3'
-      fullPath: '/v3'
-      preLoaderRoute: typeof V3RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/v2': {
-      id: '/v2'
-      path: '/v2'
-      fullPath: '/v2'
-      preLoaderRoute: typeof V2RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/v11': {
-      id: '/v11'
-      path: '/v11'
-      fullPath: '/v11'
-      preLoaderRoute: typeof V11RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/v10': {
-      id: '/v10'
-      path: '/v10'
-      fullPath: '/v10'
-      preLoaderRoute: typeof V10RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/v1': {
-      id: '/v1'
-      path: '/v1'
-      fullPath: '/v1'
-      preLoaderRoute: typeof V1RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/style-pills': {
-      id: '/style-pills'
-      path: '/style-pills'
-      fullPath: '/style-pills'
-      preLoaderRoute: typeof StylePillsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/studio': {
-      id: '/studio'
-      path: '/studio'
-      fullPath: '/studio'
-      preLoaderRoute: typeof StudioRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/layout': {
-      id: '/layout'
-      path: '/layout'
-      fullPath: '/layout'
-      preLoaderRoute: typeof LayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/interactions': {
-      id: '/interactions'
-      path: '/interactions'
-      fullPath: '/interactions'
-      preLoaderRoute: typeof InteractionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/connectors': {
-      id: '/connectors'
-      path: '/connectors'
-      fullPath: '/connectors'
-      preLoaderRoute: typeof ConnectorsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/colors': {
-      id: '/colors'
-      path: '/colors'
-      fullPath: '/colors'
-      preLoaderRoute: typeof ColorsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/buttons': {
       id: '/buttons'
       path: '/buttons'
@@ -418,24 +71,17 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ButtonsRoute: ButtonsRoute,
-  ColorsRoute: ColorsRoute,
-  ConnectorsRoute: ConnectorsRoute,
-  InteractionsRoute: InteractionsRoute,
-  LayoutRoute: LayoutRoute,
-  StudioRoute: StudioRoute,
-  StylePillsRoute: StylePillsRoute,
-  V1Route: V1Route,
-  V10Route: V10Route,
-  V11Route: V11Route,
-  V2Route: V2Route,
-  V3Route: V3Route,
-  V4Route: V4Route,
-  V5Route: V5Route,
-  V6Route: V6Route,
-  V7Route: V7Route,
-  V8Route: V8Route,
-  V9Route: V9Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
