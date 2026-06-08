@@ -342,6 +342,27 @@ function buildThemeVars(mode: ThemeMode, accent: string, accentContrast: string)
 /* Readable foreground for the accent fill — accent lightness picks black vs white. */
 const accentContrastFor = (lightness: number) => (lightness > 62 ? "#0b0b0b" : "#ffffff");
 
+const ACCENT_LIGHTNESS_MIN = 10;
+const ACCENT_LIGHTNESS_MAX = 95;
+
+const ACCENT_SWATCHES = [
+  { hue: 262, saturation: 72, lightness: 58 },
+  { hue: 220, saturation: 85, lightness: 55 },
+  { hue: 175, saturation: 70, lightness: 40 },
+  { hue: 145, saturation: 65, lightness: 42 },
+  { hue: 85,  saturation: 75, lightness: 45 },
+  { hue: 38,  saturation: 92, lightness: 50 },
+  { hue: 22,  saturation: 90, lightness: 52 },
+  { hue: 350, saturation: 75, lightness: 55 },
+] as const;
+
+const accentHsl = (h: number, s: number, l: number) => `hsl(${h} ${s}% ${l}%)`;
+
+const matchesAccentSwatch = (settings: Settings, swatch: (typeof ACCENT_SWATCHES)[number]) =>
+  Math.round(settings.hue) === swatch.hue
+  && Math.round(settings.saturation) === swatch.saturation
+  && Math.round(settings.lightness) === swatch.lightness;
+
 
 
 
@@ -380,7 +401,7 @@ function HoverTip({ label, keys, desc, children, side = "bottom", align = "cente
               desc
                 ? "w-[240px] flex-col items-start"
                 : "flex items-center gap-2 whitespace-nowrap"
-            } flex rounded-lg border border-border/60 bg-popover/95 px-3 py-2 text-popover-foreground shadow-xl backdrop-blur-sm`}
+            } hidden max-w-[calc(100vw_-_1rem)] rounded-lg border border-border/60 bg-popover/95 px-3 py-2 text-popover-foreground shadow-xl backdrop-blur-sm sm:flex`}
           >
             <span className="flex w-full items-center gap-1.5">
               <span aria-hidden className="h-1 w-1 rounded-full bg-foreground/50" />
@@ -568,7 +589,7 @@ function ModelGlyph({ index }: { index: number }) {
 type PickerOption = { id: string; desc?: string; glyph: ReactNode };
 
 function FancyPicker({
-  ctx, label, value, options, onChange, align = "left",
+  ctx, label, value, options, onChange, align = "left", className = "", compact = false,
 }: {
   ctx: Ctx;
   label: string;
@@ -576,9 +597,14 @@ function FancyPicker({
   options: PickerOption[];
   onChange: (v: string) => void;
   align?: "left" | "right";
+  /** applied to the root — pass e.g. "min-w-0 flex-1 sm:flex-none" so the trigger can shrink */
+  className?: string;
+  /** hide the text label on mobile to save width (e.g. the Model picker in a tight row) */
+  compact?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [hoverId, setHoverId] = useState<string | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const current = options.find((o) => o.id === value) ?? options[0];
   const longest = options.reduce((a, b) => (a.id.length >= b.id.length ? a : b)).id;
   const activeId = hoverId ?? value;
@@ -586,16 +612,21 @@ function FancyPicker({
   const total = options.length;
 
   return (
-    <div className="relative">
+    <div className={`relative ${className}`}>
       <motion.button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((o) => !o)}
         whileTap={{ scale: 0.97 }}
-        className={`${ctx.btn} flex h-9 shrink-0 items-center gap-1.5 px-3 text-[11px] cursor-pointer select-none`}
+        className={`${ctx.btn} flex h-9 w-full min-w-0 items-center gap-1.5 px-3 text-[11px] cursor-pointer select-none`}
       >
-        <span className="shrink-0 opacity-60">{label}</span>
-        <span className="relative inline-block whitespace-nowrap text-left">
-          <span className="invisible">{longest}</span>
+        {/* compact pickers hide the label on mobile to save width; others always show it */}
+        <span className={`shrink-0 opacity-60 ${compact ? "hidden sm:inline" : ""}`}>{label}</span>
+        <span className="relative flex min-w-0 flex-1 overflow-hidden whitespace-nowrap text-left sm:inline-block sm:flex-none sm:overflow-visible">
+          {/* mobile: truncating value (sizes to fit available space) */}
+          <span className="block min-w-0 truncate sm:hidden">{current.id}</span>
+          {/* desktop: animated value over a reserved longest-width spacer (no width jump) */}
+          <span className="invisible hidden sm:inline">{longest}</span>
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.span
               key={current.id}
@@ -603,7 +634,7 @@ function FancyPicker({
               animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
               exit={{ y: 8, opacity: 0, filter: "blur(2px)" }}
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0"
+              className="absolute inset-0 hidden sm:block"
             >
               {current.id}
             </motion.span>
@@ -612,27 +643,38 @@ function FancyPicker({
         <motion.span
           animate={{ rotate: open ? -180 : 0 }}
           transition={{ type: "spring", stiffness: 380, damping: 28 }}
-          className="ml-0.5 inline-flex"
+          className="ml-0.5 inline-flex shrink-0"
         >
           <ChevronDown className="h-3 w-3 opacity-60" />
         </motion.span>
       </motion.button>
 
       <AnimatePresence>
-        {open && (
+        {open && (() => {
+          // Anchor just above the trigger, but clamp into the viewport so the
+          // menu stays connected to the selector without ever overflowing.
+          const r = triggerRef.current?.getBoundingClientRect();
+          const vw = typeof window !== "undefined" ? window.innerWidth : 1024;
+          const vh = typeof window !== "undefined" ? window.innerHeight : 768;
+          const w = Math.min(260, vw - 16);
+          const anchorLeft = r ? (align === "right" ? r.right - w : r.left) : 8;
+          const left = Math.min(Math.max(8, anchorLeft), vw - w - 8);
+          const bottom = r ? vh - r.top + 8 : 8;
+          return (
           <>
             <div
               className="fixed inset-0 z-40"
               onMouseDown={(e) => { e.preventDefault(); setOpen(false); }}
             />
+            {/* anchored just above the trigger; position clamped into the viewport */}
             <motion.div
               initial={{ opacity: 0, y: 8, scale: 0.95, filter: "blur(6px)" }}
               animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, y: 8, scale: 0.95, filter: "blur(6px)" }}
               transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
-              style={{ transformOrigin: align === "right" ? "bottom right" : "bottom left" }}
+              style={{ position: "fixed", left, bottom, width: w, transformOrigin: align === "right" ? "bottom right" : "bottom left" }}
               onMouseLeave={() => setHoverId(null)}
-              className={`${ctx.panel} absolute bottom-full z-50 mb-2 w-[260px] overflow-hidden p-1 ${align === "right" ? "right-0" : "left-0"}`}
+              className={`${ctx.panel} z-50 overflow-hidden p-1`}
             >
               <div className={`${ctx.panelInner} relative overflow-hidden`}>
 
@@ -765,7 +807,8 @@ function FancyPicker({
               </div>
             </motion.div>
           </>
-        )}
+          );
+        })()}
       </AnimatePresence>
     </div>
   );
@@ -974,7 +1017,7 @@ function LeftPill({ ctx, sideOpen, onSide, onSearch }: {
   ctx: Ctx; sideOpen: boolean; onSide?: () => void; onSearch: () => void;
 }) {
   return (
-    <div className="fixed top-3 left-4 z-40 flex items-center gap-1.5">
+    <div className="fixed top-3 left-4 z-60 flex items-center gap-1.5">
       {onSide && (
         <HoverTip label={sideOpen ? "Close menu" : "Open menu"} keys="⌘B" align="start">
           <motion.button
@@ -1008,46 +1051,49 @@ function LeftPill({ ctx, sideOpen, onSide, onSearch }: {
 }
 
 
-function SideMenu({ ctx, open }: { ctx: Ctx; open: boolean; onToggle?: () => void; placement?: "left" | "right" }) {
+function SideMenu({ ctx, open, onToggle }: { ctx: Ctx; open: boolean; onToggle?: () => void; placement?: "left" | "right" }) {
   return (
-    <aside
-      aria-hidden={!open}
-      className="relative shrink-0 overflow-hidden border-r border-foreground/10 -translate-x-1"
-      style={{
-        width: open ? 260 : 0,
-        background: "var(--lumen-panel)",
-        transition: "width 360ms cubic-bezier(0.32, 0.72, 0, 1)",
-        willChange: "width",
-      }}
-    >
+    <>
+      {/* mobile backdrop — taps close the drawer */}
       <div
-        className="flex h-full flex-col pt-[60px] px-2 pb-3"
-        style={{
-          width: 260,
-          opacity: open ? 1 : 0,
-          transition: "opacity 200ms ease-out",
-          transitionDelay: open ? "180ms" : "0ms",
-        }}
+        aria-hidden
+        onMouseDown={onToggle}
+        className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 sm:hidden ${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
+      {/* mobile: fixed drawer that slides in (no layout push); sm+: in-flow width push */}
+      <aside
+        aria-hidden={!open}
+        className={`fixed inset-y-0 left-0 z-50 w-[260px] overflow-hidden border-r border-foreground/10 shadow-2xl transition-transform duration-300 ease-out sm:static sm:z-auto sm:shrink-0 sm:translate-x-0 sm:shadow-none sm:transition-[width] ${
+          open ? "translate-x-0 sm:w-[260px]" : "-translate-x-full sm:w-0"
+        }`}
+        style={{ background: "var(--lumen-panel)" }}
       >
-        <div className="px-2 pb-2 pt-1">
-          <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-50">Menu</span>
+        <div
+          className="flex h-full w-[260px] flex-col px-2 pt-[60px] pb-3 transition-opacity duration-200"
+          style={{ opacity: open ? 1 : 0, transitionDelay: open ? "120ms" : "0ms" }}
+        >
+          <div className="px-2 pb-2 pt-1">
+            <span className="font-mono text-[10px] uppercase tracking-[0.25em] opacity-50">Menu</span>
+          </div>
+          <nav className="flex flex-col gap-1.5 overflow-y-auto">
+            {NAV_ITEMS.map((i) => (
+              <button
+                key={i.label}
+                className={`${ctx.btn} flex h-10 items-center justify-between gap-2 px-3 text-[11px]`}
+              >
+                <span className="flex items-center gap-2.5">
+                  <i.icon className="h-3.5 w-3.5 opacity-70" />
+                  {i.label}
+                </span>
+                <kbd className="font-mono text-[9px] tracking-widest opacity-40">{i.keys}</kbd>
+              </button>
+            ))}
+          </nav>
         </div>
-        <nav className="flex flex-col gap-1.5 overflow-y-auto">
-          {NAV_ITEMS.map((i) => (
-            <button
-              key={i.label}
-              className={`${ctx.btn} flex h-10 items-center justify-between gap-2 px-3 text-[11px]`}
-            >
-              <span className="flex items-center gap-2.5">
-                <i.icon className="h-3.5 w-3.5 opacity-70" />
-                {i.label}
-              </span>
-              <kbd className="font-mono text-[9px] tracking-widest opacity-40">{i.keys}</kbd>
-            </button>
-          ))}
-        </nav>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }
 
@@ -2020,27 +2066,26 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
 function PrimaryRow({ ctx }: { ctx: Ctx }) {
   const [model, setModel] = useState<(typeof MODEL_OPTIONS)[number]>("Lumen 4");
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <div className="flex items-center gap-1.5">
-        <AttachButton ctx={ctx} />
-        <ToolsButton ctx={ctx} />
-        <FancyPicker
-          ctx={ctx} label="Model" value={model}
-          onChange={(v) => setModel(v as (typeof MODEL_OPTIONS)[number])}
-          options={MODEL_OPTIONS.map((id, i) => ({
-            id,
-            glyph: <ModelGlyph index={i} />,
-            desc:
-              id === "Lumen 4 Mini" ? "Fastest, lightest tier — quick chats."
-              : id === "Lumen 4" ? "Balanced default — good for most tasks."
-              : "Highest reasoning tier — slower, deeper.",
-          }))}
-        />
-      </div>
-      <div className="ml-auto flex items-center gap-1.5">
-        <DictateButton ctx={ctx} />
-        <SendButton ctx={ctx} />
-      </div>
+    <div className="flex items-center gap-1.5 sm:gap-2">
+      <AttachButton ctx={ctx} />
+      <ToolsButton ctx={ctx} />
+      <FancyPicker
+        ctx={ctx} label="Model" value={model} compact
+        className="min-w-0 flex-1 sm:flex-none"
+        onChange={(v) => setModel(v as (typeof MODEL_OPTIONS)[number])}
+        options={MODEL_OPTIONS.map((id, i) => ({
+          id,
+          glyph: <ModelGlyph index={i} />,
+          desc:
+            id === "Lumen 4 Mini" ? "Fastest, lightest tier — quick chats."
+            : id === "Lumen 4" ? "Balanced default — good for most tasks."
+            : "Highest reasoning tier — slower, deeper.",
+        }))}
+      />
+      {/* desktop spacer pushes the action buttons to the right; on mobile the model picker fills instead */}
+      <div className="hidden flex-1 sm:block" />
+      <DictateButton ctx={ctx} />
+      <SendButton ctx={ctx} />
     </div>
   );
 }
@@ -2051,8 +2096,8 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
   const [depth, setDepth] = useState("Standard");
   const [web, setWeb] = useState(true);
   const [memory, setMemory] = useState(true);
-  return (
-    <div className={`flex ${vertical ? "flex-col items-stretch" : "flex-wrap items-center"} gap-1.5`}>
+  const selectors = (
+    <>
       <FancyPicker
         ctx={ctx} label="Style" value={style} onChange={setStyle}
         options={STYLE_OPTIONS.map((id, i) => {
@@ -2075,13 +2120,16 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
         ctx={ctx} label="Depth" value={depth} onChange={setDepth}
         options={["Quick", "Standard", "Deep"] as const}
         glyph={(i) => <DepthGlyph index={i} />}
-
         descriptions={{
           Quick: "Fast surface-level answer with minimal reasoning.",
           Standard: "Balanced analysis — the default reasoning depth.",
           Deep: "Slower, multi-step reasoning for harder problems.",
         }}
       />
+    </>
+  );
+  const toggles = (
+    <>
       <TogglePill
         ctx={ctx} on={memory} onClick={() => setMemory(!memory)} size={36}
         label={memory ? "Memory · on" : "Memory · off"}
@@ -2096,8 +2144,19 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
         icon={<Globe className="h-3.5 w-3.5" />}
         hideTipOnClick
       />
+    </>
+  );
 
+  if (vertical) {
+    return <div className="flex flex-col items-stretch gap-1.5">{selectors}{toggles}</div>;
+  }
 
+  // Two groups: selectors + toggles. On mobile they stack as two centered rows
+  // (so Memory/Web sit together on their own centered row); on sm+ it's one row.
+  return (
+    <div className="flex flex-col items-center gap-1.5 sm:flex-row sm:flex-wrap sm:justify-center">
+      <div className="flex flex-wrap items-center justify-center gap-1.5">{selectors}</div>
+      <div className="flex items-center justify-center gap-1.5">{toggles}</div>
     </div>
   );
 }
@@ -2199,13 +2258,14 @@ function PreferencesButton({ ctx }: { ctx: Ctx }) {
         {open && (
           <>
             <div className="fixed inset-0 z-40" onMouseDown={() => setOpen(false)} />
+            {/* mobile: pinned to the top-right of the viewport so it can't clip; sm+: anchored under the button */}
             <motion.div
               initial={{ opacity: 0, y: -8, scale: 0.96, filter: "blur(6px)" }}
               animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, y: -8, scale: 0.96, filter: "blur(6px)" }}
               transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
               style={{ transformOrigin: "top right" }}
-              className={`${ctx.panel} absolute top-full right-0 z-50 mt-2 w-[360px] overflow-hidden p-1`}
+              className={`${ctx.panel} fixed right-3 top-14 z-50 w-[min(360px,calc(100vw_-_1.5rem))] overflow-hidden p-1 sm:absolute sm:right-0 sm:top-full sm:mt-2 sm:w-[360px]`}
             >
               <PreferencesPanel ctx={ctx} settings={settings} />
             </motion.div>
@@ -2308,54 +2368,7 @@ function PreferencesPanel({ ctx, settings }: { ctx: Ctx; settings: Settings }) {
         })}
       </div>
 
-      {/* Accent · custom — colored swatch preview + clean sliders */}
-      <SectionHeader label="Accent · custom" right={
-        <span className="font-mono text-[9px] tabular-nums opacity-60">
-          {Math.round(settings.hue)}·{Math.round(settings.saturation)}·{Math.round(settings.lightness)}
-        </span>
-      } />
-      <div className="px-3 pb-3">
-        {/* Big live swatch */}
-        <div
-          className="mb-2.5 flex items-center gap-3 overflow-hidden rounded-lg border border-foreground/10 p-2.5"
-          style={{ background: `linear-gradient(135deg, hsl(${settings.hue} ${settings.saturation}% ${settings.lightness}% / 0.12) 0%, transparent 60%)` }}
-        >
-          <motion.span
-            layout
-            animate={{
-              backgroundColor: `hsl(${settings.hue} ${settings.saturation}% ${settings.lightness}%)`,
-              boxShadow: `0 4px 18px -4px hsl(${settings.hue} ${settings.saturation}% ${settings.lightness}% / 0.55)`,
-            }}
-            transition={{ duration: 0.18 }}
-            className="h-10 w-10 shrink-0 rounded-full border border-foreground/15"
-          />
-          <div className="flex min-w-0 flex-1 flex-col leading-tight">
-            <span className="font-mono text-[9px] uppercase tracking-[0.22em] opacity-55">Accent</span>
-            <span className="truncate font-mono text-[10.5px] tabular-nums">
-              hsl({Math.round(settings.hue)} {Math.round(settings.saturation)}% {Math.round(settings.lightness)}%)
-            </span>
-          </div>
-          <button
-            onClick={() => {
-              settingsStore.set("hue", DEFAULT_SETTINGS.hue);
-              settingsStore.set("saturation", DEFAULT_SETTINGS.saturation);
-              settingsStore.set("lightness", DEFAULT_SETTINGS.lightness);
-            }}
-            className="shrink-0 rounded-md border border-foreground/10 px-1.5 py-0.5 font-mono text-[8.5px] uppercase tracking-[0.18em] opacity-60 transition-opacity hover:opacity-100"
-          >
-            Reset
-          </button>
-        </div>
-
-        <div className="space-y-2">
-          <Slider label="Hue"        min={0}   max={360} value={settings.hue}        onChange={(v) => settingsStore.set("hue", v)}
-                  track="linear-gradient(90deg, #ff5a5a, #ffd000, #5aff5a, #5addff, #5a5aff, #ff5aff, #ff5a5a)" />
-          <Slider label="Saturation" min={0}   max={100} value={settings.saturation} onChange={(v) => settingsStore.set("saturation", v)}
-                  track={`linear-gradient(90deg, hsl(${settings.hue} 0% ${settings.lightness}%), hsl(${settings.hue} 100% ${settings.lightness}%))`} />
-          <Slider label="Lightness"  min={10}  max={95}  value={settings.lightness}  onChange={(v) => settingsStore.set("lightness", v)}
-                  track={`linear-gradient(90deg, hsl(${settings.hue} ${settings.saturation}% 10%), hsl(${settings.hue} ${settings.saturation}% 50%), hsl(${settings.hue} ${settings.saturation}% 95%))`} />
-        </div>
-      </div>
+      <AccentCustomSection settings={settings} />
 
       {/* Button style picker — bigger previews, inner span when needed */}
       <SectionHeader label="Button style" right={<span className="font-mono text-[9px] tabular-nums opacity-50">10</span>} />
@@ -2396,6 +2409,201 @@ function PreferencesPanel({ ctx, settings }: { ctx: Ctx; settings: Settings }) {
         <span>auto-saved</span>
         {/* <Link to="/connectors" className="underline-offset-4 hover:underline">connectors lab →</Link> */}
       </div>
+    </div>
+  );
+}
+
+function AccentCustomSection({ settings }: { settings: Settings }) {
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const accent = accentHsl(settings.hue, settings.saturation, settings.lightness);
+
+  const applySwatch = (swatch: (typeof ACCENT_SWATCHES)[number]) => {
+    settingsStore.set("hue", swatch.hue);
+    settingsStore.set("saturation", swatch.saturation);
+    settingsStore.set("lightness", swatch.lightness);
+  };
+
+  return (
+    <>
+      <SectionHeader label="Accent · custom" right={
+        <span
+          className="h-3 w-3 shrink-0 rounded-full border border-foreground/15"
+          style={{ backgroundColor: accent }}
+          aria-hidden
+        />
+      } />
+      <div className="space-y-2.5 px-3 pb-3">
+        <div className="flex gap-1.5">
+          {ACCENT_SWATCHES.map((swatch) => {
+            const active = matchesAccentSwatch(settings, swatch);
+            return (
+              <button
+                key={`${swatch.hue}-${swatch.saturation}-${swatch.lightness}`}
+                type="button"
+                onClick={() => applySwatch(swatch)}
+                aria-label={`Accent ${accentHsl(swatch.hue, swatch.saturation, swatch.lightness)}`}
+                aria-pressed={active}
+                className={`h-6 flex-1 rounded-md border transition-all ${
+                  active
+                    ? "border-foreground/40 ring-1 ring-foreground/25"
+                    : "border-foreground/10 hover:border-foreground/25"
+                }`}
+                style={{ backgroundColor: accentHsl(swatch.hue, swatch.saturation, swatch.lightness) }}
+              />
+            );
+          })}
+        </div>
+
+        <SatLightField
+          hue={settings.hue}
+          saturation={settings.saturation}
+          lightness={settings.lightness}
+          onChange={(s, l) => {
+            settingsStore.set("saturation", s);
+            settingsStore.set("lightness", l);
+          }}
+        />
+
+        <HueStrip
+          hue={settings.hue}
+          onChange={(h) => settingsStore.set("hue", h)}
+        />
+
+        <button
+          type="button"
+          onClick={() => setAdvancedOpen((o) => !o)}
+          className="flex w-full items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.18em] opacity-50 transition-opacity hover:opacity-80"
+          aria-expanded={advancedOpen}
+        >
+          <ChevronDown className={`h-3 w-3 transition-transform ${advancedOpen ? "rotate-180" : ""}`} />
+          Advanced
+        </button>
+
+        {advancedOpen && (
+          <div className="space-y-2 border-t border-foreground/10 pt-2">
+            <Slider label="Hue" min={0} max={360} value={settings.hue}
+              onChange={(v) => settingsStore.set("hue", v)}
+              track="linear-gradient(90deg, #ff5a5a, #ffd000, #5aff5a, #5addff, #5a5aff, #ff5aff, #ff5a5a)" />
+            <Slider label="Saturation" min={0} max={100} value={settings.saturation}
+              onChange={(v) => settingsStore.set("saturation", v)}
+              track={`linear-gradient(90deg, hsl(${settings.hue} 0% ${settings.lightness}%), hsl(${settings.hue} 100% ${settings.lightness}%))`} />
+            <Slider label="Lightness" min={ACCENT_LIGHTNESS_MIN} max={ACCENT_LIGHTNESS_MAX} value={settings.lightness}
+              onChange={(v) => settingsStore.set("lightness", v)}
+              track={`linear-gradient(90deg, hsl(${settings.hue} ${settings.saturation}% ${ACCENT_LIGHTNESS_MIN}%), hsl(${settings.hue} ${settings.saturation}% 50%), hsl(${settings.hue} ${settings.saturation}% ${ACCENT_LIGHTNESS_MAX}%))`} />
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+function SatLightField({ hue, saturation, lightness, onChange }: {
+  hue: number; saturation: number; lightness: number;
+  onChange: (saturation: number, lightness: number) => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const update = (clientX: number, clientY: number) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    const y = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+    onChange(
+      Math.round(x * 100),
+      Math.round(ACCENT_LIGHTNESS_MAX - y * (ACCENT_LIGHTNESS_MAX - ACCENT_LIGHTNESS_MIN)),
+    );
+  };
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    update(e.clientX, e.clientY);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+    update(e.clientX, e.clientY);
+  };
+
+  const thumbX = `${saturation}%`;
+  const thumbY = `${((ACCENT_LIGHTNESS_MAX - lightness) / (ACCENT_LIGHTNESS_MAX - ACCENT_LIGHTNESS_MIN)) * 100}%`;
+
+  return (
+    <div
+      ref={ref}
+      role="slider"
+      aria-label="Saturation and lightness"
+      aria-valuemin={ACCENT_LIGHTNESS_MIN}
+      aria-valuemax={ACCENT_LIGHTNESS_MAX}
+      aria-valuenow={lightness}
+      tabIndex={0}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onKeyDown={(e) => {
+        const step = e.shiftKey ? 10 : 2;
+        if (e.key === "ArrowLeft")  { e.preventDefault(); onChange(Math.max(0, saturation - step), lightness); }
+        if (e.key === "ArrowRight") { e.preventDefault(); onChange(Math.min(100, saturation + step), lightness); }
+        if (e.key === "ArrowUp")    { e.preventDefault(); onChange(saturation, Math.min(ACCENT_LIGHTNESS_MAX, lightness + step)); }
+        if (e.key === "ArrowDown")  { e.preventDefault(); onChange(saturation, Math.max(ACCENT_LIGHTNESS_MIN, lightness - step)); }
+      }}
+      className="relative h-[88px] cursor-crosshair touch-none overflow-hidden rounded-lg border border-foreground/10"
+      style={{
+        backgroundColor: accentHsl(hue, 100, 50),
+        backgroundImage: "linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent)",
+      }}
+    >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.35)]"
+        style={{ left: thumbX, top: thumbY, backgroundColor: accentHsl(hue, saturation, lightness) }}
+      />
+    </div>
+  );
+}
+
+function HueStrip({ hue, onChange }: { hue: number; onChange: (hue: number) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const update = (clientX: number) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    onChange(Math.round(x * 360));
+  };
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    update(e.clientX);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+    update(e.clientX);
+  };
+
+  return (
+    <div
+      ref={ref}
+      role="slider"
+      aria-label="Hue"
+      aria-valuemin={0}
+      aria-valuemax={360}
+      aria-valuenow={hue}
+      tabIndex={0}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onKeyDown={(e) => {
+        const step = e.shiftKey ? 15 : 3;
+        if (e.key === "ArrowLeft")  { e.preventDefault(); onChange(Math.max(0, hue - step)); }
+        if (e.key === "ArrowRight") { e.preventDefault(); onChange(Math.min(360, hue + step)); }
+      }}
+      className="relative h-3 cursor-ew-resize touch-none rounded-full border border-foreground/10"
+      style={{ background: "linear-gradient(90deg, #ff5a5a, #ffd000, #5aff5a, #5addff, #5a5aff, #ff5aff, #ff5a5a)" }}
+    >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute top-1/2 h-3.5 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white bg-foreground/80 shadow-[0_0_0_1px_rgba(0,0,0,0.35)]"
+        style={{ left: `${(hue / 360) * 100}%` }}
+      />
     </div>
   );
 }
@@ -2925,16 +3133,16 @@ function FramedConsole({ ctx }: { ctx: Ctx }) {
       <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
-        <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
+        <main className="flex flex-1 flex-col items-center justify-center px-4 py-10 sm:px-6">
           <div className="w-full max-w-[780px]">
             <Greeting className="text-center" />
-            <div className={`${ctx.panel} mt-6 p-4`}>
-              <div className="flex items-center justify-between px-4 pb-3">
+            <div className={`${ctx.panel} mt-6 p-3 sm:p-4`}>
+              <div className="flex items-center justify-between px-2 pb-3 sm:px-4">
                 <SessionMark />
                 <StatusTicker />
               </div>
 
-              <div className={`${ctx.panelInner} p-4`}>
+              <div className={`${ctx.panelInner} p-3 sm:p-4`}>
                 <InputBlock ctx={ctx} rows={4} />
                 <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
               </div>
