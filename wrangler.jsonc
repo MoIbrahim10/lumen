@@ -1,7 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tanstack-start-app",
+  "name": "lumen",
+  "account_id": "263ad8907dc3ed688838c72e2e9f994f",
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
+  "routes": [
+    { "pattern": "lumen.m0code.com", "custom_domain": true },
+  ],
 }
