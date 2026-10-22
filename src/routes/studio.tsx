@@ -33,7 +33,7 @@ function buildTheme(L: number, S: number, I: number, H: number): Theme {
   const step = 0.03 + (I / 100) * 0.09;
 
   // surfaces step away from the page bg
-  const bgL = isLight ? 0.93 - (1 - base) * 0.08 : 0.08 + base * 0.10;
+  const bgL = isLight ? 0.93 - (1 - base) * 0.08 : 0.08 + base * 0.1;
   const surfaceL = isLight ? bgL + step * 0.6 : bgL + step;
   const innerL = isLight ? bgL - step * 0.3 : bgL - step * 0.4;
   const borderL = isLight ? bgL - step * 1.2 : bgL + step * 1.6;
@@ -45,7 +45,7 @@ function buildTheme(L: number, S: number, I: number, H: number): Theme {
   // accent chroma scales 0..0.28
   const C = (S / 100) * 0.28;
   // accent lightness — bright enough to read in both modes
-  const accentL = isLight ? 0.55 - (C * 0.4) : 0.78;
+  const accentL = isLight ? 0.55 - C * 0.4 : 0.78;
   // pick readable text on accent
   const accentText = accentL > 0.6 ? "oklch(0.12 0 0)" : "oklch(0.97 0 0)";
 
@@ -70,7 +70,10 @@ function Preview({ t }: { t: Theme }) {
       <div className="mx-auto max-w-[720px]">
         {/* top bar */}
         <div className="mb-8 flex items-center justify-between">
-          <span className="font-mono text-[11px] uppercase tracking-[0.3em]" style={{ color: t.textDim }}>
+          <span
+            className="font-mono text-[11px] uppercase tracking-[0.3em]"
+            style={{ color: t.textDim }}
+          >
             Lumen
           </span>
           <div className="flex items-center gap-2">
@@ -103,8 +106,18 @@ function Preview({ t }: { t: Theme }) {
           style={{ background: t.surface, borderColor: t.border, boxShadow: surfaceShadow }}
         >
           <div className="mb-3 flex items-center justify-between px-1">
-            <span className="font-mono text-[10px] uppercase tracking-[0.25em]" style={{ color: t.textDim }}>Compose</span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.25em]" style={{ color: t.textDim }}>Lumen 4 · ready</span>
+            <span
+              className="font-mono text-[10px] uppercase tracking-[0.25em]"
+              style={{ color: t.textDim }}
+            >
+              Compose
+            </span>
+            <span
+              className="font-mono text-[10px] uppercase tracking-[0.25em]"
+              style={{ color: t.textDim }}
+            >
+              Lumen 4 · ready
+            </span>
           </div>
 
           <div
@@ -148,7 +161,13 @@ function Preview({ t }: { t: Theme }) {
 
         {/* chips */}
         <div className="mt-5 flex flex-wrap justify-center gap-1.5">
-          {["Summarize document", "Write email", "Generate UI", "Research topic", "Brainstorm ideas"].map((c) => (
+          {[
+            "Summarize document",
+            "Write email",
+            "Generate UI",
+            "Research topic",
+            "Brainstorm ideas",
+          ].map((c) => (
             <span
               key={c}
               className="rounded-md border px-3 py-1.5 text-[11px]"
@@ -165,20 +184,36 @@ function Preview({ t }: { t: Theme }) {
 
 /* ---------- slider ---------- */
 function Slider({
-  label, value, onChange, min = 0, max = 100, gradient,
+  label,
+  value,
+  onChange,
+  min = 0,
+  max = 100,
+  gradient,
 }: {
-  label: string; value: number; onChange: (v: number) => void;
-  min?: number; max?: number; gradient: string;
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+  min?: number;
+  max?: number;
+  gradient: string;
 }) {
   return (
     <label className="block">
       <div className="mb-2 flex items-center justify-between">
-        <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-500">{label}</span>
-        <span className="font-mono text-[11px] tabular-nums text-neutral-300">{Math.round(value)}</span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-500">
+          {label}
+        </span>
+        <span className="font-mono text-[11px] tabular-nums text-neutral-300">
+          {Math.round(value)}
+        </span>
       </div>
       <div className="relative h-3 rounded-full" style={{ background: gradient }}>
         <input
-          type="range" min={min} max={max} value={value}
+          type="range"
+          min={min}
+          max={max}
+          value={value}
           onChange={(e) => onChange(Number(e.target.value))}
           className="studio-range absolute inset-0 h-full w-full cursor-pointer appearance-none bg-transparent"
         />
@@ -189,20 +224,20 @@ function Slider({
 
 /* ---------- page ---------- */
 function StudioPage() {
-  const [L, setL] = useState(8);    // dark → starts near 07 Acid Lime feel
-  const [S, setS] = useState(92);   // saturated accent
-  const [I, setI] = useState(45);   // medium contrast
-  const [H, setH] = useState(132);  // lime-green hue
+  const [L, setL] = useState(8); // dark → starts near 07 Acid Lime feel
+  const [S, setS] = useState(92); // saturated accent
+  const [I, setI] = useState(45); // medium contrast
+  const [H, setH] = useState(132); // lime-green hue
 
   const t = useMemo(() => buildTheme(L, S, I, H), [L, S, I, H]);
 
   const presets: { name: string; L: number; S: number; I: number; H: number }[] = [
-    { name: "Acid Lime",   L: 8,  S: 95, I: 40, H: 132 },
-    { name: "Bone Paper",  L: 92, S: 30, I: 35, H: 50  },
-    { name: "Obsidian",    L: 5,  S: 0,  I: 55, H: 0   },
-    { name: "Plasma",      L: 10, S: 85, I: 50, H: 295 },
-    { name: "Ocean",       L: 14, S: 60, I: 45, H: 200 },
-    { name: "Ember",       L: 12, S: 90, I: 40, H: 30  },
+    { name: "Acid Lime", L: 8, S: 95, I: 40, H: 132 },
+    { name: "Bone Paper", L: 92, S: 30, I: 35, H: 50 },
+    { name: "Obsidian", L: 5, S: 0, I: 55, H: 0 },
+    { name: "Plasma", L: 10, S: 85, I: 50, H: 295 },
+    { name: "Ocean", L: 14, S: 60, I: 45, H: 200 },
+    { name: "Ember", L: 12, S: 90, I: 40, H: 30 },
   ];
 
   return (
@@ -223,51 +258,82 @@ function StudioPage() {
 
       <header className="flex items-center justify-between border-b border-neutral-900 px-6 py-4">
         <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-neutral-500">Color Studio</p>
-          <h1 className="mt-1 font-mono text-sm uppercase tracking-[0.2em]">Build your own palette</h1>
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-neutral-500">
+            Color Studio
+          </p>
+          <h1 className="mt-1 font-mono text-sm uppercase tracking-[0.2em]">
+            Build your own palette
+          </h1>
         </div>
         <div className="flex gap-2">
-          <Link to="/colors" className="rounded-md border border-neutral-800 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em]">← Colors</Link>
-          <Link to="/layout" className="rounded-md border border-neutral-800 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em]">Layouts</Link>
+          <Link
+            to="/colors"
+            className="rounded-md border border-neutral-800 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em]"
+          >
+            ← Colors
+          </Link>
+          <Link
+            to="/layout"
+            className="rounded-md border border-neutral-800 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em]"
+          >
+            Layouts
+          </Link>
         </div>
       </header>
 
       <div className="grid gap-6 p-6 lg:grid-cols-[340px_1fr]">
         {/* controls */}
-        <aside className="space-y-6 rounded-xl border border-neutral-900 bg-neutral-925 p-5" style={{ background: "#0f0f0f" }}>
+        <aside
+          className="space-y-6 rounded-xl border border-neutral-900 bg-neutral-925 p-5"
+          style={{ background: "#0f0f0f" }}
+        >
           <Slider
             label="Lightness · dark ↔ light"
-            value={L} onChange={setL}
+            value={L}
+            onChange={setL}
             gradient="linear-gradient(to right, #0a0a0a, #2a2a2a, #888, #e8e8e8, #ffffff)"
           />
           <Slider
             label="Saturation"
-            value={S} onChange={setS}
+            value={S}
+            onChange={setS}
             gradient={`linear-gradient(to right, oklch(0.55 0 ${H}), oklch(0.55 0.14 ${H}), oklch(0.55 0.28 ${H}))`}
           />
           <Slider
             label="Intensity · surface contrast"
-            value={I} onChange={setI}
+            value={I}
+            onChange={setI}
             gradient="linear-gradient(to right, #2a2a2a, #666, #f0f0f0)"
           />
           <Slider
             label="Hue"
-            value={H} onChange={setH} max={360}
+            value={H}
+            onChange={setH}
+            max={360}
             gradient="linear-gradient(to right, oklch(0.7 0.2 0), oklch(0.7 0.2 60), oklch(0.7 0.2 120), oklch(0.7 0.2 180), oklch(0.7 0.2 240), oklch(0.7 0.2 300), oklch(0.7 0.2 360))"
           />
 
           {/* swatches */}
           <div>
-            <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-500">Tokens</div>
+            <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-500">
+              Tokens
+            </div>
             <div className="grid grid-cols-4 gap-1.5">
               {[
-                ["bg", t.bg], ["surface", t.surface], ["inner", t.surfaceInner],
-                ["border", t.border], ["text", t.text], ["dim", t.textDim],
-                ["accent", t.accent], ["on accent", t.accentText],
+                ["bg", t.bg],
+                ["surface", t.surface],
+                ["inner", t.surfaceInner],
+                ["border", t.border],
+                ["text", t.text],
+                ["dim", t.textDim],
+                ["accent", t.accent],
+                ["on accent", t.accentText],
               ].map(([n, v]) => (
                 <div key={n} className="overflow-hidden rounded-md border border-neutral-800">
                   <div className="h-10" style={{ background: v }} />
-                  <div className="px-1.5 py-1 font-mono text-[9px] uppercase tracking-wider text-neutral-500">{n}</div>
+                  <div className="px-1.5 py-1 font-mono text-[9px] uppercase tracking-wider text-neutral-500">
+                    {n}
+                  </div>
                 </div>
               ))}
             </div>
@@ -275,12 +341,19 @@ function StudioPage() {
 
           {/* presets */}
           <div>
-            <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-500">Starting points</div>
+            <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-neutral-500">
+              Starting points
+            </div>
             <div className="flex flex-wrap gap-1.5">
               {presets.map((p) => (
                 <button
                   key={p.name}
-                  onClick={() => { setL(p.L); setS(p.S); setI(p.I); setH(p.H); }}
+                  onClick={() => {
+                    setL(p.L);
+                    setS(p.S);
+                    setI(p.I);
+                    setH(p.H);
+                  }}
                   className="rounded-md border border-neutral-800 bg-neutral-900 px-2.5 py-1.5 text-[11px] hover:border-neutral-700"
                 >
                   {p.name}

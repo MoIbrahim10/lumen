@@ -104,7 +104,7 @@ export const navigationIaConversation: ConversationMessage[] = [
     code: {
       language: "tsx",
       value:
-        "const reduceMotion = useReducedMotion();\nconst transition = reduceMotion ? { duration: 0 } : { type: \"spring\", stiffness: 360, damping: 34 };",
+        'const reduceMotion = useReducedMotion();\nconst transition = reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 360, damping: 34 };',
     },
   },
   {

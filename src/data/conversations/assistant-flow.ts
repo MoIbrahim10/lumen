@@ -87,8 +87,7 @@ export const assistantFlowConversation: ConversationMessage[] = [
     role: "assistant",
     variant: "table",
     title: "Comparison behavior",
-    content:
-      "A temporary comparison is useful when the rewrite changes more than a sentence.",
+    content: "A temporary comparison is useful when the rewrite changes more than a sentence.",
     table: {
       headers: ["View", "Best for", "Action"],
       rows: [
@@ -138,8 +137,7 @@ export const assistantFlowConversation: ConversationMessage[] = [
     role: "assistant",
     variant: "steps",
     title: "Keyboard flow",
-    content:
-      "Keep the common path predictable and announce every result change.",
+    content: "Keep the common path predictable and announce every result change.",
     points: [
       "Enter submits; Shift+Enter adds a line.",
       "Tab reaches context and rewrite actions in visual order.",

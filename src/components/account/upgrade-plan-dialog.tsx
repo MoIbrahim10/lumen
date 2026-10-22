@@ -457,8 +457,8 @@ export function UpgradePlanDialog({
                           <div>
                             <p className="text-[10px] font-medium">No payment action</p>
                             <p className="mt-0.5 text-[9.5px] leading-relaxed opacity-55">
-                              Confirming updates the plan locally. No charge, invoice, renewal,
-                              or payment information is involved.
+                              Confirming updates the plan locally. No charge, invoice, renewal, or
+                              payment information is involved.
                             </p>
                           </div>
                         </div>
@@ -502,8 +502,8 @@ export function UpgradePlanDialog({
                   </motion.div>
                   <h3 className="mt-5 text-[21px] font-medium">Prototype plan changed</h3>
                   <p className="mt-2 max-w-sm text-[10.5px] leading-relaxed opacity-55">
-                    This workspace now displays the {pendingPlan} plan. The change was saved locally;
-                    no subscription or payment was created.
+                    This workspace now displays the {pendingPlan} plan. The change was saved
+                    locally; no subscription or payment was created.
                   </p>
                   <div className={`${style.panelClass} mt-6 w-full p-1`}>
                     <div

@@ -57,8 +57,7 @@ export const portfolioStoryConversation: ConversationMessage[] = [
     role: "assistant",
     variant: "steps",
     title: "Constraints that shaped the work",
-    content:
-      "Frame each constraint as a design condition and show how you responded.",
+    content: "Frame each constraint as a design condition and show how you responded.",
     points: [
       "Three weeks: prioritize navigation and core chat flows over broad visual polish.",
       "No research budget: use support notes, session recordings, and quick usability checks.",
@@ -97,7 +96,12 @@ export const portfolioStoryConversation: ConversationMessage[] = [
     table: {
       headers: ["Direction", "Benefit", "Cost", "Decision"],
       rows: [
-        ["Persistent actions", "Immediate discoverability", "Noise and truncated titles", "Rejected"],
+        [
+          "Persistent actions",
+          "Immediate discoverability",
+          "Noise and truncated titles",
+          "Rejected",
+        ],
         ["Contextual actions", "Calmer scanning", "Requires hover or focus", "Selected"],
       ],
     },
@@ -157,8 +161,7 @@ export const portfolioStoryConversation: ConversationMessage[] = [
     role: "assistant",
     variant: "steps",
     title: "Final case-study outline",
-    content:
-      "Headline: Redesigning an AI workspace so growing capability still feels calm.",
+    content: "Headline: Redesigning an AI workspace so growing capability still feels calm.",
     points: [
       "Context: audience, product growth, and your design ownership.",
       "Problem: navigation density, lost context, and supporting user evidence.",

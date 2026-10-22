@@ -61,8 +61,7 @@ export const motionSystemConversation: ConversationMessage[] = [
     role: "assistant",
     variant: "table",
     title: "Reduced-motion mapping",
-    content:
-      "The same state changes remain clear, but movement is removed or shortened.",
+    content: "The same state changes remain clear, but movement is removed or shortened.",
     table: {
       headers: ["Default", "Reduced motion"],
       rows: [
@@ -91,8 +90,7 @@ export const motionSystemConversation: ConversationMessage[] = [
   {
     id: "motion-system-11",
     role: "user",
-    content:
-      "How should the composer move when I send a prompt from the empty new-chat screen?",
+    content: "How should the composer move when I send a prompt from the empty new-chat screen?",
     timestamp: "09:34",
   },
   {
@@ -114,8 +112,7 @@ export const motionSystemConversation: ConversationMessage[] = [
     role: "assistant",
     variant: "code",
     title: "Composer transition",
-    content:
-      "A firm spring preserves continuity without adding bounce.",
+    content: "A firm spring preserves continuity without adding bounce.",
     code: {
       language: "ts",
       value:
@@ -149,8 +146,7 @@ export const motionSystemConversation: ConversationMessage[] = [
     role: "assistant",
     variant: "steps",
     title: "Preserve state continuity",
-    content:
-      "Treat selection and disclosure as separate motion patterns.",
+    content: "Treat selection and disclosure as separate motion patterns.",
     points: [
       "Move one shared active indicator between tabs; keep labels stationary.",
       "Keep accordion headers fixed while only the content region changes height.",

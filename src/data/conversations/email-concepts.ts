@@ -71,8 +71,7 @@ export const emailConceptsConversation: ConversationMessage[] = [
     role: "assistant",
     variant: "table",
     title: "Receipt hierarchy",
-    content:
-      "Keep the first screen focused on details customers use to verify the purchase.",
+    content: "Keep the first screen focused on details customers use to verify the purchase.",
     table: {
       headers: ["Priority", "Details", "Placement"],
       rows: [
@@ -130,8 +129,7 @@ export const emailConceptsConversation: ConversationMessage[] = [
   {
     id: "email-concepts-17",
     role: "user",
-    content:
-      "What edge cases should the design survive before we call it finished?",
+    content: "What edge cases should the design survive before we call it finished?",
     timestamp: "2:43 PM",
   },
   {

@@ -9,8 +9,21 @@ import {
   MotionConfig,
 } from "motion/react";
 import {
-  ChevronDown, Plus, Check, Heart, Bell, Search, Trash2, Copy, Settings,
-  ArrowRight, Star, X, Menu as MenuIcon, Sparkles, Volume2,
+  ChevronDown,
+  Plus,
+  Check,
+  Heart,
+  Bell,
+  Search,
+  Trash2,
+  Copy,
+  Settings,
+  ArrowRight,
+  Star,
+  X,
+  Menu as MenuIcon,
+  Sparkles,
+  Volume2,
 } from "lucide-react";
 
 // export const Route = createFileRoute("/interactions")({ component: InteractionsPage });
@@ -33,7 +46,10 @@ function MagneticButton() {
     x.set((e.clientX - (r.left + r.width / 2)) * 0.35);
     y.set((e.clientY - (r.top + r.height / 2)) * 0.35);
   };
-  const reset = () => { x.set(0); y.set(0); };
+  const reset = () => {
+    x.set(0);
+    y.set(0);
+  };
 
   return (
     <motion.button
@@ -144,10 +160,7 @@ function Segmented() {
 function Toggle({ label }: { label: string }) {
   const [on, setOn] = useState(false);
   return (
-    <button
-      onClick={() => setOn(!on)}
-      className="flex items-center gap-3 text-sm text-neutral-300"
-    >
+    <button onClick={() => setOn(!on)} className="flex items-center gap-3 text-sm text-neutral-300">
       <motion.div
         animate={{ background: on ? "#4ade80" : "#262626" }}
         transition={{ duration: 0.2 }}
@@ -184,8 +197,11 @@ function Dropdown() {
         {open && (
           <>
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40" onClick={() => setOpen(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40"
+              onClick={() => setOpen(false)}
             />
             <motion.div
               initial={{ opacity: 0, y: -6, scale: 0.96 }}
@@ -262,11 +278,7 @@ function Tabs() {
     <div className="border-b border-neutral-800">
       <div className="flex gap-6">
         {tabs.map((t) => (
-          <button
-            key={t}
-            onClick={() => setActive(t)}
-            className="relative pb-3 text-sm"
-          >
+          <button key={t} onClick={() => setActive(t)} className="relative pb-3 text-sm">
             <span className={active === t ? "text-white" : "text-neutral-500"}>{t}</span>
             {active === t && (
               <motion.span
@@ -289,7 +301,12 @@ function SpringySlider() {
     <div className="w-full max-w-sm">
       <div className="mb-2 flex justify-between text-[10px] uppercase tracking-widest text-neutral-500">
         <span>Intensity</span>
-        <motion.span key={value} initial={{ y: -4, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-neutral-300">
+        <motion.span
+          key={value}
+          initial={{ y: -4, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="text-neutral-300"
+        >
           {value}
         </motion.span>
       </div>
@@ -307,7 +324,10 @@ function SpringySlider() {
           whileTap={{ scale: 0.9 }}
         />
         <input
-          type="range" min={0} max={100} value={value}
+          type="range"
+          min={0}
+          max={100}
+          value={value}
           onChange={(e) => setValue(Number(e.target.value))}
           className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
         />
@@ -327,12 +347,16 @@ function DragConfirm() {
       style={{ background: bg }}
       className="relative h-12 w-72 overflow-hidden rounded-full border border-neutral-800"
     >
-      <motion.span style={{ opacity }} className="absolute inset-0 grid place-items-center text-xs text-neutral-400">
+      <motion.span
+        style={{ opacity }}
+        className="absolute inset-0 grid place-items-center text-xs text-neutral-400"
+      >
         Slide to confirm →
       </motion.span>
       {done && (
         <motion.span
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           className="absolute inset-0 grid place-items-center text-xs font-medium text-black"
         >
           Confirmed
@@ -345,9 +369,15 @@ function DragConfirm() {
         style={{ x }}
         onDragEnd={(_, info) => {
           if (info.point.x > 0 && x.get() > 200) {
-            x.set(240); setDone(true);
-            setTimeout(() => { setDone(false); x.set(0); }, 1200);
-          } else { x.set(0); }
+            x.set(240);
+            setDone(true);
+            setTimeout(() => {
+              setDone(false);
+              x.set(0);
+            }, 1200);
+          } else {
+            x.set(0);
+          }
         }}
         whileTap={{ scale: 0.95 }}
         className="absolute left-1 top-1 grid h-10 w-10 cursor-grab place-items-center rounded-full bg-white text-black active:cursor-grabbing"
@@ -364,7 +394,9 @@ function Modal() {
   return (
     <>
       <motion.button
-        whileTap={{ scale: 0.96 }} whileHover={{ scale: 1.02 }} transition={spring}
+        whileTap={{ scale: 0.96 }}
+        whileHover={{ scale: 1.02 }}
+        transition={spring}
         onClick={() => setOpen(true)}
         className="rounded-lg border border-neutral-700 bg-neutral-900 px-4 py-2 text-sm"
       >
@@ -374,7 +406,9 @@ function Modal() {
         {open && (
           <>
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
               onClick={() => setOpen(false)}
             />
@@ -390,12 +424,20 @@ function Modal() {
                   <h3 className="text-base font-medium">Delete project?</h3>
                   <p className="mt-1 text-xs text-neutral-400">This action cannot be undone.</p>
                 </div>
-                <button onClick={() => setOpen(false)} className="rounded-md p-1 hover:bg-neutral-900">
+                <button
+                  onClick={() => setOpen(false)}
+                  className="rounded-md p-1 hover:bg-neutral-900"
+                >
                   <X className="h-4 w-4" />
                 </button>
               </div>
               <div className="mt-6 flex justify-end gap-2">
-                <button onClick={() => setOpen(false)} className="rounded-md border border-neutral-800 px-3 py-1.5 text-xs">Cancel</button>
+                <button
+                  onClick={() => setOpen(false)}
+                  className="rounded-md border border-neutral-800 px-3 py-1.5 text-xs"
+                >
+                  Cancel
+                </button>
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setOpen(false)}
@@ -423,7 +465,8 @@ function Toasts() {
   return (
     <>
       <motion.button
-        whileTap={{ scale: 0.95 }} onClick={fire}
+        whileTap={{ scale: 0.95 }}
+        onClick={fire}
         className="rounded-lg bg-white px-4 py-2 text-sm text-black"
       >
         Trigger toast
@@ -465,31 +508,44 @@ function Drawer() {
         {open && (
           <>
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               className="fixed inset-0 z-50 bg-black/60"
               onClick={() => setOpen(false)}
             />
             <motion.aside
-              initial={{ x: -320 }} animate={{ x: 0 }} exit={{ x: -320 }}
+              initial={{ x: -320 }}
+              animate={{ x: 0 }}
+              exit={{ x: -320 }}
               transition={softSpring}
               className="fixed inset-y-0 left-0 z-50 w-80 border-r border-neutral-800 bg-neutral-950 p-4"
             >
               <div className="mb-4 flex items-center justify-between">
-                <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-neutral-500">Menu</span>
-                <button onClick={() => setOpen(false)} className="rounded-md p-1 hover:bg-neutral-900"><X className="h-4 w-4" /></button>
+                <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-neutral-500">
+                  Menu
+                </span>
+                <button
+                  onClick={() => setOpen(false)}
+                  className="rounded-md p-1 hover:bg-neutral-900"
+                >
+                  <X className="h-4 w-4" />
+                </button>
               </div>
               <nav className="flex flex-col gap-1">
-                {["New chat", "Library", "Projects", "Memory", "Connectors", "History"].map((n, i) => (
-                  <motion.button
-                    key={n}
-                    initial={{ opacity: 0, x: -16 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.06 + i * 0.04 }}
-                    className="rounded-md px-3 py-2 text-left text-sm hover:bg-neutral-900"
-                  >
-                    {n}
-                  </motion.button>
-                ))}
+                {["New chat", "Library", "Projects", "Memory", "Connectors", "History"].map(
+                  (n, i) => (
+                    <motion.button
+                      key={n}
+                      initial={{ opacity: 0, x: -16 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.06 + i * 0.04 }}
+                      className="rounded-md px-3 py-2 text-left text-sm hover:bg-neutral-900"
+                    >
+                      {n}
+                    </motion.button>
+                  ),
+                )}
               </nav>
             </motion.aside>
           </>
@@ -505,13 +561,17 @@ function CommandInput() {
   return (
     <div className="w-full max-w-md">
       <motion.div
-        layout transition={softSpring}
+        layout
+        transition={softSpring}
         className={`flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-950 ${open ? "px-4 py-3" : "px-3 py-2"}`}
       >
-        <motion.div layout><Search className="h-4 w-4 text-neutral-500" /></motion.div>
+        <motion.div layout>
+          <Search className="h-4 w-4 text-neutral-500" />
+        </motion.div>
         <motion.input
           layout
-          onFocus={() => setOpen(true)} onBlur={() => setOpen(false)}
+          onFocus={() => setOpen(true)}
+          onBlur={() => setOpen(false)}
           placeholder="Search anything…"
           className="flex-1 bg-transparent text-sm placeholder:text-neutral-600 focus:outline-none"
         />
@@ -537,8 +597,13 @@ function Counter() {
   const [n, setN] = useState(1);
   return (
     <div className="flex items-center gap-2">
-      <motion.button whileTap={{ scale: 0.9 }} onClick={() => setN(Math.max(0, n - 1))}
-        className="grid h-10 w-10 place-items-center rounded-lg border border-neutral-800 bg-neutral-900">−</motion.button>
+      <motion.button
+        whileTap={{ scale: 0.9 }}
+        onClick={() => setN(Math.max(0, n - 1))}
+        className="grid h-10 w-10 place-items-center rounded-lg border border-neutral-800 bg-neutral-900"
+      >
+        −
+      </motion.button>
       <div className="relative h-10 w-16 overflow-hidden rounded-lg border border-neutral-800 bg-neutral-950 text-center">
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span
@@ -553,8 +618,13 @@ function Counter() {
           </motion.span>
         </AnimatePresence>
       </div>
-      <motion.button whileTap={{ scale: 0.9 }} onClick={() => setN(n + 1)}
-        className="grid h-10 w-10 place-items-center rounded-lg border border-neutral-800 bg-neutral-900">+</motion.button>
+      <motion.button
+        whileTap={{ scale: 0.9 }}
+        onClick={() => setN(n + 1)}
+        className="grid h-10 w-10 place-items-center rounded-lg border border-neutral-800 bg-neutral-900"
+      >
+        +
+      </motion.button>
     </div>
   );
 }
@@ -585,7 +655,10 @@ function Volume() {
         })}
       </div>
       <input
-        type="range" min={0} max={100} value={v}
+        type="range"
+        min={0}
+        max={100}
+        value={v}
         onChange={(e) => setV(Number(e.target.value))}
         className="mt-3 w-full accent-white"
       />
@@ -603,7 +676,9 @@ function Cell({ title, hint, children }: { title: string; hint: string; children
       transition={softSpring}
       className="flex flex-col rounded-2xl border border-neutral-900 bg-neutral-950/50 p-6"
     >
-      <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.3em] text-neutral-500">{title}</div>
+      <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.3em] text-neutral-500">
+        {title}
+      </div>
       <div className="mb-6 text-xs text-neutral-400">{hint}</div>
       <div className="flex flex-1 items-center justify-center py-4">{children}</div>
     </motion.div>
@@ -616,12 +691,26 @@ function InteractionsPage() {
       <div className="min-h-screen bg-neutral-950 text-neutral-200">
         <header className="flex items-center justify-between border-b border-neutral-900 px-6 py-4">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-neutral-500">Interactions</p>
-            <h1 className="mt-1 font-mono text-sm uppercase tracking-[0.2em]">Motion-powered micro-UX</h1>
+            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-neutral-500">
+              Interactions
+            </p>
+            <h1 className="mt-1 font-mono text-sm uppercase tracking-[0.2em]">
+              Motion-powered micro-UX
+            </h1>
           </div>
           <div className="flex gap-2">
-            <Link to="/studio" className="rounded-md border border-neutral-800 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em]">Studio</Link>
-            <Link to="/" className="rounded-md border border-neutral-800 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em]">Layouts</Link>
+            <Link
+              to="/studio"
+              className="rounded-md border border-neutral-800 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em]"
+            >
+              Studio
+            </Link>
+            <Link
+              to="/"
+              className="rounded-md border border-neutral-800 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em]"
+            >
+              Layouts
+            </Link>
           </div>
         </header>
 
@@ -652,7 +741,9 @@ function InteractionsPage() {
             <Accordion />
           </Cell>
           <Cell title="08 · Tabs" hint="Indicator slides between tabs.">
-            <div className="w-full max-w-md"><Tabs /></div>
+            <div className="w-full max-w-md">
+              <Tabs />
+            </div>
           </Cell>
           <Cell title="09 · Slider" hint="Thumb and fill share the same spring.">
             <SpringySlider />

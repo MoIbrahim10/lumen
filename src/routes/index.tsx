@@ -2,28 +2,88 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ReactNode, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from "motion/react";
 import {
-  Paperclip, Mic, Wrench, ArrowUp, Globe, Brain, ChevronDown, Sun, Moon, Eye,
-  SlidersHorizontal, Menu, EyeOff, FileText, Mail, Code2, Search,
-  ScanSearch, Lightbulb, Presentation, Image as ImageIcon,
-  Plus, History, Library, FolderClosed, Cpu, Plug,
-  Settings, User, ChevronRight, PanelLeft, X, ArrowRight, Check,
-  Sparkles, Feather, Smile, Scissors, Wand2,
-  Upload, Link2, ClipboardPaste, Github, Database, Calendar,
-  Hash, Film, FileAudio, MonitorUp, Pin, PinOff, Pencil, Trash2, ArrowUpDown, FolderPlus,
-  FileArchive, FileSpreadsheet, Palette, CircleHelp, LogOut, ArrowLeft,
-  MoreHorizontal, Copy, ThumbsUp, ThumbsDown, RefreshCw, Share2, Volume2,
-  Files, Link as LinkIcon,
+  Paperclip,
+  Mic,
+  Wrench,
+  ArrowUp,
+  Globe,
+  Brain,
+  ChevronDown,
+  Sun,
+  Moon,
+  Eye,
+  SlidersHorizontal,
+  Menu,
+  EyeOff,
+  FileText,
+  Mail,
+  Code2,
+  Search,
+  ScanSearch,
+  Lightbulb,
+  Presentation,
+  Image as ImageIcon,
+  Plus,
+  History,
+  Library,
+  FolderClosed,
+  Cpu,
+  Plug,
+  Settings,
+  User,
+  ChevronRight,
+  PanelLeft,
+  X,
+  ArrowRight,
+  Check,
+  Sparkles,
+  Feather,
+  Smile,
+  Scissors,
+  Wand2,
+  Upload,
+  Link2,
+  ClipboardPaste,
+  Github,
+  Database,
+  Calendar,
+  Hash,
+  Film,
+  FileAudio,
+  MonitorUp,
+  Pin,
+  PinOff,
+  Pencil,
+  Trash2,
+  ArrowUpDown,
+  FolderPlus,
+  FileArchive,
+  FileSpreadsheet,
+  Palette,
+  CircleHelp,
+  LogOut,
+  ArrowLeft,
+  MoreHorizontal,
+  Copy,
+  ThumbsUp,
+  ThumbsDown,
+  RefreshCw,
+  Share2,
+  Volume2,
+  Files,
+  Link as LinkIcon,
 } from "lucide-react";
 import {
-  Command, CommandInput, CommandList, CommandEmpty, CommandGroup,
-  CommandItem, CommandSeparator, CommandShortcut,
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandSeparator,
+  CommandShortcut,
 } from "@/components/ui/command";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,11 +98,7 @@ import { SettingsDialog } from "@/components/account/settings-dialog";
 import { UpgradePlanDialog } from "@/components/account/upgrade-plan-dialog";
 import { accountStore, useAccountState } from "@/components/account/account-store";
 import type { AccountSurfaceStyle } from "@/components/account/types";
-import type {
-  AttachKind,
-  Attachment,
-  ConversationMessage,
-} from "@/data/conversations/types";
+import type { AttachKind, Attachment, ConversationMessage } from "@/data/conversations/types";
 import { SEEDED_CONVERSATIONS } from "@/data/conversations";
 
 export const Route = createFileRoute("/")({ component: LayoutGallery });
@@ -55,7 +111,6 @@ const SPRING_TURN = { type: "spring" as const, stiffness: 500, damping: 22 };
 const SPRING_SETTLE = { type: "spring" as const, stiffness: 360, damping: 26 };
 const EASE_OUT_STRONG = "cubic-bezier(0.23, 1, 0.32, 1)";
 
-
 type Ctx = {
   light: boolean;
   btn: string;
@@ -64,13 +119,21 @@ type Ctx = {
 };
 
 const QUICK = [
-  { icon: FileText, label: "Summarize document", prompt: "Summarize this document into key bullet points with a TL;DR at the top." },
+  {
+    icon: FileText,
+    label: "Summarize document",
+    prompt: "Summarize this document into key bullet points with a TL;DR at the top.",
+  },
   { icon: Mail, label: "Write email", prompt: "Draft a polite, concise email about " },
   { icon: Code2, label: "Generate UI", prompt: "Generate a clean React + Tailwind UI for " },
   { icon: ScanSearch, label: "Research topic", prompt: "Research the latest on " },
   { icon: Lightbulb, label: "Brainstorm ideas", prompt: "Brainstorm 10 creative ideas for " },
   { icon: Code2, label: "Code assistant", prompt: "Help me debug this code:\n\n" },
-  { icon: Presentation, label: "Create presentation", prompt: "Outline a 10-slide presentation about " },
+  {
+    icon: Presentation,
+    label: "Create presentation",
+    prompt: "Outline a 10-slide presentation about ",
+  },
   { icon: ImageIcon, label: "Create image", prompt: "Generate an image of " },
 ];
 
@@ -95,12 +158,26 @@ const composerStore = (() => {
     get: () => snap,
     subscribe: (cb: () => void) => {
       listeners.add(cb);
-      return () => { listeners.delete(cb); };
+      return () => {
+        listeners.delete(cb);
+      };
     },
-    setValue: (v: string) => { snap = { ...snap, value: v }; notify(); },
-    setStreaming: (v: boolean) => { snap = { ...snap, streaming: v }; notify(); },
-    setListening: (v: boolean) => { snap = { ...snap, listening: v }; notify(); },
-    bumpFillEpoch: () => { snap = { ...snap, fillEpoch: snap.fillEpoch + 1 }; notify(); },
+    setValue: (v: string) => {
+      snap = { ...snap, value: v };
+      notify();
+    },
+    setStreaming: (v: boolean) => {
+      snap = { ...snap, streaming: v };
+      notify();
+    },
+    setListening: (v: boolean) => {
+      snap = { ...snap, listening: v };
+      notify();
+    },
+    bumpFillEpoch: () => {
+      snap = { ...snap, fillEpoch: snap.fillEpoch + 1 };
+      notify();
+    },
   };
 })();
 
@@ -116,25 +193,49 @@ const attachmentsStore = (() => {
   let counter = 0;
   return {
     get: () => snap,
-    subscribe: (cb: () => void) => { listeners.add(cb); return () => { listeners.delete(cb); }; },
-    add: (a: Omit<Attachment, "id">) => { snap = [...snap, { ...a, id: `att-${++counter}` }]; notify(); },
-    remove: (id: string) => { snap = snap.filter((a) => a.id !== id); notify(); },
-    clear: () => { snap = []; notify(); },
+    subscribe: (cb: () => void) => {
+      listeners.add(cb);
+      return () => {
+        listeners.delete(cb);
+      };
+    },
+    add: (a: Omit<Attachment, "id">) => {
+      snap = [...snap, { ...a, id: `att-${++counter}` }];
+      notify();
+    },
+    remove: (id: string) => {
+      snap = snap.filter((a) => a.id !== id);
+      notify();
+    },
+    clear: () => {
+      snap = [];
+      notify();
+    },
   };
 })();
 
 function useAttachments() {
-  return useSyncExternalStore(attachmentsStore.subscribe, attachmentsStore.get, attachmentsStore.get);
+  return useSyncExternalStore(
+    attachmentsStore.subscribe,
+    attachmentsStore.get,
+    attachmentsStore.get,
+  );
 }
 
 const kindIcon = (k: AttachKind) => {
   switch (k) {
-    case "image": return <ImageIcon className="h-3 w-3" />;
-    case "audio": return <FileAudio className="h-3 w-3" />;
-    case "video": return <Film className="h-3 w-3" />;
-    case "url": return <Link2 className="h-3 w-3" />;
-    case "text": return <ClipboardPaste className="h-3 w-3" />;
-    default: return <FileText className="h-3 w-3" />;
+    case "image":
+      return <ImageIcon className="h-3 w-3" />;
+    case "audio":
+      return <FileAudio className="h-3 w-3" />;
+    case "video":
+      return <Film className="h-3 w-3" />;
+    case "url":
+      return <Link2 className="h-3 w-3" />;
+    case "text":
+      return <ClipboardPaste className="h-3 w-3" />;
+    default:
+      return <FileText className="h-3 w-3" />;
   }
 };
 
@@ -154,20 +255,26 @@ const prettyBytes = (n: number) => {
 /* ───────── toolsStore — tools + connectors toggled by the user ───────── */
 type ToolDef = { id: string; label: string; desc: string; icon: typeof Globe };
 const TOOL_DEFS: ToolDef[] = [
-  { id: "think",  label: "Deep think",   desc: "Slower, multi-step reasoning.",   icon: Brain },
-  { id: "code",   label: "Code runner",  desc: "Run snippets in a sandbox.",      icon: Code2 },
-  { id: "image",  label: "Image gen",    desc: "Generate images inline.",         icon: ImageIcon },
-  { id: "scan",   label: "Vision scan",  desc: "Read screenshots and diagrams.",  icon: ScanSearch },
+  { id: "think", label: "Deep think", desc: "Slower, multi-step reasoning.", icon: Brain },
+  { id: "code", label: "Code runner", desc: "Run snippets in a sandbox.", icon: Code2 },
+  { id: "image", label: "Image gen", desc: "Generate images inline.", icon: ImageIcon },
+  { id: "scan", label: "Vision scan", desc: "Read screenshots and diagrams.", icon: ScanSearch },
 ];
 
-type ConnDef = { id: string; label: string; icon: typeof Github; hue: string; status: "linked" | "available" };
+type ConnDef = {
+  id: string;
+  label: string;
+  icon: typeof Github;
+  hue: string;
+  status: "linked" | "available";
+};
 const CONN_DEFS: ConnDef[] = [
-  { id: "github",   label: "GitHub",          icon: Github,       hue: "#a78bfa", status: "linked" },
-  { id: "notion",   label: "Notion",          icon: FileText,     hue: "#94a3b8", status: "linked" },
-  { id: "slack",    label: "Slack",           icon: Hash,         hue: "#ec4899", status: "available" },
-  { id: "drive",    label: "Google Drive",    icon: FolderClosed, hue: "#60a5fa", status: "linked" },
-  { id: "calendar", label: "Calendar",        icon: Calendar,     hue: "#f59e0b", status: "available" },
-  { id: "db",       label: "Postgres",        icon: Database,     hue: "#34d399", status: "available" },
+  { id: "github", label: "GitHub", icon: Github, hue: "#a78bfa", status: "linked" },
+  { id: "notion", label: "Notion", icon: FileText, hue: "#94a3b8", status: "linked" },
+  { id: "slack", label: "Slack", icon: Hash, hue: "#ec4899", status: "available" },
+  { id: "drive", label: "Google Drive", icon: FolderClosed, hue: "#60a5fa", status: "linked" },
+  { id: "calendar", label: "Calendar", icon: Calendar, hue: "#f59e0b", status: "available" },
+  { id: "db", label: "Postgres", icon: Database, hue: "#34d399", status: "available" },
 ];
 
 const toolsStore = (() => {
@@ -179,16 +286,31 @@ const toolsStore = (() => {
   const notify = () => listeners.forEach((l) => l());
   return {
     get: () => snap,
-    subscribe: (cb: () => void) => { listeners.add(cb); return () => { listeners.delete(cb); }; },
+    subscribe: (cb: () => void) => {
+      listeners.add(cb);
+      return () => {
+        listeners.delete(cb);
+      };
+    },
     toggleTool: (id: string) => {
       const t = new Set(snap.tools);
-      t.has(id) ? t.delete(id) : t.add(id);
-      snap = { ...snap, tools: t }; notify();
+      if (t.has(id)) {
+        t.delete(id);
+      } else {
+        t.add(id);
+      }
+      snap = { ...snap, tools: t };
+      notify();
     },
     toggleConn: (id: string) => {
       const c = new Set(snap.conns);
-      c.has(id) ? c.delete(id) : c.add(id);
-      snap = { ...snap, conns: c }; notify();
+      if (c.has(id)) {
+        c.delete(id);
+      } else {
+        c.add(id);
+      }
+      snap = { ...snap, conns: c };
+      notify();
     },
   };
 })();
@@ -200,17 +322,25 @@ function useTools() {
 /* ───────── settingsStore — theme, accent, button style (persisted) ───────── */
 
 export type ButtonStyleId =
-  | "mech" | "clean" | "emboss" | "depth3d" | "penrose"
-  | "squircle" | "liquid" | "pebble" | "inflated" | "paper";
+  | "mech"
+  | "clean"
+  | "emboss"
+  | "depth3d"
+  | "penrose"
+  | "squircle"
+  | "liquid"
+  | "pebble"
+  | "inflated"
+  | "paper";
 
 export type ThemePresetId = "obsidian" | "graphite" | "ocean" | "plasma";
 
 type Settings = {
   light: boolean;
   themeId: ThemePresetId;
-  hue: number;        // 0-360
+  hue: number; // 0-360
   saturation: number; // 0-100
-  lightness: number;  // 0-100 (accent lightness)
+  lightness: number; // 0-100 (accent lightness)
   buttonStyleId: ButtonStyleId;
 };
 
@@ -231,7 +361,9 @@ const loadSettings = (): Settings => {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (!raw) return DEFAULT_SETTINGS;
     return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
-  } catch { return DEFAULT_SETTINGS; }
+  } catch {
+    return DEFAULT_SETTINGS;
+  }
 };
 
 const settingsStore = (() => {
@@ -241,7 +373,11 @@ const settingsStore = (() => {
   const notify = () => listeners.forEach((l) => l());
   const persist = () => {
     if (typeof window !== "undefined") {
-      try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(snap)); } catch {}
+      try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(snap));
+      } catch {
+        // Ignore persistence failures when browser storage is unavailable.
+      }
     }
   };
   return {
@@ -252,12 +388,22 @@ const settingsStore = (() => {
       snap = loadSettings();
       notify();
     },
-    subscribe: (cb: () => void) => { listeners.add(cb); return () => { listeners.delete(cb); }; },
+    subscribe: (cb: () => void) => {
+      listeners.add(cb);
+      return () => {
+        listeners.delete(cb);
+      };
+    },
     set: <K extends keyof Settings>(key: K, value: Settings[K]) => {
       snap = { ...snap, [key]: value };
-      persist(); notify();
+      persist();
+      notify();
     },
-    reset: () => { snap = DEFAULT_SETTINGS; persist(); notify(); },
+    reset: () => {
+      snap = DEFAULT_SETTINGS;
+      persist();
+      notify();
+    },
   };
 })();
 
@@ -266,58 +412,164 @@ function useSettings() {
 }
 
 export const BUTTON_STYLES: {
-  id: ButtonStyleId; name: string;
-  lightClass: string; darkClass: string;
-  panelLight: string; panelDarkClass: string;
-  panelInnerLight: string; panelInnerDark: string;
+  id: ButtonStyleId;
+  name: string;
+  lightClass: string;
+  darkClass: string;
+  panelLight: string;
+  panelDarkClass: string;
+  panelInnerLight: string;
+  panelInnerDark: string;
   inner: boolean;
 }[] = [
-  { id: "mech",     name: "Mechanical", lightClass: "btn-mech-light", darkClass: "btn-mech",
-    panelLight: "panel-mech-light", panelDarkClass: "panel-mech",
-    panelInnerLight: "panel-inner-mech-light", panelInnerDark: "panel-inner-mech", inner: false },
-  { id: "clean",    name: "Cupertino",  lightClass: "btn-clean", darkClass: "btn-clean",
-    panelLight: "panel-clean", panelDarkClass: "panel-clean",
-    panelInnerLight: "panel-inner-clean", panelInnerDark: "panel-inner-clean", inner: false },
-  { id: "emboss",   name: "Embossed",   lightClass: "btn-emboss", darkClass: "btn-emboss",
-    panelLight: "panel-emboss", panelDarkClass: "panel-emboss-dark",
-    panelInnerLight: "panel-inner-emboss", panelInnerDark: "panel-inner-emboss-dark", inner: false },
-  { id: "depth3d",  name: "Soft 3D",    lightClass: "btn-3d", darkClass: "btn-3d",
-    panelLight: "panel-3d", panelDarkClass: "panel-3d-dark",
-    panelInnerLight: "panel-inner-3d", panelInnerDark: "panel-inner-3d-dark", inner: false },
-  { id: "penrose",  name: "Penrose",    lightClass: "btn-penrose", darkClass: "btn-penrose",
-    panelLight: "panel-penrose", panelDarkClass: "panel-penrose-dark",
-    panelInnerLight: "panel-inner-penrose", panelInnerDark: "panel-inner-penrose-dark", inner: true },
-  { id: "squircle", name: "Squircle",   lightClass: "btn-squircle", darkClass: "btn-squircle",
-    panelLight: "panel-squircle", panelDarkClass: "panel-squircle-dark",
-    panelInnerLight: "panel-inner-squircle", panelInnerDark: "panel-inner-squircle-dark", inner: true },
-  { id: "liquid",   name: "Liquid",     lightClass: "btn-liquid", darkClass: "btn-liquid",
-    panelLight: "panel-liquid", panelDarkClass: "panel-liquid-dark",
-    panelInnerLight: "panel-inner-liquid", panelInnerDark: "panel-inner-liquid-dark", inner: true },
-  { id: "pebble",   name: "Pebble",     lightClass: "btn-pebble", darkClass: "btn-pebble",
-    panelLight: "panel-pebble", panelDarkClass: "panel-pebble-dark",
-    panelInnerLight: "panel-inner-pebble", panelInnerDark: "panel-inner-pebble-dark", inner: false },
-  { id: "inflated", name: "Inflated",   lightClass: "btn-inflated", darkClass: "btn-inflated",
-    panelLight: "panel-inflated", panelDarkClass: "panel-inflated-dark",
-    panelInnerLight: "panel-inner-inflated", panelInnerDark: "panel-inner-inflated-dark", inner: true },
-  { id: "paper",    name: "Paper",      lightClass: "btn-paper", darkClass: "btn-paper",
-    panelLight: "panel-paper", panelDarkClass: "panel-paper-dark",
-    panelInnerLight: "panel-inner-paper", panelInnerDark: "panel-inner-paper-dark", inner: false },
+  {
+    id: "mech",
+    name: "Mechanical",
+    lightClass: "btn-mech-light",
+    darkClass: "btn-mech",
+    panelLight: "panel-mech-light",
+    panelDarkClass: "panel-mech",
+    panelInnerLight: "panel-inner-mech-light",
+    panelInnerDark: "panel-inner-mech",
+    inner: false,
+  },
+  {
+    id: "clean",
+    name: "Cupertino",
+    lightClass: "btn-clean",
+    darkClass: "btn-clean",
+    panelLight: "panel-clean",
+    panelDarkClass: "panel-clean",
+    panelInnerLight: "panel-inner-clean",
+    panelInnerDark: "panel-inner-clean",
+    inner: false,
+  },
+  {
+    id: "emboss",
+    name: "Embossed",
+    lightClass: "btn-emboss",
+    darkClass: "btn-emboss",
+    panelLight: "panel-emboss",
+    panelDarkClass: "panel-emboss-dark",
+    panelInnerLight: "panel-inner-emboss",
+    panelInnerDark: "panel-inner-emboss-dark",
+    inner: false,
+  },
+  {
+    id: "depth3d",
+    name: "Soft 3D",
+    lightClass: "btn-3d",
+    darkClass: "btn-3d",
+    panelLight: "panel-3d",
+    panelDarkClass: "panel-3d-dark",
+    panelInnerLight: "panel-inner-3d",
+    panelInnerDark: "panel-inner-3d-dark",
+    inner: false,
+  },
+  {
+    id: "penrose",
+    name: "Penrose",
+    lightClass: "btn-penrose",
+    darkClass: "btn-penrose",
+    panelLight: "panel-penrose",
+    panelDarkClass: "panel-penrose-dark",
+    panelInnerLight: "panel-inner-penrose",
+    panelInnerDark: "panel-inner-penrose-dark",
+    inner: true,
+  },
+  {
+    id: "squircle",
+    name: "Squircle",
+    lightClass: "btn-squircle",
+    darkClass: "btn-squircle",
+    panelLight: "panel-squircle",
+    panelDarkClass: "panel-squircle-dark",
+    panelInnerLight: "panel-inner-squircle",
+    panelInnerDark: "panel-inner-squircle-dark",
+    inner: true,
+  },
+  {
+    id: "liquid",
+    name: "Liquid",
+    lightClass: "btn-liquid",
+    darkClass: "btn-liquid",
+    panelLight: "panel-liquid",
+    panelDarkClass: "panel-liquid-dark",
+    panelInnerLight: "panel-inner-liquid",
+    panelInnerDark: "panel-inner-liquid-dark",
+    inner: true,
+  },
+  {
+    id: "pebble",
+    name: "Pebble",
+    lightClass: "btn-pebble",
+    darkClass: "btn-pebble",
+    panelLight: "panel-pebble",
+    panelDarkClass: "panel-pebble-dark",
+    panelInnerLight: "panel-inner-pebble",
+    panelInnerDark: "panel-inner-pebble-dark",
+    inner: false,
+  },
+  {
+    id: "inflated",
+    name: "Inflated",
+    lightClass: "btn-inflated",
+    darkClass: "btn-inflated",
+    panelLight: "panel-inflated",
+    panelDarkClass: "panel-inflated-dark",
+    panelInnerLight: "panel-inner-inflated",
+    panelInnerDark: "panel-inner-inflated-dark",
+    inner: true,
+  },
+  {
+    id: "paper",
+    name: "Paper",
+    lightClass: "btn-paper",
+    darkClass: "btn-paper",
+    panelLight: "panel-paper",
+    panelDarkClass: "panel-paper-dark",
+    panelInnerLight: "panel-inner-paper",
+    panelInnerDark: "panel-inner-paper-dark",
+    inner: false,
+  },
 ];
 
 type ThemeMode = { bg: string; fg: string; accent: string; panel: string };
-export const THEME_PRESETS: { id: ThemePresetId; name: string; tagline: string; light: ThemeMode; dark: ThemeMode }[] = [
-  { id: "obsidian", name: "Obsidian", tagline: "Pure black · violet pulse",
+export const THEME_PRESETS: {
+  id: ThemePresetId;
+  name: string;
+  tagline: string;
+  light: ThemeMode;
+  dark: ThemeMode;
+}[] = [
+  {
+    id: "obsidian",
+    name: "Obsidian",
+    tagline: "Pure black · violet pulse",
     light: { bg: "#f5f3ef", fg: "#1a1a1a", accent: "#7c3aed", panel: "#ecebe6" },
-    dark:  { bg: "#0a0a0a", fg: "#f0f0f0", accent: "#a78bfa", panel: "#161616" } },
-  { id: "graphite", name: "Graphite Ink", tagline: "Newsprint · soft graphite",
+    dark: { bg: "#0a0a0a", fg: "#f0f0f0", accent: "#a78bfa", panel: "#161616" },
+  },
+  {
+    id: "graphite",
+    name: "Graphite Ink",
+    tagline: "Newsprint · soft graphite",
     light: { bg: "#ededeb", fg: "#111111", accent: "#3b3b3b", panel: "#e2e0dc" },
-    dark:  { bg: "#1c1c1c", fg: "#e8e8e6", accent: "#a0a0a0", panel: "#262626" } },
-  { id: "ocean",    name: "Ocean Deep",   tagline: "Submarine indigo · teal",
+    dark: { bg: "#1c1c1c", fg: "#e8e8e6", accent: "#a0a0a0", panel: "#262626" },
+  },
+  {
+    id: "ocean",
+    name: "Ocean Deep",
+    tagline: "Submarine indigo · teal",
     light: { bg: "#e6f1ff", fg: "#0c1f2e", accent: "#0d7a8a", panel: "#d4e5f5" },
-    dark:  { bg: "#0c1f2e", fg: "#e6f1ff", accent: "#5cbdb9", panel: "#13293d" } },
-  { id: "plasma",   name: "Plasma Violet", tagline: "Midnight · neon plasma",
+    dark: { bg: "#0c1f2e", fg: "#e6f1ff", accent: "#5cbdb9", panel: "#13293d" },
+  },
+  {
+    id: "plasma",
+    name: "Plasma Violet",
+    tagline: "Midnight · neon plasma",
     light: { bg: "#f7eafe", fg: "#2e0f4a", accent: "#c026d3", panel: "#ecdaf5" },
-    dark:  { bg: "#15101f", fg: "#f3eaff", accent: "#e879f9", panel: "#1f1830" } },
+    dark: { bg: "#15101f", fg: "#f3eaff", accent: "#e879f9", panel: "#1f1830" },
+  },
 ];
 
 /* ───────── theme → CSS variables ─────────
@@ -328,7 +580,11 @@ export const THEME_PRESETS: { id: ThemePresetId; name: string; tagline: string; 
      button/panel materials in styles.css.
    • --lumen-accent/-contrast consumed by the accent helper classes.
    Derived shades use CSS color-mix so they track the seeds reactively. */
-function buildThemeVars(mode: ThemeMode, accent: string, accentContrast: string): Record<string, string> {
+function buildThemeVars(
+  mode: ThemeMode,
+  accent: string,
+  accentContrast: string,
+): Record<string, string> {
   const { bg, fg, accent: presetAccent, panel } = mode;
   const mix = (a: string, b: string, pct: number) => `color-mix(in srgb, ${a}, ${b} ${pct}%)`;
   return {
@@ -375,24 +631,33 @@ const ACCENT_SWATCHES = [
   { hue: 220, saturation: 85, lightness: 55 },
   { hue: 175, saturation: 70, lightness: 40 },
   { hue: 145, saturation: 65, lightness: 42 },
-  { hue: 85,  saturation: 75, lightness: 45 },
-  { hue: 38,  saturation: 92, lightness: 50 },
-  { hue: 22,  saturation: 90, lightness: 52 },
+  { hue: 85, saturation: 75, lightness: 45 },
+  { hue: 38, saturation: 92, lightness: 50 },
+  { hue: 22, saturation: 90, lightness: 52 },
   { hue: 350, saturation: 75, lightness: 55 },
 ] as const;
 
 const accentHsl = (h: number, s: number, l: number) => `hsl(${h} ${s}% ${l}%)`;
 
 const matchesAccentSwatch = (settings: Settings, swatch: (typeof ACCENT_SWATCHES)[number]) =>
-  Math.round(settings.hue) === swatch.hue
-  && Math.round(settings.saturation) === swatch.saturation
-  && Math.round(settings.lightness) === swatch.lightness;
+  Math.round(settings.hue) === swatch.hue &&
+  Math.round(settings.saturation) === swatch.saturation &&
+  Math.round(settings.lightness) === swatch.lightness;
 
-
-
-
-function HoverTip({ label, keys, desc, children, side = "bottom", align = "center", hideOnClick = false }: {
-  label: string; keys?: string; desc?: string; children: ReactNode; side?: "top" | "bottom";
+function HoverTip({
+  label,
+  keys,
+  desc,
+  children,
+  side = "bottom",
+  align = "center",
+  hideOnClick = false,
+}: {
+  label: string;
+  keys?: string;
+  desc?: string;
+  children: ReactNode;
+  side?: "top" | "bottom";
   align?: "start" | "center" | "end";
   /** Dismiss on press; stay hidden until pointer leaves (for click-to-cycle controls). */
   hideOnClick?: boolean;
@@ -410,11 +675,28 @@ function HoverTip({ label, keys, desc, children, side = "bottom", align = "cente
   return (
     <span
       className="relative inline-flex"
-      onMouseEnter={() => { if (!suppressed) setHover(true); }}
-      onMouseLeave={() => { setHover(false); setSuppressed(false); }}
-      onFocus={() => { if (!suppressed) setHover(true); }}
-      onBlur={() => { setHover(false); setSuppressed(false); }}
-      onPointerDown={hideOnClick ? () => { setHover(false); setSuppressed(true); } : undefined}
+      onMouseEnter={() => {
+        if (!suppressed) setHover(true);
+      }}
+      onMouseLeave={() => {
+        setHover(false);
+        setSuppressed(false);
+      }}
+      onFocus={() => {
+        if (!suppressed) setHover(true);
+      }}
+      onBlur={() => {
+        setHover(false);
+        setSuppressed(false);
+      }}
+      onPointerDown={
+        hideOnClick
+          ? () => {
+              setHover(false);
+              setSuppressed(true);
+            }
+          : undefined
+      }
     >
       {children}
       <AnimatePresence>
@@ -425,14 +707,14 @@ function HoverTip({ label, keys, desc, children, side = "bottom", align = "cente
             exit={{ opacity: 0, y: side === "top" ? 6 : -6, scale: 0.94 }}
             transition={{ type: "spring", stiffness: 480, damping: 30, mass: 0.5 }}
             className={`pointer-events-none absolute z-60 ${alignClass} ${pos} ${
-              desc
-                ? "w-[240px] flex-col items-start"
-                : "flex items-center gap-2 whitespace-nowrap"
+              desc ? "w-[240px] flex-col items-start" : "flex items-center gap-2 whitespace-nowrap"
             } hidden max-w-[calc(100vw_-_1rem)] rounded-lg border border-border/60 bg-popover/95 px-3 py-2 text-popover-foreground shadow-xl backdrop-blur-sm sm:flex`}
           >
             <span className="flex w-full items-center gap-1.5">
               <span aria-hidden className="h-1 w-1 rounded-full bg-foreground/50" />
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] opacity-80">{label}</span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] opacity-80">
+                {label}
+              </span>
             </span>
             {desc && (
               <>
@@ -454,10 +736,24 @@ function HoverTip({ label, keys, desc, children, side = "bottom", align = "cente
   );
 }
 
-
-function IconBtn({ ctx, children, onClick, dim = false, size = 9, tip, keys, "aria-label": ariaLabel }: {
-  ctx: Ctx; children: ReactNode; onClick?: () => void; dim?: boolean; size?: number;
-  tip?: string; keys?: string; "aria-label"?: string;
+function IconBtn({
+  ctx,
+  children,
+  onClick,
+  dim = false,
+  size = 9,
+  tip,
+  keys,
+  "aria-label": ariaLabel,
+}: {
+  ctx: Ctx;
+  children: ReactNode;
+  onClick?: () => void;
+  dim?: boolean;
+  size?: number;
+  tip?: string;
+  keys?: string;
+  "aria-label"?: string;
 }) {
   const btn = (
     <button
@@ -469,22 +765,43 @@ function IconBtn({ ctx, children, onClick, dim = false, size = 9, tip, keys, "ar
       {children}
     </button>
   );
-  return tip ? <HoverTip label={tip} keys={keys}>{btn}</HoverTip> : btn;
+  return tip ? (
+    <HoverTip label={tip} keys={keys}>
+      {btn}
+    </HoverTip>
+  ) : (
+    btn
+  );
 }
 
 function Pill({ ctx, children, onClick }: { ctx: Ctx; children: ReactNode; onClick?: () => void }) {
   return (
-    <button onClick={onClick} className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px]`}>
+    <button
+      onClick={onClick}
+      className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px]`}
+    >
       {children}
     </button>
   );
 }
 
 function TogglePill({
-  ctx, on, onClick, label, desc, icon, tipAlign, hideTipOnClick = false, size = 30,
+  ctx,
+  on,
+  onClick,
+  label,
+  desc,
+  icon,
+  tipAlign,
+  hideTipOnClick = false,
+  size = 30,
 }: {
-  ctx: Ctx; on: boolean; onClick: () => void;
-  label: string; desc: string; icon: ReactNode;
+  ctx: Ctx;
+  on: boolean;
+  onClick: () => void;
+  label: string;
+  desc: string;
+  icon: ReactNode;
   tipAlign?: "start" | "center" | "end";
   hideTipOnClick?: boolean;
   size?: number;
@@ -514,29 +831,37 @@ function TogglePill({
             rotate: SPRING_POP,
             color: { duration: 0.2 },
           }}
-
           className="inline-flex"
         >
           {icon}
         </motion.span>
-
       </motion.button>
-
     </HoverTip>
   );
 }
 
-
 function Dropdown({
-  ctx, value, options, label, onChange, align = "left",
+  ctx,
+  value,
+  options,
+  label,
+  onChange,
+  align = "left",
 }: {
-  ctx: Ctx; value: string; options: string[]; label?: string;
-  onChange: (v: string) => void; align?: "left" | "right";
+  ctx: Ctx;
+  value: string;
+  options: string[];
+  label?: string;
+  onChange: (v: string) => void;
+  align?: "left" | "right";
 }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="relative">
-      <button onClick={() => setOpen(!open)} className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px]`}>
+      <button
+        onClick={() => setOpen(!open)}
+        className={`${ctx.btn} flex items-center gap-1.5 px-3 py-1.5 text-[11px]`}
+      >
         {label && <span className="opacity-60">{label}</span>}
         <span>{value}</span>
         <ChevronDown className="h-3 w-3 opacity-60" />
@@ -550,7 +875,10 @@ function Dropdown({
             {options.map((o) => (
               <button
                 key={o}
-                onClick={() => { onChange(o); setOpen(false); }}
+                onClick={() => {
+                  onChange(o);
+                  setOpen(false);
+                }}
                 className="block w-full px-3 py-2 text-left text-xs hover:bg-muted"
               >
                 {o}
@@ -610,13 +938,19 @@ function ModelGlyph({ index }: { index: number }) {
   );
 }
 
-
 /* ───────── FancyPicker — creative dropdown for multi-option selectors ───────── */
 
 type PickerOption = { id: string; desc?: string; glyph: ReactNode };
 
 function FancyPicker({
-  ctx, label, value, options, onChange, align = "left", className = "", compact = false,
+  ctx,
+  label,
+  value,
+  options,
+  onChange,
+  align = "left",
+  className = "",
+  compact = false,
 }: {
   ctx: Ctx;
   label: string;
@@ -635,7 +969,10 @@ function FancyPicker({
   const current = options.find((o) => o.id === value) ?? options[0];
   const longest = options.reduce((a, b) => (a.id.length >= b.id.length ? a : b)).id;
   const activeId = hoverId ?? value;
-  const activeIndex = Math.max(0, options.findIndex((o) => o.id === activeId));
+  const activeIndex = Math.max(
+    0,
+    options.findIndex((o) => o.id === activeId),
+  );
   const total = options.length;
 
   return (
@@ -677,170 +1014,199 @@ function FancyPicker({
       </motion.button>
 
       <AnimatePresence>
-        {open && (() => {
-          // Anchor just above the trigger, but clamp into the viewport so the
-          // menu stays connected to the selector without ever overflowing.
-          const r = triggerRef.current?.getBoundingClientRect();
-          const vw = typeof window !== "undefined" ? window.innerWidth : 1024;
-          const vh = typeof window !== "undefined" ? window.innerHeight : 768;
-          const w = Math.min(260, vw - 16);
-          const anchorLeft = r ? (align === "right" ? r.right - w : r.left) : 8;
-          const left = Math.min(Math.max(8, anchorLeft), vw - w - 8);
-          const bottom = r ? vh - r.top + 8 : 8;
-          return (
-          <>
-            <div
-              className="fixed inset-0 z-40"
-              onMouseDown={(e) => { e.preventDefault(); setOpen(false); }}
-            />
-            {/* anchored just above the trigger; position clamped into the viewport */}
-            <motion.div
-              initial={{ opacity: 0, y: 8, scale: 0.95, filter: "blur(6px)" }}
-              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: 8, scale: 0.95, filter: "blur(6px)" }}
-              transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
-              style={{ position: "fixed", left, bottom, width: w, transformOrigin: align === "right" ? "bottom right" : "bottom left" }}
-              onMouseLeave={() => setHoverId(null)}
-              className={`${ctx.panel} z-50 overflow-hidden p-1`}
-            >
-              <div className={`${ctx.panelInner} relative overflow-hidden`}>
+        {open &&
+          (() => {
+            // Anchor just above the trigger, but clamp into the viewport so the
+            // menu stays connected to the selector without ever overflowing.
+            const r = triggerRef.current?.getBoundingClientRect();
+            const vw = typeof window !== "undefined" ? window.innerWidth : 1024;
+            const vh = typeof window !== "undefined" ? window.innerHeight : 768;
+            const w = Math.min(260, vw - 16);
+            const anchorLeft = r ? (align === "right" ? r.right - w : r.left) : 8;
+            const left = Math.min(Math.max(8, anchorLeft), vw - w - 8);
+            const bottom = r ? vh - r.top + 8 : 8;
+            return (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setOpen(false);
+                  }}
+                />
+                {/* anchored just above the trigger; position clamped into the viewport */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.95, filter: "blur(6px)" }}
+                  animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, y: 8, scale: 0.95, filter: "blur(6px)" }}
+                  transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.55 }}
+                  style={{
+                    position: "fixed",
+                    left,
+                    bottom,
+                    width: w,
+                    transformOrigin: align === "right" ? "bottom right" : "bottom left",
+                  }}
+                  onMouseLeave={() => setHoverId(null)}
+                  className={`${ctx.panel} z-50 overflow-hidden p-1`}
+                >
+                  <div className={`${ctx.panelInner} relative overflow-hidden`}>
+                    {/* header strip */}
+                    <div className="relative flex items-center justify-between border-b border-border/40 px-3 py-2">
+                      <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] opacity-70">
+                        <span
+                          aria-hidden
+                          className="inline-block h-1 w-1 rounded-full bg-foreground/60"
+                        />
+                        {label}
+                      </span>
+                      <span className="font-mono text-[9px] tabular-nums uppercase tracking-[0.18em] opacity-45">
+                        {String(activeIndex + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
+                      </span>
+                    </div>
 
-
-              {/* header strip */}
-              <div className="relative flex items-center justify-between border-b border-border/40 px-3 py-2">
-                <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] opacity-70">
-                  <span aria-hidden className="inline-block h-1 w-1 rounded-full bg-foreground/60" />
-                  {label}
-                </span>
-                <span className="font-mono text-[9px] tabular-nums uppercase tracking-[0.18em] opacity-45">
-                  {String(activeIndex + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
-                </span>
-              </div>
-
-              {/* options list */}
-              <LayoutGroup id={`picker-${label}`}>
-                <div className="relative py-1">
-                  {options.map((o, i) => {
-                    const selected = o.id === value;
-                    const active = o.id === activeId;
-                    return (
-                      <motion.button
-                        key={o.id}
-                        type="button"
-                        initial={{ opacity: 0, x: -8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{
-                          delay: 0.05 + i * 0.04,
-                          duration: 0.28,
-                          ease: [0.22, 1, 0.36, 1],
-                        }}
-                        onClick={() => { onChange(o.id); setOpen(false); }}
-                        onMouseEnter={() => setHoverId(o.id)}
-                        className="group/row relative flex w-full items-start gap-2.5 px-3 py-2 text-left"
-                      >
-                        {/* active row backdrop */}
-                        {active && (
-                          <motion.span
-                            layoutId={`picker-bg-${label}`}
-                            transition={{ type: "spring", stiffness: 480, damping: 36, mass: 0.5 }}
-                            className="absolute inset-x-1 inset-y-0.5 rounded-md bg-foreground/6"
-                          />
-                        )}
-                        {/* left rail for selected */}
-                        {selected && (
-                          <motion.span
-                            layoutId={`picker-rail-${label}`}
-                            transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.5 }}
-                            className="absolute left-0 top-2 bottom-2 w-[2px] rounded-r-full"
-                            style={{ background: "var(--lumen-accent)" }}
-                          />
-                        )}
-
-                        {/* index + caret column */}
-                        <span className="relative z-10 mt-px flex w-7 shrink-0 items-center gap-1 font-mono text-[9px] uppercase tracking-[0.14em] opacity-60 tabular-nums">
-                          <span className="inline-block w-2 text-foreground/80">
-                            {active ? (
-                              <motion.span
-                                layoutId={`picker-caret-${label}`}
-                                transition={{ type: "spring", stiffness: 520, damping: 34 }}
-                                className="inline-block"
-                              >
-                                ▸
-                              </motion.span>
-                            ) : null}
-                          </span>
-                          <span>{String(i + 1).padStart(2, "0")}</span>
-                        </span>
-
-                        {/* glyph */}
-                        <motion.span
-                          animate={{ scale: active ? 1.08 : 1, opacity: active ? 1 : 0.65 }}
-                          transition={{ type: "spring", stiffness: 420, damping: 28 }}
-                          className="relative z-10 mt-[2px] flex h-4 w-4 shrink-0 items-center justify-center"
-                        >
-                          {o.glyph}
-                        </motion.span>
-
-                        {/* text */}
-                        <span className="relative z-10 flex min-w-0 flex-1 flex-col">
-                          <span className={`text-[11px] leading-tight ${selected ? "text-foreground" : active ? "text-foreground/90" : "text-foreground/70"}`}>
-                            {o.id}
-                          </span>
-                          {o.desc && (
-                            <motion.span
-                              initial={false}
-                              animate={{
-                                height: active ? "auto" : 0,
-                                opacity: active ? 0.6 : 0,
-                                marginTop: active ? 2 : 0,
+                    {/* options list */}
+                    <LayoutGroup id={`picker-${label}`}>
+                      <div className="relative py-1">
+                        {options.map((o, i) => {
+                          const selected = o.id === value;
+                          const active = o.id === activeId;
+                          return (
+                            <motion.button
+                              key={o.id}
+                              type="button"
+                              initial={{ opacity: 0, x: -8 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{
+                                delay: 0.05 + i * 0.04,
+                                duration: 0.28,
+                                ease: [0.22, 1, 0.36, 1],
                               }}
-                              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                              className="overflow-hidden text-[10px] leading-snug"
+                              onClick={() => {
+                                onChange(o.id);
+                                setOpen(false);
+                              }}
+                              onMouseEnter={() => setHoverId(o.id)}
+                              className="group/row relative flex w-full items-start gap-2.5 px-3 py-2 text-left"
                             >
-                              {o.desc}
-                            </motion.span>
-                          )}
-                        </span>
+                              {/* active row backdrop */}
+                              {active && (
+                                <motion.span
+                                  layoutId={`picker-bg-${label}`}
+                                  transition={{
+                                    type: "spring",
+                                    stiffness: 480,
+                                    damping: 36,
+                                    mass: 0.5,
+                                  }}
+                                  className="absolute inset-x-1 inset-y-0.5 rounded-md bg-foreground/6"
+                                />
+                              )}
+                              {/* left rail for selected */}
+                              {selected && (
+                                <motion.span
+                                  layoutId={`picker-rail-${label}`}
+                                  transition={{
+                                    type: "spring",
+                                    stiffness: 420,
+                                    damping: 34,
+                                    mass: 0.5,
+                                  }}
+                                  className="absolute left-0 top-2 bottom-2 w-[2px] rounded-r-full"
+                                  style={{ background: "var(--lumen-accent)" }}
+                                />
+                              )}
 
-                        {/* selected marker */}
-                        <span className="relative z-10 mt-[5px] flex h-2 w-2 shrink-0 items-center justify-center">
-                          {selected && (
-                            <motion.span
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ type: "spring", stiffness: 520, damping: 24 }}
-                              className="inline-block h-1.5 w-1.5 rounded-full"
-                              style={{ background: "var(--lumen-accent)" }}
-                            />
-                          )}
-                        </span>
-                      </motion.button>
-                    );
-                  })}
-                </div>
-              </LayoutGroup>
+                              {/* index + caret column */}
+                              <span className="relative z-10 mt-px flex w-7 shrink-0 items-center gap-1 font-mono text-[9px] uppercase tracking-[0.14em] opacity-60 tabular-nums">
+                                <span className="inline-block w-2 text-foreground/80">
+                                  {active ? (
+                                    <motion.span
+                                      layoutId={`picker-caret-${label}`}
+                                      transition={{ type: "spring", stiffness: 520, damping: 34 }}
+                                      className="inline-block"
+                                    >
+                                      ▸
+                                    </motion.span>
+                                  ) : null}
+                                </span>
+                                <span>{String(i + 1).padStart(2, "0")}</span>
+                              </span>
 
-              {/* footer hint strip */}
-              <div className="relative flex items-center justify-between border-t border-border/40 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] opacity-45">
-                <span className="flex items-center gap-1">
-                  <kbd className="rounded-sm border border-border/60 px-1 py-px text-[8px]">↑↓</kbd>
-                  <span>navigate</span>
-                </span>
-                <span className="flex items-center gap-1">
-                  <kbd className="rounded-sm border border-border/60 px-1 py-px text-[8px]">↵</kbd>
-                  <span>select</span>
-                </span>
-              </div>
-              </div>
-            </motion.div>
-          </>
-          );
-        })()}
+                              {/* glyph */}
+                              <motion.span
+                                animate={{ scale: active ? 1.08 : 1, opacity: active ? 1 : 0.65 }}
+                                transition={{ type: "spring", stiffness: 420, damping: 28 }}
+                                className="relative z-10 mt-[2px] flex h-4 w-4 shrink-0 items-center justify-center"
+                              >
+                                {o.glyph}
+                              </motion.span>
+
+                              {/* text */}
+                              <span className="relative z-10 flex min-w-0 flex-1 flex-col">
+                                <span
+                                  className={`text-[11px] leading-tight ${selected ? "text-foreground" : active ? "text-foreground/90" : "text-foreground/70"}`}
+                                >
+                                  {o.id}
+                                </span>
+                                {o.desc && (
+                                  <motion.span
+                                    initial={false}
+                                    animate={{
+                                      height: active ? "auto" : 0,
+                                      opacity: active ? 0.6 : 0,
+                                      marginTop: active ? 2 : 0,
+                                    }}
+                                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                                    className="overflow-hidden text-[10px] leading-snug"
+                                  >
+                                    {o.desc}
+                                  </motion.span>
+                                )}
+                              </span>
+
+                              {/* selected marker */}
+                              <span className="relative z-10 mt-[5px] flex h-2 w-2 shrink-0 items-center justify-center">
+                                {selected && (
+                                  <motion.span
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    transition={{ type: "spring", stiffness: 520, damping: 24 }}
+                                    className="inline-block h-1.5 w-1.5 rounded-full"
+                                    style={{ background: "var(--lumen-accent)" }}
+                                  />
+                                )}
+                              </span>
+                            </motion.button>
+                          );
+                        })}
+                      </div>
+                    </LayoutGroup>
+
+                    {/* footer hint strip */}
+                    <div className="relative flex items-center justify-between border-t border-border/40 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] opacity-45">
+                      <span className="flex items-center gap-1">
+                        <kbd className="rounded-sm border border-border/60 px-1 py-px text-[8px]">
+                          ↑↓
+                        </kbd>
+                        <span>navigate</span>
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <kbd className="rounded-sm border border-border/60 px-1 py-px text-[8px]">
+                          ↵
+                        </kbd>
+                        <span>select</span>
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              </>
+            );
+          })()}
       </AnimatePresence>
     </div>
   );
 }
-
 
 /* ───────── CycleButton — click to cycle, animated SVG indicator ───────── */
 
@@ -908,9 +1274,15 @@ function DepthGlyph({ index }: { index: number }) {
   );
 }
 
-
 function CycleButton({
-  ctx, label, options, value, onChange, glyph, descriptions, showLabel = true,
+  ctx,
+  label,
+  options,
+  value,
+  onChange,
+  glyph,
+  descriptions,
+  showLabel = true,
 }: {
   ctx: Ctx;
   label: string;
@@ -951,7 +1323,6 @@ function CycleButton({
             scale: SPRING_POP,
             rotate: SPRING_POP,
           }}
-
           className="inline-flex"
         >
           {glyph(index)}
@@ -960,9 +1331,6 @@ function CycleButton({
     </HoverTip>
   );
 }
-
-
-
 
 function accountInitials(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -1012,40 +1380,92 @@ const PROJECT_GROUPS: ProjectGroup[] = [
     id: "lumen",
     name: "Lumen",
     chats: [
-      { id: "navigation-ia", title: "Navigation and IA", summary: "Refine the sidebar and workspace structure.", updated: "Now" },
-      { id: "motion-system", title: "Motion system", summary: "Shape subtle, interruptible interface motion.", updated: "2h" },
-      { id: "theme-qa", title: "Theme QA", summary: "Check color, surface, and button-style variants.", updated: "Yesterday" },
+      {
+        id: "navigation-ia",
+        title: "Navigation and IA",
+        summary: "Refine the sidebar and workspace structure.",
+        updated: "Now",
+      },
+      {
+        id: "motion-system",
+        title: "Motion system",
+        summary: "Shape subtle, interruptible interface motion.",
+        updated: "2h",
+      },
+      {
+        id: "theme-qa",
+        title: "Theme QA",
+        summary: "Check color, surface, and button-style variants.",
+        updated: "Yesterday",
+      },
     ],
   },
   {
     id: "client-work",
     name: "Client workspace",
     chats: [
-      { id: "launch-brief", title: "Launch brief", summary: "Turn product notes into a concise launch plan.", updated: "Mon" },
-      { id: "research-synthesis", title: "Research synthesis", summary: "Organize interview findings and next steps.", updated: "Fri" },
+      {
+        id: "launch-brief",
+        title: "Launch brief",
+        summary: "Turn product notes into a concise launch plan.",
+        updated: "Mon",
+      },
+      {
+        id: "research-synthesis",
+        title: "Research synthesis",
+        summary: "Organize interview findings and next steps.",
+        updated: "Fri",
+      },
     ],
   },
   {
     id: "personal",
     name: "Personal",
     chats: [
-      { id: "portfolio-story", title: "Portfolio story", summary: "Clarify the narrative for recent case studies.", updated: "Jul 18" },
-      { id: "weekly-planning", title: "Weekly planning", summary: "Prioritize deep work and recurring tasks.", updated: "Jul 14" },
+      {
+        id: "portfolio-story",
+        title: "Portfolio story",
+        summary: "Clarify the narrative for recent case studies.",
+        updated: "Jul 18",
+      },
+      {
+        id: "weekly-planning",
+        title: "Weekly planning",
+        summary: "Prioritize deep work and recurring tasks.",
+        updated: "Jul 14",
+      },
     ],
   },
 ];
 
 const RECENT_THREADS: ChatThread[] = [
-  { id: "assistant-flow", title: "Writing assistant flow", summary: "Explore a focused writing workspace.", updated: "1h" },
-  { id: "browser-review", title: "Browser performance review", summary: "Summarize the latest UI validation notes.", updated: "4h" },
-  { id: "email-concepts", title: "Confirmation email concepts", summary: "Develop calm, editorial confirmation patterns.", updated: "Yesterday" },
-  { id: "healthy-routine", title: "Building a healthy routine", summary: "Create a flexible, sustainable weekly plan.", updated: "Tue" },
+  {
+    id: "assistant-flow",
+    title: "Writing assistant flow",
+    summary: "Explore a focused writing workspace.",
+    updated: "1h",
+  },
+  {
+    id: "browser-review",
+    title: "Browser performance review",
+    summary: "Summarize the latest UI validation notes.",
+    updated: "4h",
+  },
+  {
+    id: "email-concepts",
+    title: "Confirmation email concepts",
+    summary: "Develop calm, editorial confirmation patterns.",
+    updated: "Yesterday",
+  },
+  {
+    id: "healthy-routine",
+    title: "Building a healthy routine",
+    summary: "Create a flexible, sustainable weekly plan.",
+    updated: "Tue",
+  },
 ];
 
-const ALL_THREADS = [
-  ...PROJECT_GROUPS.flatMap((project) => project.chats),
-  ...RECENT_THREADS,
-];
+const ALL_THREADS = [...PROJECT_GROUPS.flatMap((project) => project.chats), ...RECENT_THREADS];
 
 type AgentProgress = {
   phase: "thinking" | "working" | "streaming";
@@ -1260,8 +1680,16 @@ function createAssistantReply(
   };
 }
 
-function LeftPill({ ctx, sideOpen, onSide, onSearch }: {
-  ctx: Ctx; sideOpen: boolean; onSide?: () => void; onSearch: () => void;
+function LeftPill({
+  ctx,
+  sideOpen,
+  onSide,
+  onSearch,
+}: {
+  ctx: Ctx;
+  sideOpen: boolean;
+  onSide?: () => void;
+  onSearch: () => void;
 }) {
   return (
     <div className="absolute left-4 top-3 z-60 flex items-center gap-1.5">
@@ -1324,9 +1752,7 @@ function AccountMenuItem({
       role="menuitem"
       onClick={onClick}
       className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-[11px] transition-colors ${
-        destructive
-          ? "text-red-500 hover:bg-red-500/[0.08]"
-          : "hover:bg-foreground/[0.06]"
+        destructive ? "text-red-500 hover:bg-red-500/[0.08]" : "hover:bg-foreground/[0.06]"
       }`}
     >
       <Icon className="h-3.5 w-3.5 shrink-0 opacity-65" />
@@ -1429,9 +1855,15 @@ function SidebarAccountMenu({ ctx }: { ctx: Ctx }) {
           <motion.div
             role="menu"
             aria-label="Account menu"
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10, scale: 0.96, filter: "blur(5px)" }}
+            initial={
+              reduceMotion
+                ? { opacity: 0 }
+                : { opacity: 0, y: 10, scale: 0.96, filter: "blur(5px)" }
+            }
             animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.97, filter: "blur(4px)" }}
+            exit={
+              reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.97, filter: "blur(4px)" }
+            }
             transition={reduceMotion ? { duration: 0.12 } : SPRING_SETTLE}
             style={{ transformOrigin: "bottom center" }}
             className={`${ctx.panel} absolute bottom-[calc(100%+0.5rem)] left-0 right-0 z-30 max-h-[min(70vh,430px)] overflow-hidden p-1 shadow-xl`}
@@ -1440,9 +1872,13 @@ function SidebarAccountMenu({ ctx }: { ctx: Ctx }) {
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={view}
-                  initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: view === "main" ? -10 : 10 }}
+                  initial={
+                    reduceMotion ? { opacity: 0 } : { opacity: 0, x: view === "main" ? -10 : 10 }
+                  }
                   animate={{ opacity: 1, x: 0 }}
-                  exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: view === "main" ? -10 : 10 }}
+                  exit={
+                    reduceMotion ? { opacity: 0 } : { opacity: 0, x: view === "main" ? -10 : 10 }
+                  }
                   transition={{ duration: reduceMotion ? 0.1 : 0.18, ease: [0.22, 1, 0.36, 1] }}
                   className="max-h-[min(68vh,418px)] overflow-y-auto p-1"
                 >
@@ -1458,7 +1894,9 @@ function SidebarAccountMenu({ ctx }: { ctx: Ctx }) {
                           {accountInitials(activeAccount?.name ?? "Emma")}
                         </span>
                         <span className="flex min-w-0 flex-1 flex-col leading-tight">
-                          <span className="truncate text-[11px] font-medium">{activeAccount?.name ?? "Emma"}</span>
+                          <span className="truncate text-[11px] font-medium">
+                            {activeAccount?.name ?? "Emma"}
+                          </span>
                           <span className="truncate font-mono text-[8px] uppercase tracking-[0.12em] opacity-45">
                             {activeAccount?.plan ?? "Pro"} workspace
                           </span>
@@ -1466,17 +1904,38 @@ function SidebarAccountMenu({ ctx }: { ctx: Ctx }) {
                         <ChevronRight className="h-3.5 w-3.5 opacity-45" />
                       </button>
                       <span aria-hidden className="my-1 block h-px bg-foreground/10" />
-                      <AccountMenuItem icon={Sparkles} label="Upgrade plan" onClick={() => showDialog("plan")} />
-                      <AccountMenuItem icon={Palette} label="Personalization" onClick={() => openSettings("Personalization")} />
-                      <AccountMenuItem icon={User} label="Profile" onClick={() => showDialog("profile")} />
-                      <AccountMenuItem icon={Settings} label="Settings" onClick={() => showDialog("settings")} />
+                      <AccountMenuItem
+                        icon={Sparkles}
+                        label="Upgrade plan"
+                        onClick={() => showDialog("plan")}
+                      />
+                      <AccountMenuItem
+                        icon={Palette}
+                        label="Personalization"
+                        onClick={() => openSettings("Personalization")}
+                      />
+                      <AccountMenuItem
+                        icon={User}
+                        label="Profile"
+                        onClick={() => showDialog("profile")}
+                      />
+                      <AccountMenuItem
+                        icon={Settings}
+                        label="Settings"
+                        onClick={() => showDialog("settings")}
+                      />
                       <span aria-hidden className="my-1 block h-px bg-foreground/10" />
                       <AccountMenuItem
                         icon={CircleHelp}
                         label="Help"
                         onClick={() => showDialog("help")}
                       />
-                      <AccountMenuItem icon={LogOut} label="Log out" onClick={() => showView("signout")} destructive />
+                      <AccountMenuItem
+                        icon={LogOut}
+                        label="Log out"
+                        onClick={() => showView("signout")}
+                        destructive
+                      />
                     </>
                   )}
 
@@ -1500,10 +1959,19 @@ function SidebarAccountMenu({ ctx }: { ctx: Ctx }) {
                               {accountInitials(account.name)}
                             </span>
                             <span className="flex min-w-0 flex-1 flex-col leading-tight">
-                              <span className="truncate text-[11px] font-medium">{account.name}</span>
-                              <span className="truncate text-[9px] opacity-45">{account.email}</span>
+                              <span className="truncate text-[11px] font-medium">
+                                {account.name}
+                              </span>
+                              <span className="truncate text-[9px] opacity-45">
+                                {account.email}
+                              </span>
                             </span>
-                            {active && <Check className="h-3.5 w-3.5" style={{ color: "var(--lumen-accent)" }} />}
+                            {active && (
+                              <Check
+                                className="h-3.5 w-3.5"
+                                style={{ color: "var(--lumen-accent)" }}
+                              />
+                            )}
                           </button>
                         );
                       })}
@@ -1521,7 +1989,9 @@ function SidebarAccountMenu({ ctx }: { ctx: Ctx }) {
                       {backHeader("Log out")}
                       <div className="px-3 py-3">
                         <p className="text-[11px] font-medium">Log out of Lumen?</p>
-                        <p className="mt-1 text-[10px] leading-relaxed opacity-55">This local prototype has no connected authentication session.</p>
+                        <p className="mt-1 text-[10px] leading-relaxed opacity-55">
+                          This local prototype has no connected authentication session.
+                        </p>
                         <div className="mt-3 flex gap-1.5">
                           <button
                             type="button"
@@ -1636,7 +2106,6 @@ function SidebarAccountMenu({ ctx }: { ctx: Ctx }) {
   );
 }
 
-
 function SideMenu({
   ctx,
   open,
@@ -1668,9 +2137,7 @@ function SideMenu({
 }) {
   const [projectsOpen, setProjectsOpen] = useState(true);
   const [chatsOpen, setChatsOpen] = useState(true);
-  const [expandedProjects, setExpandedProjects] = useState<Set<string>>(
-    () => new Set(["lumen"]),
-  );
+  const [expandedProjects, setExpandedProjects] = useState<Set<string>>(() => new Set(["lumen"]));
   const [localPinnedChatIds, setLocalPinnedChatIds] = useState<Set<string>>(
     () => new Set(["navigation-ia"]),
   );
@@ -1719,7 +2186,11 @@ function SideMenu({
           <span
             aria-hidden
             className="h-1.5 w-1.5 shrink-0 rounded-full"
-            style={{ background: pinned ? "var(--lumen-accent)" : "color-mix(in srgb, currentColor 28%, transparent)" }}
+            style={{
+              background: pinned
+                ? "var(--lumen-accent)"
+                : "color-mix(in srgb, currentColor 28%, transparent)",
+            }}
           />
           <span className="min-w-0 flex-1 truncate">{chat.title}</span>
           <span className="shrink-0 font-mono text-[8px] opacity-35 transition-opacity sm:group-hover/thread:opacity-0 sm:group-focus-within/thread:opacity-0">
@@ -1785,7 +2256,9 @@ function SideMenu({
           <div className="px-2 pb-3 pt-1">
             <div className="flex flex-col">
               <span className="text-[13px] font-medium tracking-tight">Lumen</span>
-              <span className="font-mono text-[8px] uppercase tracking-[0.2em] opacity-45">Personal workspace</span>
+              <span className="font-mono text-[8px] uppercase tracking-[0.2em] opacity-45">
+                Personal workspace
+              </span>
             </div>
           </div>
           <nav aria-label="Workspace" className="flex min-h-0 flex-1 flex-col overflow-y-auto">
@@ -1819,7 +2292,9 @@ function SideMenu({
                       <item.icon className="h-3.5 w-3.5 opacity-70" />
                       {item.label}
                     </span>
-                    <kbd className="font-mono text-[9px] tracking-widest opacity-40">{item.keys}</kbd>
+                    <kbd className="font-mono text-[9px] tracking-widest opacity-40">
+                      {item.keys}
+                    </kbd>
                   </button>
                 );
               })}
@@ -1867,8 +2342,13 @@ function SideMenu({
                           >
                             <FolderClosed className="h-3.5 w-3.5 opacity-65" />
                             <span className="min-w-0 flex-1 truncate">{project.name}</span>
-                            <span className="font-mono text-[8px] opacity-40">{projectChats.length}</span>
-                            <motion.span animate={{ rotate: expanded ? 90 : 0 }} transition={SPRING_TURN}>
+                            <span className="font-mono text-[8px] opacity-40">
+                              {projectChats.length}
+                            </span>
+                            <motion.span
+                              animate={{ rotate: expanded ? 90 : 0 }}
+                              transition={SPRING_TURN}
+                            >
                               <ChevronRight className="h-3 w-3 opacity-55" />
                             </motion.span>
                           </button>
@@ -1952,32 +2432,134 @@ type LibraryAsset = {
 };
 
 const INITIAL_LIBRARY_ASSETS: LibraryAsset[] = [
-  { id: "lumen", name: "Lumen", kind: "folder", modified: "Today", modifiedAt: Date.parse("2026-07-26T10:30:00"), size: "—", sizeBytes: null },
-  { id: "sidebar-study", name: "sidebar-reference.png", kind: "image", modified: "Today", modifiedAt: Date.parse("2026-07-26T09:15:00"), size: "284 KB", sizeBytes: 284 * 1024 },
-  { id: "interaction-notes", name: "Interaction notes.md", kind: "document", modified: "Yesterday", modifiedAt: Date.parse("2026-07-25T17:40:00"), size: "18 KB", sizeBytes: 18 * 1024 },
-  { id: "theme-matrix", name: "Theme QA matrix.pdf", kind: "document", modified: "Jul 24", modifiedAt: Date.parse("2026-07-24T14:20:00"), size: "126 KB", sizeBytes: 126 * 1024 },
-  { id: "connector-map", name: "connector-map.png", kind: "image", modified: "Jul 23", modifiedAt: Date.parse("2026-07-23T11:05:00"), size: "94 KB", sizeBytes: 94 * 1024 },
-  { id: "research-brief", name: "Research brief.docx", kind: "document", modified: "Jul 21", modifiedAt: Date.parse("2026-07-21T08:50:00"), size: "42 KB", sizeBytes: 42 * 1024 },
+  {
+    id: "lumen",
+    name: "Lumen",
+    kind: "folder",
+    modified: "Today",
+    modifiedAt: Date.parse("2026-07-26T10:30:00"),
+    size: "—",
+    sizeBytes: null,
+  },
+  {
+    id: "sidebar-study",
+    name: "sidebar-reference.png",
+    kind: "image",
+    modified: "Today",
+    modifiedAt: Date.parse("2026-07-26T09:15:00"),
+    size: "284 KB",
+    sizeBytes: 284 * 1024,
+  },
+  {
+    id: "interaction-notes",
+    name: "Interaction notes.md",
+    kind: "document",
+    modified: "Yesterday",
+    modifiedAt: Date.parse("2026-07-25T17:40:00"),
+    size: "18 KB",
+    sizeBytes: 18 * 1024,
+  },
+  {
+    id: "theme-matrix",
+    name: "Theme QA matrix.pdf",
+    kind: "document",
+    modified: "Jul 24",
+    modifiedAt: Date.parse("2026-07-24T14:20:00"),
+    size: "126 KB",
+    sizeBytes: 126 * 1024,
+  },
+  {
+    id: "connector-map",
+    name: "connector-map.png",
+    kind: "image",
+    modified: "Jul 23",
+    modifiedAt: Date.parse("2026-07-23T11:05:00"),
+    size: "94 KB",
+    sizeBytes: 94 * 1024,
+  },
+  {
+    id: "research-brief",
+    name: "Research brief.docx",
+    kind: "document",
+    modified: "Jul 21",
+    modifiedAt: Date.parse("2026-07-21T08:50:00"),
+    size: "42 KB",
+    sizeBytes: 42 * 1024,
+  },
 ];
 
 type LibraryFilter = "all" | "images" | "videos" | "documents" | "archives";
 type LibrarySortKey = "name" | "modified" | "size";
 
 const IMAGE_EXTENSIONS = new Set([
-  "avif", "bmp", "gif", "heic", "heif", "jpeg", "jpg", "png", "svg", "tif", "tiff", "webp",
+  "avif",
+  "bmp",
+  "gif",
+  "heic",
+  "heif",
+  "jpeg",
+  "jpg",
+  "png",
+  "svg",
+  "tif",
+  "tiff",
+  "webp",
 ]);
-const VIDEO_EXTENSIONS = new Set([
-  "avi", "m4v", "mkv", "mov", "mp4", "mpeg", "mpg", "webm",
-]);
+const VIDEO_EXTENSIONS = new Set(["avi", "m4v", "mkv", "mov", "mp4", "mpeg", "mpg", "webm"]);
 const SPREADSHEET_EXTENSIONS = new Set(["csv", "tsv", "xls", "xlsx"]);
 const CODE_EXTENSIONS = new Set([
-  "astro", "bash", "c", "cc", "cjs", "cpp", "cs", "csharp", "css", "cxx", "fish", "go", "h", "hpp",
-  "html", "htm", "java", "js", "json", "jsonl", "jsx", "kt", "kts", "less", "mjs", "php", "py",
-  "rb", "rs", "sass", "scss", "sh", "sql", "svelte", "swift", "ts", "tsx", "vue", "xml", "yaml",
-  "yml", "zsh",
+  "astro",
+  "bash",
+  "c",
+  "cc",
+  "cjs",
+  "cpp",
+  "cs",
+  "csharp",
+  "css",
+  "cxx",
+  "fish",
+  "go",
+  "h",
+  "hpp",
+  "html",
+  "htm",
+  "java",
+  "js",
+  "json",
+  "jsonl",
+  "jsx",
+  "kt",
+  "kts",
+  "less",
+  "mjs",
+  "php",
+  "py",
+  "rb",
+  "rs",
+  "sass",
+  "scss",
+  "sh",
+  "sql",
+  "svelte",
+  "swift",
+  "ts",
+  "tsx",
+  "vue",
+  "xml",
+  "yaml",
+  "yml",
+  "zsh",
 ]);
 const DOCUMENT_EXTENSIONS = new Set([
-  "doc", "docx", "md", "pdf", "ppt", "pptx", "rtf", "txt",
+  "doc",
+  "docx",
+  "md",
+  "pdf",
+  "ppt",
+  "pptx",
+  "rtf",
+  "txt",
   ...SPREADSHEET_EXTENSIONS,
   ...CODE_EXTENSIONS,
 ]);
@@ -2087,15 +2669,17 @@ function LibrarySurface({ ctx }: { ctx: Ctx }) {
     const uploaded = selected.flatMap<LibraryAsset>((file, index) => {
       const kind = classifyLibraryFile(file);
       if (!kind) return [];
-      return [{
-        id: `upload-${now}-${index}`,
-        name: file.name,
-        kind,
-        modified: "Just now",
-        modifiedAt: now - index,
-        size: formatFileSize(file.size),
-        sizeBytes: file.size,
-      }];
+      return [
+        {
+          id: `upload-${now}-${index}`,
+          name: file.name,
+          kind,
+          modified: "Just now",
+          modifiedAt: now - index,
+          size: formatFileSize(file.size),
+          sizeBytes: file.size,
+        },
+      ];
     });
     const rejected = selected.length - uploaded.length;
     if (uploaded.length) {
@@ -2114,7 +2698,7 @@ function LibrarySurface({ ctx }: { ctx: Ctx }) {
 
   const changeSort = (nextKey: LibrarySortKey) => {
     if (nextKey === sortKey) {
-      setSortDirection((current) => current === "asc" ? "desc" : "asc");
+      setSortDirection((current) => (current === "asc" ? "desc" : "asc"));
       return;
     }
     setSortKey(nextKey);
@@ -2140,7 +2724,7 @@ function LibrarySurface({ ctx }: { ctx: Ctx }) {
                 kind:
                   asset.kind === "folder"
                     ? "folder"
-                    : classifyLibraryFile({ name, type: "" }) ?? asset.kind,
+                    : (classifyLibraryFile({ name, type: "" }) ?? asset.kind),
                 modified: "Just now",
                 modifiedAt: now,
               }
@@ -2158,8 +2742,8 @@ function LibrarySurface({ ctx }: { ctx: Ctx }) {
     setDeletingId(assetId);
     window.setTimeout(() => {
       setAssets((current) => current.filter((asset) => asset.id !== assetId));
-      setSelectedId((current) => current === assetId ? null : current);
-      setRenamingId((current) => current === assetId ? null : current);
+      setSelectedId((current) => (current === assetId ? null : current));
+      setRenamingId((current) => (current === assetId ? null : current));
       setDeletingId(null);
     }, 180);
   };
@@ -2179,7 +2763,10 @@ function LibrarySurface({ ctx }: { ctx: Ctx }) {
           transition={SPRING_TURN}
           className="inline-flex"
         >
-          <ArrowUpDown className="h-2.5 w-2.5" style={active ? { color: "var(--lumen-accent)" } : undefined} />
+          <ArrowUpDown
+            className="h-2.5 w-2.5"
+            style={active ? { color: "var(--lumen-accent)" } : undefined}
+          />
         </motion.span>
       </button>
     );
@@ -2190,14 +2777,18 @@ function LibrarySurface({ ctx }: { ctx: Ctx }) {
       <div className="mx-auto w-full max-w-[980px]">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <span className="font-mono text-[9px] uppercase tracking-[0.22em] opacity-45">Workspace assets</span>
+            <span className="font-mono text-[9px] uppercase tracking-[0.22em] opacity-45">
+              Workspace assets
+            </span>
             <h1 className="mt-1 text-[28px] font-light tracking-tight sm:text-[34px]">Library</h1>
             <p className="mt-1 max-w-[520px] text-[12px] leading-relaxed opacity-55">
               Files and generated artifacts from your conversations.
             </p>
           </div>
           <div className="flex w-full gap-2 sm:w-auto">
-            <label className={`${ctx.panelInner} flex h-10 min-w-0 flex-1 items-center gap-2 px-3 sm:w-[260px]`}>
+            <label
+              className={`${ctx.panelInner} flex h-10 min-w-0 flex-1 items-center gap-2 px-3 sm:w-[260px]`}
+            >
               <Search className="h-3.5 w-3.5 shrink-0 opacity-45" />
               <input
                 value={query}
@@ -2260,12 +2851,16 @@ function LibrarySurface({ ctx }: { ctx: Ctx }) {
                       }}
                       className={`${ctx.btn} flex w-full items-center gap-3 px-2.5 py-2.5 text-left`}
                     >
-                      <span className={`${ctx.panelInner} flex h-8 w-8 shrink-0 items-center justify-center`}>
+                      <span
+                        className={`${ctx.panelInner} flex h-8 w-8 shrink-0 items-center justify-center`}
+                      >
                         <Upload className="h-3.5 w-3.5" />
                       </span>
                       <span className="min-w-0">
                         <span className="block text-[11px]">Upload files</span>
-                        <span className="mt-0.5 block text-[9px] opacity-45">Images, videos, files, or ZIP</span>
+                        <span className="mt-0.5 block text-[9px] opacity-45">
+                          Images, videos, files, or ZIP
+                        </span>
                       </span>
                     </button>
                     <button
@@ -2274,12 +2869,16 @@ function LibrarySurface({ ctx }: { ctx: Ctx }) {
                       onClick={createFolder}
                       className={`${ctx.btn} mt-1 flex w-full items-center gap-3 px-2.5 py-2.5 text-left`}
                     >
-                      <span className={`${ctx.panelInner} flex h-8 w-8 shrink-0 items-center justify-center`}>
+                      <span
+                        className={`${ctx.panelInner} flex h-8 w-8 shrink-0 items-center justify-center`}
+                      >
                         <FolderPlus className="h-3.5 w-3.5" />
                       </span>
                       <span className="min-w-0">
                         <span className="block text-[11px]">New folder</span>
-                        <span className="mt-0.5 block text-[9px] opacity-45">Create an empty folder</span>
+                        <span className="mt-0.5 block text-[9px] opacity-45">
+                          Create an empty folder
+                        </span>
                       </span>
                     </button>
                   </motion.div>
@@ -2410,8 +3009,13 @@ function LibrarySurface({ ctx }: { ctx: Ctx }) {
                           </AnimatePresence>
 
                           <div className="relative flex min-w-0 items-center gap-2.5">
-                            <span className={`${ctx.btn} flex h-8 w-8 shrink-0 items-center justify-center`}>
-                              <Icon className="h-3.5 w-3.5" style={{ color: "var(--lumen-accent)" }} />
+                            <span
+                              className={`${ctx.btn} flex h-8 w-8 shrink-0 items-center justify-center`}
+                            >
+                              <Icon
+                                className="h-3.5 w-3.5"
+                                style={{ color: "var(--lumen-accent)" }}
+                              />
                             </span>
                             <AnimatePresence mode="wait" initial={false}>
                               {renaming ? (
@@ -2457,8 +3061,12 @@ function LibrarySurface({ ctx }: { ctx: Ctx }) {
                             </AnimatePresence>
                           </div>
 
-                          <span className="relative font-mono text-[9px] opacity-50">{asset.modified}</span>
-                          <span className="relative hidden text-right font-mono text-[9px] opacity-50 sm:block">{asset.size}</span>
+                          <span className="relative font-mono text-[9px] opacity-50">
+                            {asset.modified}
+                          </span>
+                          <span className="relative hidden text-right font-mono text-[9px] opacity-50 sm:block">
+                            {asset.size}
+                          </span>
                           <div className="relative flex items-center justify-end gap-1">
                             <HoverTip label="Rename" side="top" align="end">
                               <motion.button
@@ -2499,7 +3107,9 @@ function LibrarySurface({ ctx }: { ctx: Ctx }) {
                   >
                     <Search className="h-5 w-5 opacity-30" />
                     <span className="mt-3 text-[12px] opacity-60">No matching assets</span>
-                    <span className="mt-1 text-[10px] opacity-40">Try another search or filter.</span>
+                    <span className="mt-1 text-[10px] opacity-40">
+                      Try another search or filter.
+                    </span>
                   </motion.div>
                 )}
               </motion.div>
@@ -2520,14 +3130,62 @@ type ConnectorCard = {
 };
 
 const CONNECTOR_CARDS: ConnectorCard[] = [
-  { id: "github", name: "GitHub", description: "Review repositories, issues, and pull requests.", category: "Development", icon: Github },
-  { id: "notion", name: "Notion", description: "Search workspace knowledge and capture decisions.", category: "Productivity", icon: FileText },
-  { id: "drive", name: "Google Drive", description: "Find and work with documents stored in Drive.", category: "Files", icon: FolderClosed },
-  { id: "slack", name: "Slack", description: "Read team context and prepare thoughtful replies.", category: "Communication", icon: Hash },
-  { id: "calendar", name: "Calendar", description: "Review schedules and prepare for upcoming work.", category: "Productivity", icon: Calendar },
-  { id: "database", name: "Postgres", description: "Explore schemas and safely inspect application data.", category: "Development", icon: Database },
-  { id: "research", name: "Web Research", description: "Gather current sources and structured findings.", category: "Research", icon: Globe },
-  { id: "email", name: "Email", description: "Draft, organize, and respond with conversation context.", category: "Communication", icon: Mail },
+  {
+    id: "github",
+    name: "GitHub",
+    description: "Review repositories, issues, and pull requests.",
+    category: "Development",
+    icon: Github,
+  },
+  {
+    id: "notion",
+    name: "Notion",
+    description: "Search workspace knowledge and capture decisions.",
+    category: "Productivity",
+    icon: FileText,
+  },
+  {
+    id: "drive",
+    name: "Google Drive",
+    description: "Find and work with documents stored in Drive.",
+    category: "Files",
+    icon: FolderClosed,
+  },
+  {
+    id: "slack",
+    name: "Slack",
+    description: "Read team context and prepare thoughtful replies.",
+    category: "Communication",
+    icon: Hash,
+  },
+  {
+    id: "calendar",
+    name: "Calendar",
+    description: "Review schedules and prepare for upcoming work.",
+    category: "Productivity",
+    icon: Calendar,
+  },
+  {
+    id: "database",
+    name: "Postgres",
+    description: "Explore schemas and safely inspect application data.",
+    category: "Development",
+    icon: Database,
+  },
+  {
+    id: "research",
+    name: "Web Research",
+    description: "Gather current sources and structured findings.",
+    category: "Research",
+    icon: Globe,
+  },
+  {
+    id: "email",
+    name: "Email",
+    description: "Draft, organize, and respond with conversation context.",
+    category: "Communication",
+    icon: Mail,
+  },
 ];
 
 function ConnectorsSurface({ ctx }: { ctx: Ctx }) {
@@ -2558,13 +3216,19 @@ function ConnectorsSurface({ ctx }: { ctx: Ctx }) {
       <div className="mx-auto w-full max-w-[980px]">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <span className="font-mono text-[9px] uppercase tracking-[0.22em] opacity-45">Extend your workspace</span>
-            <h1 className="mt-1 text-[28px] font-light tracking-tight sm:text-[34px]">Connectors</h1>
+            <span className="font-mono text-[9px] uppercase tracking-[0.22em] opacity-45">
+              Extend your workspace
+            </span>
+            <h1 className="mt-1 text-[28px] font-light tracking-tight sm:text-[34px]">
+              Connectors
+            </h1>
             <p className="mt-1 max-w-[560px] text-[12px] leading-relaxed opacity-55">
               Bring trusted tools and context into Lumen conversations.
             </p>
           </div>
-          <label className={`${ctx.panelInner} flex h-10 w-full items-center gap-2 px-3 sm:w-[280px]`}>
+          <label
+            className={`${ctx.panelInner} flex h-10 w-full items-center gap-2 px-3 sm:w-[280px]`}
+          >
             <Search className="h-3.5 w-3.5 shrink-0 opacity-45" />
             <input
               value={query}
@@ -2613,7 +3277,9 @@ function ConnectorsSurface({ ctx }: { ctx: Ctx }) {
                 >
                   <div className={`${ctx.panelInner} flex h-full flex-col p-4`}>
                     <div className="flex items-start gap-3 pb-4">
-                      <span className={`${ctx.btn} flex h-10 w-10 shrink-0 items-center justify-center`}>
+                      <span
+                        className={`${ctx.btn} flex h-10 w-10 shrink-0 items-center justify-center`}
+                      >
                         <Icon className="h-4 w-4" style={{ color: "var(--lumen-accent)" }} />
                       </span>
                       <span className="min-w-0 flex-1">
@@ -2662,7 +3328,9 @@ function ConnectorsSurface({ ctx }: { ctx: Ctx }) {
             <div className={`${ctx.panelInner} flex flex-col items-center py-14 text-center`}>
               <Plug className="h-5 w-5 opacity-30" />
               <span className="mt-3 text-[12px] opacity-60">No matching connectors</span>
-              <span className="mt-1 text-[10px] opacity-40">Try another search or view Discover.</span>
+              <span className="mt-1 text-[10px] opacity-40">
+                Try another search or view Discover.
+              </span>
             </div>
           </div>
         )}
@@ -2674,7 +3342,9 @@ function ConnectorsSurface({ ctx }: { ctx: Ctx }) {
 function SearchPalette({ open, onClose, ctx }: { open: boolean; onClose: () => void; ctx: Ctx }) {
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className={`${ctx.panel} overflow-hidden border-0 p-1 shadow-2xl sm:max-w-[560px]`}>
+      <DialogContent
+        className={`${ctx.panel} overflow-hidden border-0 p-1 shadow-2xl sm:max-w-[560px]`}
+      >
         <div className={`${ctx.panelInner} overflow-hidden`}>
           <Command className="bg-transparent **:[[cmdk-input]]:h-12 **:[[cmdk-input]]:bg-transparent **:[[cmdk-input-wrapper]]:border-foreground/10">
             <CommandInput placeholder="Type a command or search your threads…" />
@@ -2684,11 +3354,17 @@ function SearchPalette({ open, onClose, ctx }: { open: boolean; onClose: () => v
               </CommandEmpty>
               <CommandGroup>
                 <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/6">
-                  <Plus className="h-3.5 w-3.5 opacity-70" /> New chat <CommandShortcut className="font-mono text-[9px] tracking-[0.18em] opacity-50">⌘N</CommandShortcut>
+                  <Plus className="h-3.5 w-3.5 opacity-70" /> New chat{" "}
+                  <CommandShortcut className="font-mono text-[9px] tracking-[0.18em] opacity-50">
+                    ⌘N
+                  </CommandShortcut>
                 </CommandItem>
               </CommandGroup>
               <CommandSeparator className="my-1 bg-foreground/10" />
-              <CommandGroup heading="Chat" className="**:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-mono **:[[cmdk-group-heading]]:text-[9px] **:[[cmdk-group-heading]]:uppercase **:[[cmdk-group-heading]]:tracking-[0.22em] **:[[cmdk-group-heading]]:opacity-50">
+              <CommandGroup
+                heading="Chat"
+                className="**:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-mono **:[[cmdk-group-heading]]:text-[9px] **:[[cmdk-group-heading]]:uppercase **:[[cmdk-group-heading]]:tracking-[0.22em] **:[[cmdk-group-heading]]:opacity-50"
+              >
                 <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/6">
                   <History className="h-3.5 w-3.5 opacity-70" /> Manage chat history
                 </CommandItem>
@@ -2700,7 +3376,10 @@ function SearchPalette({ open, onClose, ctx }: { open: boolean; onClose: () => v
                 </CommandItem>
               </CommandGroup>
               <CommandSeparator className="my-1 bg-foreground/10" />
-              <CommandGroup heading="Profiles" className="**:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-mono **:[[cmdk-group-heading]]:text-[9px] **:[[cmdk-group-heading]]:uppercase **:[[cmdk-group-heading]]:tracking-[0.22em] **:[[cmdk-group-heading]]:opacity-50">
+              <CommandGroup
+                heading="Profiles"
+                className="**:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-mono **:[[cmdk-group-heading]]:text-[9px] **:[[cmdk-group-heading]]:uppercase **:[[cmdk-group-heading]]:tracking-[0.22em] **:[[cmdk-group-heading]]:opacity-50"
+              >
                 <CommandItem className="gap-2.5 rounded-md text-[12px] data-[selected=true]:bg-foreground/6">
                   <Check className="h-3.5 w-3.5 accent-text" /> Default
                 </CommandItem>
@@ -2715,7 +3394,9 @@ function SearchPalette({ open, onClose, ctx }: { open: boolean; onClose: () => v
                 <span>Search</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <kbd className="rounded-sm border border-foreground/15 bg-foreground/4 px-1.5 py-px">↵</kbd>
+                <kbd className="rounded-sm border border-foreground/15 bg-foreground/4 px-1.5 py-px">
+                  ↵
+                </kbd>
                 <span className="normal-case tracking-normal">open</span>
               </span>
             </div>
@@ -2742,10 +3423,10 @@ const STATUS_CODE: Record<StatusState, string> = {
 
 /* expanded labels for aria + tooltip — visual code stays fixed-width */
 const STATUS_LABEL: Record<StatusState, { name: string; desc: string }> = {
-  ready:     { name: "Ready",     desc: "Idle · awaiting input" },
+  ready: { name: "Ready", desc: "Idle · awaiting input" },
   listening: { name: "Listening", desc: "Capturing voice input" },
-  drafting:  { name: "Drafting",  desc: "You're typing a prompt" },
-  thinking:  { name: "Thinking",  desc: "Reasoning over context" },
+  drafting: { name: "Drafting", desc: "You're typing a prompt" },
+  thinking: { name: "Thinking", desc: "Reasoning over context" },
   composing: { name: "Composing", desc: "Streaming response" },
 };
 
@@ -2753,14 +3434,14 @@ const STATUS_LABEL: Record<StatusState, { name: string; desc: string }> = {
    Keeping `duration` constant across states means the bars never restart
    their timeline when state changes — only amplitude/opacity tween. */
 const WAVE_DURATION = 1.6;
-const WAVE_HEIGHTS = [0.40, 0.75, 0.95, 0.70, 0.45];
+const WAVE_HEIGHTS = [0.4, 0.75, 0.95, 0.7, 0.45];
 
 const PROFILES: Record<StatusState, { intensity: number; opacity: number }> = {
-  ready:     { intensity: 0.28, opacity: 0.35 },
+  ready: { intensity: 0.28, opacity: 0.35 },
   listening: { intensity: 0.55, opacity: 0.55 },
-  drafting:  { intensity: 0.50, opacity: 0.60 },
-  thinking:  { intensity: 0.80, opacity: 0.75 },
-  composing: { intensity: 1.00, opacity: 0.90 },
+  drafting: { intensity: 0.5, opacity: 0.6 },
+  thinking: { intensity: 0.8, opacity: 0.75 },
+  composing: { intensity: 1.0, opacity: 0.9 },
 };
 
 function DepthMeter({ state }: { state: StatusState }) {
@@ -2770,7 +3451,7 @@ function DepthMeter({ state }: { state: StatusState }) {
     // no keyframe restart, no timing jump.
     <motion.span
       className="flex h-2.5 items-end gap-[2px] origin-bottom"
-      style={{translate:"0px -2px"}}
+      style={{ translate: "0px -2px" }}
       animate={{ scaleY: profile.intensity, opacity: profile.opacity }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       aria-hidden
@@ -2798,10 +3479,10 @@ function StatusTicker() {
   const word: StatusState = streaming
     ? "composing"
     : listening
-    ? "listening"
-    : value.trim().length > 0
-    ? "drafting"
-    : "ready";
+      ? "listening"
+      : value.trim().length > 0
+        ? "drafting"
+        : "ready";
   const code = STATUS_CODE[word];
   const label = STATUS_LABEL[word];
   const [hovered, setHovered] = useState(false);
@@ -2889,9 +3570,7 @@ function SessionMark() {
   );
 }
 
-
 /* ───────── composer fragments (greeting + input + controls) ───────── */
-
 
 function Greeting({ className = "" }: { className?: string }) {
   return (
@@ -2905,7 +3584,6 @@ function Greeting({ className = "" }: { className?: string }) {
   );
 }
 
-
 /* helper — replace composer text from chips (interruptible exit + reveal) */
 let fillGeneration = 0;
 const FILL_EXIT_MS = 160;
@@ -2917,8 +3595,7 @@ function fillDuration(text: string) {
 function streamText(text: string) {
   const gen = ++fillGeneration;
   const reduced =
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   if (reduced) {
     composerStore.setValue(text);
@@ -2930,10 +3607,13 @@ function streamText(text: string) {
   composerStore.setValue(text);
   composerStore.bumpFillEpoch();
 
-  window.setTimeout(() => {
-    if (gen !== fillGeneration) return;
-    composerStore.setStreaming(false);
-  }, FILL_EXIT_MS + fillDuration(text));
+  window.setTimeout(
+    () => {
+      if (gen !== fillGeneration) return;
+      composerStore.setStreaming(false);
+    },
+    FILL_EXIT_MS + fillDuration(text),
+  );
 }
 
 function InputBlock({
@@ -2956,7 +3636,9 @@ function InputBlock({
       ref.current?.focus();
       streamText(text);
     });
-    return () => { unsub(); };
+    return () => {
+      unsub();
+    };
   }, []);
 
   return (
@@ -3057,7 +3739,12 @@ function AttachmentStrip() {
                     key={a.id}
                     initial={{ opacity: 0, y: -6, scale: 0.85, filter: "blur(4px)" }}
                     animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, scale: 0.7, filter: "blur(4px)", transition: { duration: 0.18 } }}
+                    exit={{
+                      opacity: 0,
+                      scale: 0.7,
+                      filter: "blur(4px)",
+                      transition: { duration: 0.18 },
+                    }}
                     transition={{ type: "spring", stiffness: 480, damping: 28, mass: 0.5 }}
                     className="group/chip relative inline-flex max-w-[220px] items-center gap-1.5 overflow-hidden rounded-full border border-border/60 bg-foreground/4 py-1 pl-2 pr-1 text-[10.5px] backdrop-blur-sm"
                   >
@@ -3072,7 +3759,9 @@ function AttachmentStrip() {
                     <span className="relative flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-foreground/10 text-foreground/80">
                       {kindIcon(a.kind)}
                     </span>
-                    <span className="relative min-w-0 truncate font-mono tracking-tight text-foreground/85">{a.name}</span>
+                    <span className="relative min-w-0 truncate font-mono tracking-tight text-foreground/85">
+                      {a.name}
+                    </span>
                     {a.meta && (
                       <span className="relative shrink-0 font-mono text-[9px] uppercase tracking-[0.14em] opacity-50">
                         {a.meta}
@@ -3132,7 +3821,6 @@ function SendButton({ ctx, onSubmit }: { ctx: Ctx; onSubmit?: (prompt: string) =
         }`}
         style={{ color: disabled && !sent ? undefined : "var(--lumen-accent)" }}
       >
-
         {/* aura on send — matches button radius */}
         <AnimatePresence>
           {sent && (
@@ -3195,7 +3883,6 @@ function DictateButton({ ctx }: { ctx: Ctx }) {
         whileTap={{ scale: 0.92 }}
         transition={{ type: "spring", stiffness: 500, damping: 22 }}
         className={`${ctx.btn} relative flex h-9 w-9 items-center justify-center overflow-visible`}
-
       >
         {/* pulsing rings while listening — match button radius, smoother */}
         <AnimatePresence>
@@ -3216,7 +3903,12 @@ function DictateButton({ ctx }: { ctx: Ctx }) {
                 initial={{ scale: 1, opacity: 0 }}
                 animate={{ scale: [1, 1.9], opacity: [0.35, 0] }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 2.2, repeat: Infinity, ease: [0.22, 1, 0.36, 1], delay: 1.0 }}
+                transition={{
+                  duration: 2.2,
+                  repeat: Infinity,
+                  ease: [0.22, 1, 0.36, 1],
+                  delay: 1.0,
+                }}
                 className="absolute inset-0 rounded-[inherit] border border-rose-500/35"
               />
             </>
@@ -3268,7 +3960,6 @@ function DictateButton({ ctx }: { ctx: Ctx }) {
   );
 }
 
-
 /* ───────── AttachButton — popover "switchboard" for sources ───────── */
 function AttachButton({ ctx }: { ctx: Ctx }) {
   const items = useAttachments();
@@ -3287,7 +3978,7 @@ function AttachButton({ ctx }: { ctx: Ctx }) {
   };
 
   const captureScreen = async () => {
-    const md = (navigator as any).mediaDevices;
+    const md = navigator.mediaDevices;
     if (!md?.getDisplayMedia) {
       attachmentsStore.add({ kind: "image", name: "screen-capture.png", meta: "screen" });
       return;
@@ -3305,29 +3996,79 @@ function AttachButton({ ctx }: { ctx: Ctx }) {
       canvas.getContext("2d")?.drawImage(video, 0, 0, canvas.width, canvas.height);
       track.stop();
       const size = `${canvas.width}×${canvas.height}`;
-      attachmentsStore.add({ kind: "image", name: `screen-${Date.now().toString(36)}.png`, meta: size });
+      attachmentsStore.add({
+        kind: "image",
+        name: `screen-${Date.now().toString(36)}.png`,
+        meta: size,
+      });
     } catch {
       /* user cancelled */
     }
   };
 
   const sources = [
-    { id: "upload", label: "Upload", glyph: <Upload className="h-3.5 w-3.5" />, hint: "From device",
-      onClick: () => fileRef.current?.click() },
-    { id: "screen", label: "Screen", glyph: <MonitorUp className="h-3.5 w-3.5" />, hint: "Capture region",
-      onClick: () => { void captureScreen(); } },
-    { id: "url",    label: "Link",   glyph: <Link2 className="h-3.5 w-3.5" />, hint: "Paste a URL",
-      onClick: () => setMode("url") },
-    { id: "text",   label: "Snippet",glyph: <ClipboardPaste className="h-3.5 w-3.5" />, hint: "Paste text",
-      onClick: () => setMode("text") },
+    {
+      id: "upload",
+      label: "Upload",
+      glyph: <Upload className="h-3.5 w-3.5" />,
+      hint: "From device",
+      onClick: () => fileRef.current?.click(),
+    },
+    {
+      id: "screen",
+      label: "Screen",
+      glyph: <MonitorUp className="h-3.5 w-3.5" />,
+      hint: "Capture region",
+      onClick: () => {
+        void captureScreen();
+      },
+    },
+    {
+      id: "url",
+      label: "Link",
+      glyph: <Link2 className="h-3.5 w-3.5" />,
+      hint: "Paste a URL",
+      onClick: () => setMode("url"),
+    },
+    {
+      id: "text",
+      label: "Snippet",
+      glyph: <ClipboardPaste className="h-3.5 w-3.5" />,
+      hint: "Paste text",
+      onClick: () => setMode("text"),
+    },
   ];
 
-  const close = () => { setOpen(false); setMode("menu"); setUrlValue(""); setTextValue(""); };
+  const close = () => {
+    setOpen(false);
+    setMode("menu");
+    setUrlValue("");
+    setTextValue("");
+  };
 
   return (
     <div className="relative">
-      <input ref={fileRef} type="file" multiple hidden onChange={(e) => { ingest(e.target.files); e.target.value = ""; }} />
-      <input ref={imageRef} type="file" accept="image/*" multiple hidden onChange={(e) => { ingest(e.target.files); e.target.value = ""; }} />
+      <input
+        ref={fileRef}
+        type="file"
+        multiple
+        hidden
+        onChange={(e) => {
+          ingest(e.target.files);
+          e.target.value = "";
+        }}
+      />
+      <input
+        ref={imageRef}
+        type="file"
+        accept="image/*"
+        multiple
+        hidden
+        onChange={(e) => {
+          ingest(e.target.files);
+          e.target.value = "";
+        }}
+      />
 
       <HoverTip label="Attach" keys="⌘U">
         <motion.button
@@ -3369,7 +4110,10 @@ function AttachButton({ ctx }: { ctx: Ctx }) {
               <div className={`${ctx.panelInner} relative overflow-hidden`}>
                 <div className="relative flex items-center justify-between border-b border-border/40 px-3 py-2">
                   <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] opacity-70">
-                    <span aria-hidden className="inline-block h-1 w-1 rounded-full bg-foreground/60" />
+                    <span
+                      aria-hidden
+                      className="inline-block h-1 w-1 rounded-full bg-foreground/60"
+                    />
                     Attach
                   </span>
                   <span className="font-mono text-[9px] tabular-nums uppercase tracking-[0.18em] opacity-45">
@@ -3391,10 +4135,17 @@ function AttachButton({ ctx }: { ctx: Ctx }) {
                         <motion.button
                           key={s.id}
                           type="button"
-                          onClick={() => { s.onClick(); if (s.id === "upload" || s.id === "screen") close(); }}
+                          onClick={() => {
+                            s.onClick();
+                            if (s.id === "upload" || s.id === "screen") close();
+                          }}
                           initial={{ opacity: 0, y: 6 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.04 + i * 0.04, duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+                          transition={{
+                            delay: 0.04 + i * 0.04,
+                            duration: 0.24,
+                            ease: [0.22, 1, 0.36, 1],
+                          }}
                           whileHover={{ y: -1 }}
                           whileTap={{ scale: 0.96 }}
                           className="group/src relative flex flex-col items-start gap-1 overflow-hidden rounded-md border border-border/40 bg-foreground/2 p-2.5 text-left transition-colors hover:bg-foreground/6"
@@ -3402,8 +4153,12 @@ function AttachButton({ ctx }: { ctx: Ctx }) {
                           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground/10 text-foreground/85">
                             {s.glyph}
                           </span>
-                          <span className="text-[11px] font-medium leading-tight text-foreground/90">{s.label}</span>
-                          <span className="font-mono text-[9px] uppercase tracking-[0.14em] opacity-55">{s.hint}</span>
+                          <span className="text-[11px] font-medium leading-tight text-foreground/90">
+                            {s.label}
+                          </span>
+                          <span className="font-mono text-[9px] uppercase tracking-[0.14em] opacity-55">
+                            {s.hint}
+                          </span>
                         </motion.button>
                       ))}
                     </motion.div>
@@ -3428,10 +4183,18 @@ function AttachButton({ ctx }: { ctx: Ctx }) {
                             if (e.key === "Enter" && urlValue.trim()) {
                               try {
                                 const u = new URL(urlValue.trim());
-                                attachmentsStore.add({ kind: "url", name: u.hostname + u.pathname, meta: u.protocol.replace(":", "") });
+                                attachmentsStore.add({
+                                  kind: "url",
+                                  name: u.hostname + u.pathname,
+                                  meta: u.protocol.replace(":", ""),
+                                });
                                 close();
                               } catch {
-                                attachmentsStore.add({ kind: "url", name: urlValue.trim(), meta: "link" });
+                                attachmentsStore.add({
+                                  kind: "url",
+                                  name: urlValue.trim(),
+                                  meta: "link",
+                                });
                                 close();
                               }
                             }
@@ -3441,7 +4204,9 @@ function AttachButton({ ctx }: { ctx: Ctx }) {
                         />
                       </div>
                       <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.18em] opacity-55">
-                        <button onClick={() => setMode("menu")} className="hover:opacity-100">← back</button>
+                        <button onClick={() => setMode("menu")} className="hover:opacity-100">
+                          ← back
+                        </button>
                         <span>↵ to attach</span>
                       </div>
                     </motion.div>
@@ -3465,13 +4230,19 @@ function AttachButton({ ctx }: { ctx: Ctx }) {
                         className="w-full resize-none rounded-md border border-border/50 bg-foreground/3 px-2 py-1.5 text-[11px] placeholder:opacity-40 focus:outline-none"
                       />
                       <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.18em] opacity-55">
-                        <button onClick={() => setMode("menu")} className="hover:opacity-100">← back</button>
+                        <button onClick={() => setMode("menu")} className="hover:opacity-100">
+                          ← back
+                        </button>
                         <button
                           onClick={() => {
                             const t = textValue.trim();
                             if (!t) return;
                             const first = t.split(/\s+/).slice(0, 4).join(" ");
-                            attachmentsStore.add({ kind: "text", name: first || "snippet", meta: `${t.length} ch` });
+                            attachmentsStore.add({
+                              kind: "text",
+                              name: first || "snippet",
+                              meta: `${t.length} ch`,
+                            });
                             close();
                           }}
                           className="rounded border border-border/60 px-2 py-0.5 hover:bg-foreground/10"
@@ -3536,11 +4307,16 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
               style={{ transformOrigin: "bottom left" }}
               className={`${ctx.panel} absolute bottom-full left-0 z-50 mb-2 flex max-h-[min(70vh,460px)] w-[320px] flex-col overflow-hidden p-1`}
             >
-              <div className={`${ctx.panelInner} relative flex min-h-0 flex-1 flex-col overflow-y-auto`}>
+              <div
+                className={`${ctx.panelInner} relative flex min-h-0 flex-1 flex-col overflow-y-auto`}
+              >
                 {/* header */}
                 <div className="flex items-center justify-between border-b border-border/40 px-3 py-2">
                   <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.24em] opacity-70">
-                    <span aria-hidden className="inline-block h-1 w-1 rounded-full bg-foreground/60" />
+                    <span
+                      aria-hidden
+                      className="inline-block h-1 w-1 rounded-full bg-foreground/60"
+                    />
                     Capabilities
                   </span>
                   <span className="font-mono text-[9px] tabular-nums uppercase tracking-[0.18em] opacity-45">
@@ -3571,7 +4347,9 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                         >
                           <motion.span
                             animate={{
-                              backgroundColor: on ? "rgba(16,185,129,0.18)" : "rgba(127,127,127,0.10)",
+                              backgroundColor: on
+                                ? "rgba(16,185,129,0.18)"
+                                : "rgba(127,127,127,0.10)",
                               color: on ? "rgb(16,185,129)" : "var(--muted-foreground)",
                             }}
                             transition={{ duration: 0.2 }}
@@ -3580,11 +4358,17 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                             <Icon className="h-3.5 w-3.5" />
                           </motion.span>
                           <span className="flex min-w-0 flex-1 flex-col">
-                            <span className="text-[11px] leading-tight text-foreground/90">{t.label}</span>
-                            <span className="truncate text-[10px] leading-tight opacity-55">{t.desc}</span>
+                            <span className="text-[11px] leading-tight text-foreground/90">
+                              {t.label}
+                            </span>
+                            <span className="truncate text-[10px] leading-tight opacity-55">
+                              {t.desc}
+                            </span>
                           </span>
                           {/* mini toggle dot */}
-                          <span className={`relative h-3.5 w-6 shrink-0 rounded-full transition-colors ${on ? "bg-(--lumen-accent)" : "bg-foreground/15"}`}>
+                          <span
+                            className={`relative h-3.5 w-6 shrink-0 rounded-full transition-colors ${on ? "bg-(--lumen-accent)" : "bg-foreground/15"}`}
+                          >
                             <motion.span
                               animate={{ x: on ? 12 : 2 }}
                               transition={{ type: "spring", stiffness: 520, damping: 30 }}
@@ -3602,7 +4386,9 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                   <div className="mb-1.5 flex items-center gap-1.5 px-1 font-mono text-[9px] uppercase tracking-[0.2em] opacity-50">
                     <span>Connectors</span>
                     <span className="h-px flex-1 bg-border/40" />
-                    <span className="tabular-nums opacity-70">{conns.size}/{CONN_DEFS.length}</span>
+                    <span className="tabular-nums opacity-70">
+                      {conns.size}/{CONN_DEFS.length}
+                    </span>
                   </div>
                   <div className="grid grid-cols-6 gap-1.5">
                     {CONN_DEFS.map((c, i) => {
@@ -3618,12 +4404,16 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.04 + i * 0.025, duration: 0.22 }}
                           whileTap={{ scale: 0.92 }}
-                          onClick={() => { if (linked) toolsStore.toggleConn(c.id); }}
+                          onClick={() => {
+                            if (linked) toolsStore.toggleConn(c.id);
+                          }}
                           aria-pressed={on}
                           aria-label={c.label}
                           className={`${ctx.light ? "btn-mech-light" : "btn-mech"} relative flex aspect-square w-full items-center justify-center ${on ? "ring-1 ring-(--lumen-accent)" : ""}`}
                         >
-                          <Icon className={`h-3.5 w-3.5 transition-colors ${on ? "accent-text" : ""}`} />
+                          <Icon
+                            className={`h-3.5 w-3.5 transition-colors ${on ? "accent-text" : ""}`}
+                          />
                           {on && (
                             <motion.span
                               aria-hidden
@@ -3652,7 +4442,9 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
                     <Plug className="h-2.5 w-2.5" />
                     <span>tap to toggle</span>
                   </span>
-                  <span className="tabular-nums">{String(activeCount).padStart(2, "0")} active</span>
+                  <span className="tabular-nums">
+                    {String(activeCount).padStart(2, "0")} active
+                  </span>
                 </div>
               </div>
             </motion.div>
@@ -3663,7 +4455,6 @@ function ToolsButton({ ctx }: { ctx: Ctx }) {
   );
 }
 
-
 function PrimaryRow({ ctx, onSubmit }: { ctx: Ctx; onSubmit?: (prompt: string) => void }) {
   const [model, setModel] = useState<(typeof MODEL_OPTIONS)[number]>("Lumen 4");
   return (
@@ -3671,16 +4462,21 @@ function PrimaryRow({ ctx, onSubmit }: { ctx: Ctx; onSubmit?: (prompt: string) =
       <AttachButton ctx={ctx} />
       <ToolsButton ctx={ctx} />
       <FancyPicker
-        ctx={ctx} label="Model" value={model} compact
+        ctx={ctx}
+        label="Model"
+        value={model}
+        compact
         className="min-w-0 flex-1 sm:flex-none"
         onChange={(v) => setModel(v as (typeof MODEL_OPTIONS)[number])}
         options={MODEL_OPTIONS.map((id, i) => ({
           id,
           glyph: <ModelGlyph index={i} />,
           desc:
-            id === "Lumen 4 Mini" ? "Fastest, lightest tier — quick chats."
-            : id === "Lumen 4" ? "Balanced default — good for most tasks."
-            : "Highest reasoning tier — slower, deeper.",
+            id === "Lumen 4 Mini"
+              ? "Fastest, lightest tier — quick chats."
+              : id === "Lumen 4"
+                ? "Balanced default — good for most tasks."
+                : "Highest reasoning tier — slower, deeper.",
         }))}
       />
       {/* desktop spacer pushes the action buttons to the right; on mobile the model picker fills instead */}
@@ -3700,7 +4496,10 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
   const selectors = (
     <>
       <FancyPicker
-        ctx={ctx} label="Style" value={style} onChange={setStyle}
+        ctx={ctx}
+        label="Style"
+        value={style}
+        onChange={setStyle}
         options={STYLE_OPTIONS.map((id, i) => {
           const descs: Record<string, string> = {
             Auto: "Lumen picks the best tone automatically.",
@@ -3713,12 +4512,18 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
         })}
       />
       <CycleButton
-        ctx={ctx} label="Length" value={length} onChange={setLength}
+        ctx={ctx}
+        label="Length"
+        value={length}
+        onChange={setLength}
         options={["Short", "Balanced", "Long"] as const}
         glyph={(i) => <LengthGlyph index={i} />}
       />
       <CycleButton
-        ctx={ctx} label="Depth" value={depth} onChange={setDepth}
+        ctx={ctx}
+        label="Depth"
+        value={depth}
+        onChange={setDepth}
         options={["Quick", "Standard", "Deep"] as const}
         glyph={(i) => <DepthGlyph index={i} />}
         descriptions={{
@@ -3732,14 +4537,20 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
   const toggles = (
     <>
       <TogglePill
-        ctx={ctx} on={memory} onClick={() => setMemory(!memory)} size={36}
+        ctx={ctx}
+        on={memory}
+        onClick={() => setMemory(!memory)}
+        size={36}
         label={memory ? "Memory · on" : "Memory · off"}
         desc="Remember details about you across conversations and use them to personalize replies."
         icon={<Brain className="h-3.5 w-3.5" />}
         hideTipOnClick
       />
       <TogglePill
-        ctx={ctx} on={web} onClick={() => setWeb(!web)} size={36}
+        ctx={ctx}
+        on={web}
+        onClick={() => setWeb(!web)}
+        size={36}
         label={web ? "Web · on" : "Web · off"}
         desc="Let the model search the live web for fresh information and cite sources."
         icon={<Globe className="h-3.5 w-3.5" />}
@@ -3749,7 +4560,12 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
   );
 
   if (vertical) {
-    return <div className="flex flex-col items-stretch gap-1.5">{selectors}{toggles}</div>;
+    return (
+      <div className="flex flex-col items-stretch gap-1.5">
+        {selectors}
+        {toggles}
+      </div>
+    );
   }
 
   // Two groups: selectors + toggles. On mobile they stack as two centered rows
@@ -3762,10 +4578,15 @@ function SecondaryRow({ ctx, vertical = false }: { ctx: Ctx; vertical?: boolean 
   );
 }
 
-
 function QuickChip({
-  ctx, item, index,
-}: { ctx: Ctx; item: typeof QUICK[number]; index: number }) {
+  ctx,
+  item,
+  index,
+}: {
+  ctx: Ctx;
+  item: (typeof QUICK)[number];
+  index: number;
+}) {
   const [fired, setFired] = useState(false);
 
   const send = () => {
@@ -3833,7 +4654,6 @@ function QuickChips({ ctx, limit = 8 }: { ctx: Ctx; limit?: number }) {
     </div>
   );
 }
-
 
 /* ───────────────────────── PreferencesButton + Panel ───────────────────────── */
 
@@ -3903,7 +4723,11 @@ function PreferencesButton({ ctx }: { ctx: Ctx }) {
   );
 }
 
-function PreferencesPanel({ ctx, settings, title = "Preferences" }: {
+function PreferencesPanel({
+  ctx,
+  settings,
+  title = "Preferences",
+}: {
   ctx: Ctx;
   settings: Settings;
   title?: PreferencesSource;
@@ -3930,7 +4754,7 @@ function PreferencesPanel({ ctx, settings, title = "Preferences" }: {
         <div className="relative grid grid-cols-2 gap-1 rounded-md border border-foreground/10 bg-foreground/3 p-1">
           {[
             { id: "light", label: "Light", icon: Sun },
-            { id: "dark",  label: "Dark",  icon: Moon },
+            { id: "dark", label: "Dark", icon: Moon },
           ].map((m) => {
             const active = (m.id === "light") === settings.light;
             return (
@@ -3945,7 +4769,9 @@ function PreferencesPanel({ ctx, settings, title = "Preferences" }: {
                   <motion.span
                     layoutId="mode-active"
                     className="absolute inset-0 rounded-[5px]"
-                    style={{ background: "color-mix(in srgb, var(--lumen-accent) 18%, transparent)" }}
+                    style={{
+                      background: "color-mix(in srgb, var(--lumen-accent) 18%, transparent)",
+                    }}
                     transition={{ type: "spring", stiffness: 480, damping: 32 }}
                   />
                 )}
@@ -3970,18 +4796,20 @@ function PreferencesPanel({ ctx, settings, title = "Preferences" }: {
               whileTap={{ scale: 0.97 }}
               transition={SPRING_TURN}
               className={`group relative overflow-hidden rounded-md border p-2 text-left transition-all ${
-                active
-                  ? "accent-soft"
-                  : "border-foreground/10 hover:border-foreground/25"
+                active ? "accent-soft" : "border-foreground/10 hover:border-foreground/25"
               }`}
               aria-pressed={active}
             >
               <div
                 className="mb-1.5 h-7 w-full overflow-hidden rounded-sm border border-foreground/10"
-                style={{ background: `linear-gradient(110deg, ${mode.bg} 0%, ${mode.bg} 52%, ${mode.panel} 52%, ${mode.panel} 64%, ${mode.accent} 64%, ${mode.accent} 100%)` }}
+                style={{
+                  background: `linear-gradient(110deg, ${mode.bg} 0%, ${mode.bg} 52%, ${mode.panel} 52%, ${mode.panel} 64%, ${mode.accent} 64%, ${mode.accent} 100%)`,
+                }}
               />
               <div className="flex items-center justify-between gap-1">
-                <span className="truncate text-[10.5px] font-medium leading-none text-foreground">{p.name}</span>
+                <span className="truncate text-[10.5px] font-medium leading-none text-foreground">
+                  {p.name}
+                </span>
                 {active && (
                   <motion.span
                     initial={{ scale: 0 }}
@@ -3993,7 +4821,9 @@ function PreferencesPanel({ ctx, settings, title = "Preferences" }: {
                   </motion.span>
                 )}
               </div>
-              <span className="mt-0.5 block truncate text-[9px] leading-tight opacity-55">{p.tagline}</span>
+              <span className="mt-0.5 block truncate text-[9px] leading-tight opacity-55">
+                {p.tagline}
+              </span>
             </motion.button>
           );
         })}
@@ -4002,7 +4832,10 @@ function PreferencesPanel({ ctx, settings, title = "Preferences" }: {
       <AccentCustomSection settings={settings} />
 
       {/* Button style picker — bigger previews, inner span when needed */}
-      <SectionHeader label="Button style" right={<span className="font-mono text-[9px] tabular-nums opacity-50">10</span>} />
+      <SectionHeader
+        label="Button style"
+        right={<span className="font-mono text-[9px] tabular-nums opacity-50">10</span>}
+      />
       <div className="grid grid-cols-2 gap-1.5 px-3 pb-3">
         {BUTTON_STYLES.map((s) => {
           const active = settings.buttonStyleId === s.id;
@@ -4013,12 +4846,12 @@ function PreferencesPanel({ ctx, settings, title = "Preferences" }: {
               onClick={() => settingsStore.set("buttonStyleId", s.id)}
               aria-pressed={active}
               className={`group relative flex items-center gap-2.5 rounded-md border p-2 pr-2 text-left transition-all ${
-                active
-                  ? "accent-soft"
-                  : "border-foreground/10 hover:border-foreground/25"
+                active ? "accent-soft" : "border-foreground/10 hover:border-foreground/25"
               }`}
             >
-              <span className={`${cls} flex h-9 w-12 shrink-0 items-center justify-center text-[11px] font-medium leading-none`}>
+              <span
+                className={`${cls} flex h-9 w-12 shrink-0 items-center justify-center text-[11px] font-medium leading-none`}
+              >
                 Aa
               </span>
               <span className="flex min-w-0 flex-1 flex-col leading-tight">
@@ -4056,13 +4889,16 @@ function AccentCustomSection({ settings }: { settings: Settings }) {
 
   return (
     <>
-      <SectionHeader label="Accent · custom" right={
-        <span
-          className="h-3 w-3 shrink-0 rounded-full border border-foreground/15"
-          style={{ backgroundColor: accent }}
-          aria-hidden
-        />
-      } />
+      <SectionHeader
+        label="Accent · custom"
+        right={
+          <span
+            className="h-3 w-3 shrink-0 rounded-full border border-foreground/15"
+            style={{ backgroundColor: accent }}
+            aria-hidden
+          />
+        }
+      />
       <div className="space-y-2.5 px-3 pb-3">
         <div className="flex gap-1.5">
           {ACCENT_SWATCHES.map((swatch) => {
@@ -4079,7 +4915,9 @@ function AccentCustomSection({ settings }: { settings: Settings }) {
                     ? "border-foreground/40 ring-1 ring-foreground/25"
                     : "border-foreground/10 hover:border-foreground/25"
                 }`}
-                style={{ backgroundColor: accentHsl(swatch.hue, swatch.saturation, swatch.lightness) }}
+                style={{
+                  backgroundColor: accentHsl(swatch.hue, swatch.saturation, swatch.lightness),
+                }}
               />
             );
           })}
@@ -4095,10 +4933,7 @@ function AccentCustomSection({ settings }: { settings: Settings }) {
           }}
         />
 
-        <HueStrip
-          hue={settings.hue}
-          onChange={(h) => settingsStore.set("hue", h)}
-        />
+        <HueStrip hue={settings.hue} onChange={(h) => settingsStore.set("hue", h)} />
 
         <button
           type="button"
@@ -4106,21 +4941,38 @@ function AccentCustomSection({ settings }: { settings: Settings }) {
           className="flex w-full items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.18em] opacity-50 transition-opacity hover:opacity-80"
           aria-expanded={advancedOpen}
         >
-          <ChevronDown className={`h-3 w-3 transition-transform ${advancedOpen ? "rotate-180" : ""}`} />
+          <ChevronDown
+            className={`h-3 w-3 transition-transform ${advancedOpen ? "rotate-180" : ""}`}
+          />
           Advanced
         </button>
 
         {advancedOpen && (
           <div className="space-y-2 border-t border-foreground/10 pt-2">
-            <Slider label="Hue" min={0} max={360} value={settings.hue}
+            <Slider
+              label="Hue"
+              min={0}
+              max={360}
+              value={settings.hue}
               onChange={(v) => settingsStore.set("hue", v)}
-              track="linear-gradient(90deg, #ff5a5a, #ffd000, #5aff5a, #5addff, #5a5aff, #ff5aff, #ff5a5a)" />
-            <Slider label="Saturation" min={0} max={100} value={settings.saturation}
+              track="linear-gradient(90deg, #ff5a5a, #ffd000, #5aff5a, #5addff, #5a5aff, #ff5aff, #ff5a5a)"
+            />
+            <Slider
+              label="Saturation"
+              min={0}
+              max={100}
+              value={settings.saturation}
               onChange={(v) => settingsStore.set("saturation", v)}
-              track={`linear-gradient(90deg, hsl(${settings.hue} 0% ${settings.lightness}%), hsl(${settings.hue} 100% ${settings.lightness}%))`} />
-            <Slider label="Lightness" min={ACCENT_LIGHTNESS_MIN} max={ACCENT_LIGHTNESS_MAX} value={settings.lightness}
+              track={`linear-gradient(90deg, hsl(${settings.hue} 0% ${settings.lightness}%), hsl(${settings.hue} 100% ${settings.lightness}%))`}
+            />
+            <Slider
+              label="Lightness"
+              min={ACCENT_LIGHTNESS_MIN}
+              max={ACCENT_LIGHTNESS_MAX}
+              value={settings.lightness}
               onChange={(v) => settingsStore.set("lightness", v)}
-              track={`linear-gradient(90deg, hsl(${settings.hue} ${settings.saturation}% ${ACCENT_LIGHTNESS_MIN}%), hsl(${settings.hue} ${settings.saturation}% 50%), hsl(${settings.hue} ${settings.saturation}% ${ACCENT_LIGHTNESS_MAX}%))`} />
+              track={`linear-gradient(90deg, hsl(${settings.hue} ${settings.saturation}% ${ACCENT_LIGHTNESS_MIN}%), hsl(${settings.hue} ${settings.saturation}% 50%), hsl(${settings.hue} ${settings.saturation}% ${ACCENT_LIGHTNESS_MAX}%))`}
+            />
           </div>
         )}
       </div>
@@ -4128,8 +4980,15 @@ function AccentCustomSection({ settings }: { settings: Settings }) {
   );
 }
 
-function SatLightField({ hue, saturation, lightness, onChange }: {
-  hue: number; saturation: number; lightness: number;
+function SatLightField({
+  hue,
+  saturation,
+  lightness,
+  onChange,
+}: {
+  hue: number;
+  saturation: number;
+  lightness: number;
   onChange: (saturation: number, lightness: number) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -4171,21 +5030,38 @@ function SatLightField({ hue, saturation, lightness, onChange }: {
       onPointerMove={onPointerMove}
       onKeyDown={(e) => {
         const step = e.shiftKey ? 10 : 2;
-        if (e.key === "ArrowLeft")  { e.preventDefault(); onChange(Math.max(0, saturation - step), lightness); }
-        if (e.key === "ArrowRight") { e.preventDefault(); onChange(Math.min(100, saturation + step), lightness); }
-        if (e.key === "ArrowUp")    { e.preventDefault(); onChange(saturation, Math.min(ACCENT_LIGHTNESS_MAX, lightness + step)); }
-        if (e.key === "ArrowDown")  { e.preventDefault(); onChange(saturation, Math.max(ACCENT_LIGHTNESS_MIN, lightness - step)); }
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          onChange(Math.max(0, saturation - step), lightness);
+        }
+        if (e.key === "ArrowRight") {
+          e.preventDefault();
+          onChange(Math.min(100, saturation + step), lightness);
+        }
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          onChange(saturation, Math.min(ACCENT_LIGHTNESS_MAX, lightness + step));
+        }
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          onChange(saturation, Math.max(ACCENT_LIGHTNESS_MIN, lightness - step));
+        }
       }}
       className="relative h-[88px] cursor-crosshair touch-none overflow-hidden rounded-lg border border-foreground/10"
       style={{
         backgroundColor: accentHsl(hue, 100, 50),
-        backgroundImage: "linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent)",
+        backgroundImage:
+          "linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent)",
       }}
     >
       <span
         aria-hidden
         className="pointer-events-none absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.35)]"
-        style={{ left: thumbX, top: thumbY, backgroundColor: accentHsl(hue, saturation, lightness) }}
+        style={{
+          left: thumbX,
+          top: thumbY,
+          backgroundColor: accentHsl(hue, saturation, lightness),
+        }}
       />
     </div>
   );
@@ -4224,11 +5100,20 @@ function HueStrip({ hue, onChange }: { hue: number; onChange: (hue: number) => v
       onPointerMove={onPointerMove}
       onKeyDown={(e) => {
         const step = e.shiftKey ? 15 : 3;
-        if (e.key === "ArrowLeft")  { e.preventDefault(); onChange(Math.max(0, hue - step)); }
-        if (e.key === "ArrowRight") { e.preventDefault(); onChange(Math.min(360, hue + step)); }
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          onChange(Math.max(0, hue - step));
+        }
+        if (e.key === "ArrowRight") {
+          e.preventDefault();
+          onChange(Math.min(360, hue + step));
+        }
       }}
       className="relative h-3 cursor-ew-resize touch-none rounded-full border border-foreground/10"
-      style={{ background: "linear-gradient(90deg, #ff5a5a, #ffd000, #5aff5a, #5addff, #5a5aff, #ff5aff, #ff5a5a)" }}
+      style={{
+        background:
+          "linear-gradient(90deg, #ff5a5a, #ffd000, #5aff5a, #5addff, #5a5aff, #ff5aff, #ff5a5a)",
+      }}
     >
       <span
         aria-hidden
@@ -4249,8 +5134,20 @@ function SectionHeader({ label, right }: { label: string; right?: ReactNode }) {
   );
 }
 
-function Slider({ label, min, max, value, onChange, track }: {
-  label: string; min: number; max: number; value: number; onChange: (v: number) => void; track: string;
+function Slider({
+  label,
+  min,
+  max,
+  value,
+  onChange,
+  track,
+}: {
+  label: string;
+  min: number;
+  max: number;
+  value: number;
+  onChange: (v: number) => void;
+  track: string;
 }) {
   return (
     <label className="block">
@@ -4280,12 +5177,20 @@ function Slider({ label, min, max, value, onChange, track }: {
 
 /* ───────────────────────── chrome ───────────────────────── */
 
-
-
 function TopBar({
-  ctx, sideOpen, onSide, onTemp, temp, chatControls = true,
+  ctx,
+  sideOpen,
+  onSide,
+  onTemp,
+  temp,
+  chatControls = true,
 }: {
-  ctx: Ctx; sideOpen?: boolean; onSide?: () => void; onTemp: () => void; temp: boolean; chatControls?: boolean;
+  ctx: Ctx;
+  sideOpen?: boolean;
+  onSide?: () => void;
+  onTemp: () => void;
+  temp: boolean;
+  chatControls?: boolean;
   right?: ReactNode;
 }) {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -4309,7 +5214,12 @@ function TopBar({
 
   return (
     <div className="flex h-14 shrink-0 items-center justify-between gap-3 px-4">
-      <LeftPill ctx={ctx} sideOpen={!!sideOpen} onSide={onSide} onSearch={() => setSearchOpen(true)} />
+      <LeftPill
+        ctx={ctx}
+        sideOpen={!!sideOpen}
+        onSide={onSide}
+        onSearch={() => setSearchOpen(true)}
+      />
       <div />
 
       {/* right cluster — individual floating controls, no group panel */}
@@ -4334,74 +5244,86 @@ function TopBar({
   );
 }
 
-
 /* ───────────────────────── 10 layouts ───────────────────────── */
 
 type LayoutFn = (ctx: Ctx) => ReactNode;
 
 const LAYOUTS: { id: string; name: string; tagline: string; render: LayoutFn }[] = [
   {
-    id: "01", name: "Centered Classic",
+    id: "01",
+    name: "Centered Classic",
     tagline: "Top bar · centered composer · chips below",
     render: (ctx) => <Centered ctx={ctx} />,
   },
   {
-    id: "02", name: "Sidebar + Stage",
+    id: "02",
+    name: "Sidebar + Stage",
     tagline: "Collapsible rail left · composer center",
     render: (ctx) => <SidebarStage ctx={ctx} />,
   },
   {
-    id: "03", name: "Split Greeting",
+    id: "03",
+    name: "Split Greeting",
     tagline: "Left greeting · right composer panel",
     render: (ctx) => <SplitGreeting ctx={ctx} />,
   },
   {
-    id: "04", name: "Bottom Dock",
+    id: "04",
+    name: "Bottom Dock",
     tagline: "Greeting top · composer pinned bottom",
     render: (ctx) => <BottomDock ctx={ctx} />,
   },
   {
-    id: "05", name: "Floating Island",
+    id: "05",
+    name: "Floating Island",
     tagline: "Compact card · everything in one tile",
     render: (ctx) => <FloatingIsland ctx={ctx} />,
   },
   {
-    id: "06", name: "Mega Header",
+    id: "06",
+    name: "Mega Header",
     tagline: "Display header · composer beneath",
     render: (ctx) => <MegaHeader ctx={ctx} />,
   },
   {
-    id: "07", name: "Right Tool Rail",
+    id: "07",
+    name: "Right Tool Rail",
     tagline: "Secondary controls live in right rail",
     render: (ctx) => <RightToolRail ctx={ctx} />,
   },
   {
-    id: "08", name: "Stacked Cards",
+    id: "08",
+    name: "Stacked Cards",
     tagline: "Each section is its own framed card",
     render: (ctx) => <StackedCards ctx={ctx} />,
   },
   {
-    id: "09", name: "Chips Aside",
+    id: "09",
+    name: "Chips Aside",
     tagline: "Composer left · suggestions in right column",
     render: (ctx) => <ChipsAside ctx={ctx} />,
   },
   {
-    id: "10", name: "Minimal Console",
+    id: "10",
+    name: "Minimal Console",
     tagline: "Bare composer · controls collapse to icons",
     render: (ctx) => <MinimalConsole ctx={ctx} />,
   },
   {
-    id: "11", name: "Nested Tile",
+    id: "11",
+    name: "Nested Tile",
     tagline: "Outer wrapper · inner prompt tile + control tile",
     render: (ctx) => <NestedTile ctx={ctx} />,
   },
   {
-    id: "12", name: "Framed Console",
+    id: "12",
+    name: "Framed Console",
     tagline: "Parent frame · divided sections inside",
     render: (ctx) => <FramedConsole ctx={ctx} />,
   },
   {
-    id: "13", name: "Tray + Strip",
+    id: "13",
+    name: "Tray + Strip",
     tagline: "Outer tray · prompt tile · controls strip",
     render: (ctx) => <TrayStrip ctx={ctx} />,
   },
@@ -4415,18 +5337,28 @@ function Centered({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar
+          ctx={ctx}
+          sideOpen={side}
+          onSide={() => setSide(!side)}
+          onTemp={() => setTemp(!temp)}
+          temp={temp}
+        />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
           <div className="w-full max-w-[760px]">
             <Greeting className="text-center" />
             <div className={`${ctx.panel} mt-6 p-5`}>
               <InputBlock ctx={ctx} />
-              <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
+              <div className="mt-3">
+                <PrimaryRow ctx={ctx} />
+              </div>
             </div>
             <div className={`${ctx.panel} mt-3 px-3 py-2`}>
               <SecondaryRow ctx={ctx} />
             </div>
-            <div className="mt-10 flex justify-center"><QuickChips ctx={ctx} /></div>
+            <div className="mt-10 flex justify-center">
+              <QuickChips ctx={ctx} />
+            </div>
           </div>
         </main>
       </div>
@@ -4447,10 +5379,16 @@ function SidebarStage({ ctx }: { ctx: Ctx }) {
           <Greeting />
           <div className={`${ctx.btn} mt-8 p-5`}>
             <InputBlock ctx={ctx} rows={4} />
-            <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
-            <div className="mt-3 border-t border-border/40 pt-3"><SecondaryRow ctx={ctx} /></div>
+            <div className="mt-3">
+              <PrimaryRow ctx={ctx} />
+            </div>
+            <div className="mt-3 border-t border-border/40 pt-3">
+              <SecondaryRow ctx={ctx} />
+            </div>
           </div>
-          <div className="mt-10"><QuickChips ctx={ctx} /></div>
+          <div className="mt-10">
+            <QuickChips ctx={ctx} />
+          </div>
         </main>
       </div>
     </div>
@@ -4465,20 +5403,34 @@ function SplitGreeting({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar
+          ctx={ctx}
+          sideOpen={side}
+          onSide={() => setSide(!side)}
+          onTemp={() => setTemp(!temp)}
+          temp={temp}
+        />
         <main className="grid flex-1 grid-cols-1 md:grid-cols-2">
           <div className="flex flex-col justify-center gap-6 border-r border-border px-10 py-12">
-            <p className="font-mono text-[10px] uppercase tracking-[0.3em] opacity-50">Composer · 03</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.3em] opacity-50">
+              Composer · 03
+            </p>
             <Greeting />
-            <p className="max-w-sm text-sm opacity-60">A studio for thoughts. Pick a model, attach a file, dictate, or just type.</p>
+            <p className="max-w-sm text-sm opacity-60">
+              A studio for thoughts. Pick a model, attach a file, dictate, or just type.
+            </p>
             <QuickChips ctx={ctx} limit={4} />
           </div>
           <div className="flex flex-col justify-center px-8 py-12">
             <div className={`${ctx.btn} p-5`}>
               <InputBlock ctx={ctx} rows={5} />
-              <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
+              <div className="mt-3">
+                <PrimaryRow ctx={ctx} />
+              </div>
             </div>
-            <div className="mt-3"><SecondaryRow ctx={ctx} /></div>
+            <div className="mt-3">
+              <SecondaryRow ctx={ctx} />
+            </div>
           </div>
         </main>
       </div>
@@ -4494,21 +5446,33 @@ function BottomDock({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar
+          ctx={ctx}
+          sideOpen={side}
+          onSide={() => setSide(!side)}
+          onTemp={() => setTemp(!temp)}
+          temp={temp}
+        />
         <main className="flex flex-1 flex-col items-center justify-center px-6">
           <Greeting className="text-center" />
           <div className="mt-6 max-w-2xl text-center text-sm opacity-60">
             Ask anything. Compose below. Suggested starting points →
           </div>
-          <div className="mt-10"><QuickChips ctx={ctx} /></div>
+          <div className="mt-10">
+            <QuickChips ctx={ctx} />
+          </div>
         </main>
         <div className="border-t border-border px-6 py-4">
           <div className="mx-auto flex max-w-[820px] flex-col gap-2">
             <div className={`${ctx.btn} p-4`}>
               <InputBlock ctx={ctx} rows={2} />
-              <div className="mt-2"><PrimaryRow ctx={ctx} /></div>
+              <div className="mt-2">
+                <PrimaryRow ctx={ctx} />
+              </div>
             </div>
-            <div className="flex justify-center"><SecondaryRow ctx={ctx} /></div>
+            <div className="flex justify-center">
+              <SecondaryRow ctx={ctx} />
+            </div>
           </div>
         </div>
       </div>
@@ -4524,15 +5488,25 @@ function FloatingIsland({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar
+          ctx={ctx}
+          sideOpen={side}
+          onSide={() => setSide(!side)}
+          onTemp={() => setTemp(!temp)}
+          temp={temp}
+        />
         <main className="flex flex-1 items-center justify-center p-6">
           <div className={`${ctx.btn} w-full max-w-[680px] p-6`}>
             <Greeting className="text-center" />
             <div className="mt-5 border-t border-border/40 pt-4">
               <InputBlock ctx={ctx} rows={3} />
             </div>
-            <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
-            <div className="mt-3 border-t border-border/40 pt-3"><SecondaryRow ctx={ctx} /></div>
+            <div className="mt-3">
+              <PrimaryRow ctx={ctx} />
+            </div>
+            <div className="mt-3 border-t border-border/40 pt-3">
+              <SecondaryRow ctx={ctx} />
+            </div>
             <div className="mt-4 flex flex-wrap justify-center gap-1.5">
               <QuickChips ctx={ctx} limit={6} />
             </div>
@@ -4554,19 +5528,27 @@ function MegaHeader({ ctx }: { ctx: Ctx }) {
         <div className="border-b border-border px-8 pb-10 pt-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <IconBtn ctx={ctx} onClick={() => setSide(!side)} size={8}><Menu className="h-3.5 w-3.5" /></IconBtn>
-              <span className="font-mono text-[12px] uppercase tracking-[0.22em]">Lumen Studio</span>
+              <IconBtn ctx={ctx} onClick={() => setSide(!side)} size={8}>
+                <Menu className="h-3.5 w-3.5" />
+              </IconBtn>
+              <span className="font-mono text-[12px] uppercase tracking-[0.22em]">
+                Lumen Studio
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <Pill ctx={ctx} onClick={() => setTemp(!temp)}>
                 <EyeOff className="h-3.5 w-3.5" /> {temp ? "Temp on" : "Temporary"}
               </Pill>
-              <IconBtn ctx={ctx} size={8}><Settings className="h-3.5 w-3.5" /></IconBtn>
+              <IconBtn ctx={ctx} size={8}>
+                <Settings className="h-3.5 w-3.5" />
+              </IconBtn>
               <Profile ctx={ctx} />
             </div>
           </div>
           <div className="mx-auto mt-10 max-w-3xl text-center">
-            <p className="font-mono text-[10px] uppercase tracking-[0.3em] opacity-50">Layout 06 · Display</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.3em] opacity-50">
+              Layout 06 · Display
+            </p>
             <h1 className="mt-3 text-[56px] leading-none tracking-tight">
               What's on your mind, <span className="uppercase">Emma?</span>
             </h1>
@@ -4576,10 +5558,16 @@ function MegaHeader({ ctx }: { ctx: Ctx }) {
           <div className="w-full max-w-[760px]">
             <div className={`${ctx.btn} p-5`}>
               <InputBlock ctx={ctx} rows={3} />
-              <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
+              <div className="mt-3">
+                <PrimaryRow ctx={ctx} />
+              </div>
             </div>
-            <div className="mt-3"><SecondaryRow ctx={ctx} /></div>
-            <div className="mt-10"><QuickChips ctx={ctx} /></div>
+            <div className="mt-3">
+              <SecondaryRow ctx={ctx} />
+            </div>
+            <div className="mt-10">
+              <QuickChips ctx={ctx} />
+            </div>
           </div>
         </main>
       </div>
@@ -4595,18 +5583,30 @@ function RightToolRail({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar
+          ctx={ctx}
+          sideOpen={side}
+          onSide={() => setSide(!side)}
+          onTemp={() => setTemp(!temp)}
+          temp={temp}
+        />
         <main className="flex flex-1">
           <div className="flex flex-1 flex-col justify-center px-10">
             <Greeting />
             <div className={`${ctx.btn} mt-6 p-5`}>
               <InputBlock ctx={ctx} rows={5} />
-              <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
+              <div className="mt-3">
+                <PrimaryRow ctx={ctx} />
+              </div>
             </div>
-            <div className="mt-10"><QuickChips ctx={ctx} limit={5} /></div>
+            <div className="mt-10">
+              <QuickChips ctx={ctx} limit={5} />
+            </div>
           </div>
           <aside className="w-[240px] shrink-0 border-l border-border p-4">
-            <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] opacity-50">Controls</p>
+            <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] opacity-50">
+              Controls
+            </p>
             <SecondaryRow ctx={ctx} vertical />
           </aside>
         </main>
@@ -4623,24 +5623,40 @@ function StackedCards({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar
+          ctx={ctx}
+          sideOpen={side}
+          onSide={() => setSide(!side)}
+          onTemp={() => setTemp(!temp)}
+          temp={temp}
+        />
         <main className="flex flex-1 flex-col items-center gap-3 overflow-y-auto px-6 py-8">
           <div className="w-full max-w-[720px] space-y-3">
-            <div className={`${ctx.btn} p-5`}><Greeting /></div>
             <div className={`${ctx.btn} p-5`}>
-              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">Prompt</p>
+              <Greeting />
+            </div>
+            <div className={`${ctx.btn} p-5`}>
+              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">
+                Prompt
+              </p>
               <InputBlock ctx={ctx} rows={3} />
             </div>
             <div className={`${ctx.btn} p-3`}>
-              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">Tools</p>
+              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">
+                Tools
+              </p>
               <PrimaryRow ctx={ctx} />
             </div>
             <div className={`${ctx.btn} p-3`}>
-              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">Options</p>
+              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">
+                Options
+              </p>
               <SecondaryRow ctx={ctx} />
             </div>
             <div className={`${ctx.btn} p-3`}>
-              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">Suggestions</p>
+              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] opacity-60">
+                Suggestions
+              </p>
               <QuickChips ctx={ctx} />
             </div>
           </div>
@@ -4658,22 +5674,38 @@ function ChipsAside({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar
+          ctx={ctx}
+          sideOpen={side}
+          onSide={() => setSide(!side)}
+          onTemp={() => setTemp(!temp)}
+          temp={temp}
+        />
         <main className="grid flex-1 grid-cols-1 gap-6 px-8 py-10 md:grid-cols-[1fr_260px]">
           <div className="flex flex-col">
             <Greeting />
             <div className={`${ctx.btn} mt-6 p-5`}>
               <InputBlock ctx={ctx} rows={5} />
-              <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
+              <div className="mt-3">
+                <PrimaryRow ctx={ctx} />
+              </div>
             </div>
-            <div className="mt-3"><SecondaryRow ctx={ctx} /></div>
+            <div className="mt-3">
+              <SecondaryRow ctx={ctx} />
+            </div>
           </div>
           <aside>
-            <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] opacity-50">Start with</p>
+            <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] opacity-50">
+              Start with
+            </p>
             <div className="flex flex-col gap-1.5">
               {QUICK.map((a) => (
-                <button key={a.label} className={`${ctx.btn} flex items-center gap-2 px-3 py-2 text-[11px]`}>
-                  <a.icon className="h-3.5 w-3.5" /> <span className="flex-1 text-left">{a.label}</span>
+                <button
+                  key={a.label}
+                  className={`${ctx.btn} flex items-center gap-2 px-3 py-2 text-[11px]`}
+                >
+                  <a.icon className="h-3.5 w-3.5" />{" "}
+                  <span className="flex-1 text-left">{a.label}</span>
                   <ChevronRight className="h-3 w-3 opacity-50" />
                 </button>
               ))}
@@ -4696,13 +5728,23 @@ function MinimalConsole({ ctx }: { ctx: Ctx }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex items-center justify-between px-6 py-3">
           <div className="flex items-center gap-2">
-            <IconBtn ctx={ctx} onClick={() => setSide(!side)} size={8}><Menu className="h-3.5 w-3.5" /></IconBtn>
-            <span className="font-mono text-[11px] uppercase tracking-[0.22em] opacity-60">Lumen</span>
+            <IconBtn ctx={ctx} onClick={() => setSide(!side)} size={8}>
+              <Menu className="h-3.5 w-3.5" />
+            </IconBtn>
+            <span className="font-mono text-[11px] uppercase tracking-[0.22em] opacity-60">
+              Lumen
+            </span>
           </div>
           <div className="flex items-center gap-1.5">
-            <IconBtn ctx={ctx} onClick={() => setTemp(!temp)} dim={!temp} size={8}><EyeOff className="h-3.5 w-3.5" /></IconBtn>
-            <IconBtn ctx={ctx} size={8}><Settings className="h-3.5 w-3.5" /></IconBtn>
-            <IconBtn ctx={ctx} size={8}><User className="h-3.5 w-3.5" /></IconBtn>
+            <IconBtn ctx={ctx} onClick={() => setTemp(!temp)} dim={!temp} size={8}>
+              <EyeOff className="h-3.5 w-3.5" />
+            </IconBtn>
+            <IconBtn ctx={ctx} size={8}>
+              <Settings className="h-3.5 w-3.5" />
+            </IconBtn>
+            <IconBtn ctx={ctx} size={8}>
+              <User className="h-3.5 w-3.5" />
+            </IconBtn>
           </div>
         </div>
         <main className="flex flex-1 flex-col items-center justify-center px-6">
@@ -4711,15 +5753,25 @@ function MinimalConsole({ ctx }: { ctx: Ctx }) {
             <InputBlock ctx={ctx} rows={2} />
             <div className="mt-2 flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <IconBtn ctx={ctx} size={8}><Paperclip className="h-3.5 w-3.5" /></IconBtn>
-                <IconBtn ctx={ctx} size={8}><Wrench className="h-3.5 w-3.5" /></IconBtn>
+                <IconBtn ctx={ctx} size={8}>
+                  <Paperclip className="h-3.5 w-3.5" />
+                </IconBtn>
+                <IconBtn ctx={ctx} size={8}>
+                  <Wrench className="h-3.5 w-3.5" />
+                </IconBtn>
                 <DictateButton ctx={ctx} />
-                <IconBtn ctx={ctx} size={8} onClick={() => setShowOpts(!showOpts)}><ChevronDown className={`h-3.5 w-3.5 transition-transform ${showOpts ? "rotate-180" : ""}`} /></IconBtn>
+                <IconBtn ctx={ctx} size={8} onClick={() => setShowOpts(!showOpts)}>
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 transition-transform ${showOpts ? "rotate-180" : ""}`}
+                  />
+                </IconBtn>
               </div>
               <SendButton ctx={ctx} />
             </div>
             {showOpts && (
-              <div className="mt-3 border-t border-border/40 pt-3"><SecondaryRow ctx={ctx} /></div>
+              <div className="mt-3 border-t border-border/40 pt-3">
+                <SecondaryRow ctx={ctx} />
+              </div>
             )}
           </div>
         </main>
@@ -4736,20 +5788,30 @@ function NestedTile({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar
+          ctx={ctx}
+          sideOpen={side}
+          onSide={() => setSide(!side)}
+          onTemp={() => setTemp(!temp)}
+          temp={temp}
+        />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
           <div className="w-full max-w-[760px]">
             <Greeting className="text-center" />
             <div className={`${ctx.panel} mt-6 p-3`}>
               <div className={`${ctx.panelInner} p-4`}>
                 <InputBlock ctx={ctx} />
-                <div className="mt-3"><PrimaryRow ctx={ctx} /></div>
+                <div className="mt-3">
+                  <PrimaryRow ctx={ctx} />
+                </div>
               </div>
               <div className={`${ctx.panelInner} mt-3 px-3 py-2`}>
                 <SecondaryRow ctx={ctx} />
               </div>
             </div>
-            <div className="mt-10 flex justify-center"><QuickChips ctx={ctx} limit={6} /></div>
+            <div className="mt-10 flex justify-center">
+              <QuickChips ctx={ctx} limit={6} />
+            </div>
           </div>
         </main>
       </div>
@@ -4757,13 +5819,7 @@ function NestedTile({ ctx }: { ctx: Ctx }) {
   );
 }
 
-function ChatHomeSurface({
-  ctx,
-  onSubmit,
-}: {
-  ctx: Ctx;
-  onSubmit: (prompt: string) => void;
-}) {
+function ChatHomeSurface({ ctx, onSubmit }: { ctx: Ctx; onSubmit: (prompt: string) => void }) {
   return (
     <main className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto px-4 py-10 sm:px-6">
       <div className="w-full max-w-[780px]">
@@ -4780,13 +5836,17 @@ function ChatHomeSurface({
 
           <div className={`${ctx.panelInner} p-3 sm:p-4`}>
             <InputBlock ctx={ctx} rows={4} onSubmit={onSubmit} />
-            <div className="mt-3"><PrimaryRow ctx={ctx} onSubmit={onSubmit} /></div>
+            <div className="mt-3">
+              <PrimaryRow ctx={ctx} onSubmit={onSubmit} />
+            </div>
           </div>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5">
             <SecondaryRow ctx={ctx} />
           </div>
         </motion.div>
-        <div className="mt-10 flex justify-center"><QuickChips ctx={ctx} limit={5} /></div>
+        <div className="mt-10 flex justify-center">
+          <QuickChips ctx={ctx} limit={5} />
+        </div>
       </div>
     </main>
   );
@@ -4821,11 +5881,7 @@ function MessageAction({
   );
 }
 
-function AssistantReasoningDisclosure({
-  message,
-}: {
-  message: ConversationMessage;
-}) {
+function AssistantReasoningDisclosure({ message }: { message: ConversationMessage }) {
   const [expanded, setExpanded] = useState(false);
   const formatSummary =
     message.variant === "steps"
@@ -4868,7 +5924,10 @@ function AssistantReasoningDisclosure({
           >
             <ol className="mt-2.5 space-y-2 border-l border-foreground/10 pl-3">
               {activity.map((item, index) => (
-                <li key={item} className="flex items-start gap-2 text-[9px] leading-relaxed opacity-55">
+                <li
+                  key={item}
+                  className="flex items-start gap-2 text-[9px] leading-relaxed opacity-55"
+                >
                   <span className="font-mono text-[7.5px] tabular-nums opacity-45">
                     {String(index + 1).padStart(2, "0")}
                   </span>
@@ -4883,13 +5942,7 @@ function AssistantReasoningDisclosure({
   );
 }
 
-function AssistantMessageContent({
-  ctx,
-  message,
-}: {
-  ctx: Ctx;
-  message: ConversationMessage;
-}) {
+function AssistantMessageContent({ ctx, message }: { ctx: Ctx; message: ConversationMessage }) {
   const streamCaret = message.streaming ? (
     <motion.span
       aria-hidden
@@ -5002,13 +6055,7 @@ function AssistantMessageContent({
   );
 }
 
-function AgentProgressRow({
-  ctx,
-  progress,
-}: {
-  ctx: Ctx;
-  progress: AgentProgress;
-}) {
+function AgentProgressRow({ ctx, progress }: { ctx: Ctx; progress: AgentProgress }) {
   const [expanded, setExpanded] = useState(false);
   const phases = ["thinking", "working", "streaming"] as const;
   const activeIndex = phases.indexOf(progress.phase);
@@ -5172,11 +6219,7 @@ function DeleteChatDialog({
             “{chat?.title}” will be removed from this workspace. This action cannot be undone.
           </DialogDescription>
           <div className="mt-5 flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={onCancel}
-              className={`${ctx.btn} h-9 px-4 text-[10px]`}
-            >
+            <button type="button" onClick={onCancel} className={`${ctx.btn} h-9 px-4 text-[10px]`}>
               Cancel
             </button>
             <button
@@ -5266,7 +6309,10 @@ function ConversationSurface({
   const copyMessage = async (message: ConversationMessage) => {
     await navigator.clipboard?.writeText(message.content);
     setCopiedId(message.id);
-    window.setTimeout(() => setCopiedId((current) => (current === message.id ? null : current)), 1200);
+    window.setTimeout(
+      () => setCopiedId((current) => (current === message.id ? null : current)),
+      1200,
+    );
   };
 
   const readMessage = (message: ConversationMessage) => {
@@ -5286,298 +6332,304 @@ function ConversationSurface({
 
   return (
     <>
-    <main
-      ref={scrollRef}
-      className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-3 sm:px-6"
-    >
-      <div className="mx-auto flex min-h-full w-full max-w-[820px] flex-col pt-5 sm:pt-8">
-        <div className="flex items-center justify-between gap-4 border-b border-foreground/10 pb-4">
-          <div className="min-w-0">
-            <span className="font-mono text-[8px] uppercase tracking-[0.2em] opacity-45">{projectName}</span>
-            <h1 className="mt-1 truncate text-[18px] font-light tracking-tight">{chat.title}</h1>
-          </div>
-          <div className="flex shrink-0 items-center gap-1">
-            <button
-              type="button"
-              onClick={copyChatLink}
-              className="flex h-8 items-center gap-1.5 rounded-md px-2 text-[9px] opacity-45 transition-opacity hover:opacity-90"
-            >
-              <Share2 className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Share</span>
-            </button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  aria-label="Conversation options"
-                  className="flex h-8 w-8 items-center justify-center rounded-md opacity-45 transition-[background-color,opacity] hover:bg-foreground/[0.06] hover:opacity-90"
-                >
-                  <MoreHorizontal className="h-4 w-4" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className={`${ctx.panel} w-48 p-1 text-[11px]`}>
-                <DropdownMenuItem
-                  onSelect={() => setFilesOpen(true)}
-                  className="text-[11px]"
-                >
-                  <Files className="h-3.5 w-3.5" />
-                  View files in chat
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={onTogglePin} className="text-[11px]">
-                  {pinned ? <PinOff className="h-3.5 w-3.5" /> : <Pin className="h-3.5 w-3.5" />}
-                  {pinned ? "Unpin chat" : "Pin chat"}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onSelect={copyChatLink}
-                  className="text-[11px]"
-                >
-                  <LinkIcon className="h-3.5 w-3.5" />
-                  Copy chat link
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onSelect={onRequestDelete}
-                  className="text-[11px] text-red-500 focus:bg-red-500/10 focus:text-red-500"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  Delete chat
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-
-        <AnimatePresence>
-          {notice ? (
-            <motion.p
-              role="status"
-              initial={{ opacity: 0, y: -4, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -2, scale: 0.98 }}
-              className="pointer-events-none fixed right-4 top-[68px] z-[70] rounded-md border border-border/60 bg-popover/95 px-2.5 py-1.5 text-[8.5px] text-popover-foreground shadow-lg backdrop-blur-sm sm:right-6"
-            >
-              {notice}
-            </motion.p>
-          ) : null}
-        </AnimatePresence>
-
-        <section aria-label="Conversation" className="flex flex-1 flex-col pb-2 pt-6">
-          <span className="self-center font-mono text-[8px] uppercase tracking-[0.18em] opacity-35">Today</span>
-
-          <div className="mt-5 flex flex-col gap-5">
-            <AnimatePresence initial={false}>
-              {messages.map((message, index) =>
-                message.role === "user" ? (
-                  <motion.div
-                    key={message.id}
-                    initial={
-                      reducedMotion
-                        ? { opacity: 0 }
-                        : {
-                            opacity: 0,
-                            y: launching && index === 0 ? 56 : 12,
-                            scale: launching && index === 0 ? 0.92 : 0.98,
-                            filter: "blur(5px)",
-                          }
-                    }
-                    animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-                    transition={
-                      reducedMotion
-                        ? { duration: 0.1 }
-                        : { type: "spring", stiffness: 330, damping: 27, mass: 0.75 }
-                    }
-                    className="group/message ml-auto flex max-w-[86%] flex-col items-end"
+      <main
+        ref={scrollRef}
+        className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-3 sm:px-6"
+      >
+        <div className="mx-auto flex min-h-full w-full max-w-[820px] flex-col pt-5 sm:pt-8">
+          <div className="flex items-center justify-between gap-4 border-b border-foreground/10 pb-4">
+            <div className="min-w-0">
+              <span className="font-mono text-[8px] uppercase tracking-[0.2em] opacity-45">
+                {projectName}
+              </span>
+              <h1 className="mt-1 truncate text-[18px] font-light tracking-tight">{chat.title}</h1>
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
+              <button
+                type="button"
+                onClick={copyChatLink}
+                className="flex h-8 items-center gap-1.5 rounded-md px-2 text-[9px] opacity-45 transition-opacity hover:opacity-90"
+              >
+                <Share2 className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Share</span>
+              </button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label="Conversation options"
+                    className="flex h-8 w-8 items-center justify-center rounded-md opacity-45 transition-[background-color,opacity] hover:bg-foreground/[0.06] hover:opacity-90"
                   >
-                    {editingId === message.id ? (
-                      <div className={`${ctx.panel} w-full min-w-[300px] p-1`}>
-                        <div className={`${ctx.panelInner} p-3`}>
-                          <textarea
-                            autoFocus
-                            aria-label="Edit message text"
-                            rows={3}
-                            value={editValue}
-                            onChange={(event) => setEditValue(event.target.value)}
-                            className="w-full resize-none bg-transparent text-[12px] leading-relaxed outline-none"
-                          />
-                          <div className="mt-2 flex justify-end gap-1.5">
-                            <button
-                              type="button"
-                              onClick={() => setEditingId(null)}
-                              className="h-7 rounded-md px-2.5 text-[9px] opacity-50 hover:bg-foreground/[0.06] hover:opacity-90"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              type="button"
-                              disabled={!editValue.trim()}
-                              onClick={() => {
-                                onEditMessage(message.id, editValue.trim());
-                                setEditingId(null);
-                              }}
-                              className={`${ctx.btn} accent-soft h-7 px-3 text-[9px] disabled:opacity-40`}
-                            >
-                              Save
-                            </button>
+                    <MoreHorizontal className="h-4 w-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className={`${ctx.panel} w-48 p-1 text-[11px]`}>
+                  <DropdownMenuItem onSelect={() => setFilesOpen(true)} className="text-[11px]">
+                    <Files className="h-3.5 w-3.5" />
+                    View files in chat
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={onTogglePin} className="text-[11px]">
+                    {pinned ? <PinOff className="h-3.5 w-3.5" /> : <Pin className="h-3.5 w-3.5" />}
+                    {pinned ? "Unpin chat" : "Pin chat"}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onSelect={copyChatLink} className="text-[11px]">
+                    <LinkIcon className="h-3.5 w-3.5" />
+                    Copy chat link
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onSelect={onRequestDelete}
+                    className="text-[11px] text-red-500 focus:bg-red-500/10 focus:text-red-500"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Delete chat
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+
+          <AnimatePresence>
+            {notice ? (
+              <motion.p
+                role="status"
+                initial={{ opacity: 0, y: -4, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -2, scale: 0.98 }}
+                className="pointer-events-none fixed right-4 top-[68px] z-[70] rounded-md border border-border/60 bg-popover/95 px-2.5 py-1.5 text-[8.5px] text-popover-foreground shadow-lg backdrop-blur-sm sm:right-6"
+              >
+                {notice}
+              </motion.p>
+            ) : null}
+          </AnimatePresence>
+
+          <section aria-label="Conversation" className="flex flex-1 flex-col pb-2 pt-6">
+            <span className="self-center font-mono text-[8px] uppercase tracking-[0.18em] opacity-35">
+              Today
+            </span>
+
+            <div className="mt-5 flex flex-col gap-5">
+              <AnimatePresence initial={false}>
+                {messages.map((message, index) =>
+                  message.role === "user" ? (
+                    <motion.div
+                      key={message.id}
+                      initial={
+                        reducedMotion
+                          ? { opacity: 0 }
+                          : {
+                              opacity: 0,
+                              y: launching && index === 0 ? 56 : 12,
+                              scale: launching && index === 0 ? 0.92 : 0.98,
+                              filter: "blur(5px)",
+                            }
+                      }
+                      animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                      transition={
+                        reducedMotion
+                          ? { duration: 0.1 }
+                          : { type: "spring", stiffness: 330, damping: 27, mass: 0.75 }
+                      }
+                      className="group/message ml-auto flex max-w-[86%] flex-col items-end"
+                    >
+                      {editingId === message.id ? (
+                        <div className={`${ctx.panel} w-full min-w-[300px] p-1`}>
+                          <div className={`${ctx.panelInner} p-3`}>
+                            <textarea
+                              autoFocus
+                              aria-label="Edit message text"
+                              rows={3}
+                              value={editValue}
+                              onChange={(event) => setEditValue(event.target.value)}
+                              className="w-full resize-none bg-transparent text-[12px] leading-relaxed outline-none"
+                            />
+                            <div className="mt-2 flex justify-end gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => setEditingId(null)}
+                                className="h-7 rounded-md px-2.5 text-[9px] opacity-50 hover:bg-foreground/[0.06] hover:opacity-90"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                type="button"
+                                disabled={!editValue.trim()}
+                                onClick={() => {
+                                  onEditMessage(message.id, editValue.trim());
+                                  setEditingId(null);
+                                }}
+                                className={`${ctx.btn} accent-soft h-7 px-3 text-[9px] disabled:opacity-40`}
+                              >
+                                Save
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div
-                        className={`${ctx.panelInner} px-4 py-3 text-[12px] leading-relaxed whitespace-pre-wrap`}
-                      >
-                        {message.content.length > 320 && !expandedMessageIds.has(message.id)
-                          ? `${message.content.slice(0, 317)}…`
-                          : message.content}
-                        {message.content.length > 320 ? (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setExpandedMessageIds((current) => {
-                                const next = new Set(current);
-                                if (next.has(message.id)) next.delete(message.id);
-                                else next.add(message.id);
-                                return next;
-                              })
-                            }
-                            className="mt-2 block text-[9.5px] font-medium opacity-55 transition-opacity hover:opacity-90"
+                      ) : (
+                        <div
+                          className={`${ctx.panelInner} px-4 py-3 text-[12px] leading-relaxed whitespace-pre-wrap`}
+                        >
+                          {message.content.length > 320 && !expandedMessageIds.has(message.id)
+                            ? `${message.content.slice(0, 317)}…`
+                            : message.content}
+                          {message.content.length > 320 ? (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setExpandedMessageIds((current) => {
+                                  const next = new Set(current);
+                                  if (next.has(message.id)) next.delete(message.id);
+                                  else next.add(message.id);
+                                  return next;
+                                })
+                              }
+                              className="mt-2 block text-[9.5px] font-medium opacity-55 transition-opacity hover:opacity-90"
+                            >
+                              {expandedMessageIds.has(message.id) ? "Show less" : "Show more"}
+                            </button>
+                          ) : null}
+                          {message.attachments?.length ? (
+                            <div className="mt-3 flex flex-wrap gap-1.5 border-t border-foreground/10 pt-3">
+                              {message.attachments.map((file) => (
+                                <span
+                                  key={file.id}
+                                  className="inline-flex items-center gap-1.5 rounded-md border border-foreground/10 px-2 py-1.5 text-[8.5px] opacity-65"
+                                >
+                                  {kindIcon(file.kind)}
+                                  <span className="max-w-40 truncate">{file.name}</span>
+                                </span>
+                              ))}
+                            </div>
+                          ) : null}
+                        </div>
+                      )}
+                      <div className="mt-1 flex items-center gap-0.5">
+                        <div className="flex opacity-0 transition-opacity group-hover/message:opacity-100 focus-within:opacity-100">
+                          <MessageAction
+                            label={copiedId === message.id ? "Copied" : "Copy message"}
+                            onClick={() => copyMessage(message)}
                           >
-                            {expandedMessageIds.has(message.id) ? "Show less" : "Show more"}
-                          </button>
-                        ) : null}
-                        {message.attachments?.length ? (
-                          <div className="mt-3 flex flex-wrap gap-1.5 border-t border-foreground/10 pt-3">
-                            {message.attachments.map((file) => (
-                              <span
-                                key={file.id}
-                                className="inline-flex items-center gap-1.5 rounded-md border border-foreground/10 px-2 py-1.5 text-[8.5px] opacity-65"
-                              >
-                                {kindIcon(file.kind)}
-                                <span className="max-w-40 truncate">{file.name}</span>
-                              </span>
-                            ))}
-                          </div>
-                        ) : null}
+                            <Copy className="h-3 w-3" />
+                          </MessageAction>
+                          <MessageAction
+                            label="Edit message"
+                            onClick={() => {
+                              setEditingId(message.id);
+                              setEditValue(message.content);
+                            }}
+                          >
+                            <Pencil className="h-3 w-3" />
+                          </MessageAction>
+                        </div>
+                        <span className="px-1 font-mono text-[7.5px] uppercase tracking-[0.14em] opacity-30">
+                          You · {message.timestamp}
+                        </span>
                       </div>
-                    )}
-                    <div className="mt-1 flex items-center gap-0.5">
-                      <div className="flex opacity-0 transition-opacity group-hover/message:opacity-100 focus-within:opacity-100">
-                        <MessageAction
-                          label={copiedId === message.id ? "Copied" : "Copy message"}
-                          onClick={() => copyMessage(message)}
-                        >
-                          <Copy className="h-3 w-3" />
-                        </MessageAction>
-                        <MessageAction
-                          label="Edit message"
-                          onClick={() => {
-                            setEditingId(message.id);
-                            setEditValue(message.content);
-                          }}
-                        >
-                          <Pencil className="h-3 w-3" />
-                        </MessageAction>
+                    </motion.div>
+                  ) : (
+                    <motion.article
+                      key={message.id}
+                      initial={
+                        reducedMotion ? { opacity: 0 } : { opacity: 0, y: 12, filter: "blur(4px)" }
+                      }
+                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                      transition={{ duration: reducedMotion ? 0.1 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+                      aria-busy={message.streaming || undefined}
+                      className="max-w-[94%] text-[12px] leading-relaxed"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className={`${ctx.btn} flex h-7 w-7 items-center justify-center`}>
+                          <Sparkles
+                            className="h-3.5 w-3.5"
+                            style={{ color: "var(--lumen-accent)" }}
+                          />
+                        </span>
+                        <span className="font-mono text-[8px] uppercase tracking-[0.18em] opacity-45">
+                          Lumen
+                        </span>
+                        <span className="font-mono text-[7.5px] uppercase tracking-[0.14em] opacity-25">
+                          {message.timestamp}
+                        </span>
                       </div>
-                      <span className="px-1 font-mono text-[7.5px] uppercase tracking-[0.14em] opacity-30">
-                        You · {message.timestamp}
-                      </span>
-                    </div>
-                  </motion.div>
-                ) : (
-                  <motion.article
-                    key={message.id}
-                    initial={
-                      reducedMotion
-                        ? { opacity: 0 }
-                        : { opacity: 0, y: 12, filter: "blur(4px)" }
-                    }
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    transition={{ duration: reducedMotion ? 0.1 : 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    aria-busy={message.streaming || undefined}
-                    className="max-w-[94%] text-[12px] leading-relaxed"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className={`${ctx.btn} flex h-7 w-7 items-center justify-center`}>
-                        <Sparkles className="h-3.5 w-3.5" style={{ color: "var(--lumen-accent)" }} />
-                      </span>
-                      <span className="font-mono text-[8px] uppercase tracking-[0.18em] opacity-45">Lumen</span>
-                      <span className="font-mono text-[7.5px] uppercase tracking-[0.14em] opacity-25">
-                        {message.timestamp}
-                      </span>
-                    </div>
-                    <AssistantReasoningDisclosure message={message} />
-                    <AssistantMessageContent ctx={ctx} message={message} />
-                    {!message.streaming ? (
-                      <div className="mt-2 flex items-center gap-0.5">
-                        <MessageAction
-                          label={copiedId === message.id ? "Copied" : "Copy response"}
-                          onClick={() => copyMessage(message)}
-                        >
-                          <Copy className="h-3 w-3" />
-                        </MessageAction>
-                        <MessageAction
-                          label="Good response"
-                          active={reactions[message.id] === "up"}
-                          onClick={() =>
-                            setReactions((current) => ({
-                              ...current,
-                              [message.id]: current[message.id] === "up" ? undefined : "up",
-                            }))
-                          }
-                        >
-                          <ThumbsUp className="h-3 w-3" />
-                        </MessageAction>
-                        <MessageAction
-                          label="Bad response"
-                          active={reactions[message.id] === "down"}
-                          onClick={() =>
-                            setReactions((current) => ({
-                              ...current,
-                              [message.id]: current[message.id] === "down" ? undefined : "down",
-                            }))
-                          }
-                        >
-                          <ThumbsDown className="h-3 w-3" />
-                        </MessageAction>
-                        <MessageAction label="Regenerate response" onClick={() => onRegenerate(message.id)}>
-                          <RefreshCw className="h-3 w-3" />
-                        </MessageAction>
-                        <MessageAction label="Read aloud" onClick={() => readMessage(message)}>
-                          <Volume2 className="h-3 w-3" />
-                        </MessageAction>
-                      </div>
-                    ) : null}
-                  </motion.article>
-                ),
-              )}
-            </AnimatePresence>
+                      <AssistantReasoningDisclosure message={message} />
+                      <AssistantMessageContent ctx={ctx} message={message} />
+                      {!message.streaming ? (
+                        <div className="mt-2 flex items-center gap-0.5">
+                          <MessageAction
+                            label={copiedId === message.id ? "Copied" : "Copy response"}
+                            onClick={() => copyMessage(message)}
+                          >
+                            <Copy className="h-3 w-3" />
+                          </MessageAction>
+                          <MessageAction
+                            label="Good response"
+                            active={reactions[message.id] === "up"}
+                            onClick={() =>
+                              setReactions((current) => ({
+                                ...current,
+                                [message.id]: current[message.id] === "up" ? undefined : "up",
+                              }))
+                            }
+                          >
+                            <ThumbsUp className="h-3 w-3" />
+                          </MessageAction>
+                          <MessageAction
+                            label="Bad response"
+                            active={reactions[message.id] === "down"}
+                            onClick={() =>
+                              setReactions((current) => ({
+                                ...current,
+                                [message.id]: current[message.id] === "down" ? undefined : "down",
+                              }))
+                            }
+                          >
+                            <ThumbsDown className="h-3 w-3" />
+                          </MessageAction>
+                          <MessageAction
+                            label="Regenerate response"
+                            onClick={() => onRegenerate(message.id)}
+                          >
+                            <RefreshCw className="h-3 w-3" />
+                          </MessageAction>
+                          <MessageAction label="Read aloud" onClick={() => readMessage(message)}>
+                            <Volume2 className="h-3 w-3" />
+                          </MessageAction>
+                        </div>
+                      ) : null}
+                    </motion.article>
+                  ),
+                )}
+              </AnimatePresence>
 
-            <AnimatePresence>
-              {agentProgress && !hasStreamingMessage ? (
-                <AgentProgressRow ctx={ctx} progress={agentProgress} />
-              ) : null}
-            </AnimatePresence>
-          </div>
-        </section>
+              <AnimatePresence>
+                {agentProgress && !hasStreamingMessage ? (
+                  <AgentProgressRow ctx={ctx} progress={agentProgress} />
+                ) : null}
+              </AnimatePresence>
+            </div>
+          </section>
 
-        <motion.div
-          layoutId="conversation-composer"
-          transition={{ type: "spring", stiffness: 300, damping: 30, mass: 0.8 }}
-          className={`${ctx.panel} sticky bottom-3 z-10 mt-4 p-3 shadow-lg sm:p-4`}
-        >
-          <div className={`${ctx.panelInner} p-3`}>
-            <InputBlock ctx={ctx} rows={2} onSubmit={onSubmit} />
-            <div className="mt-2"><PrimaryRow ctx={ctx} onSubmit={onSubmit} /></div>
-          </div>
-        </motion.div>
-      </div>
-    </main>
-    <ConversationFilesDialog
-      ctx={ctx}
-      open={filesOpen}
-      onOpenChange={setFilesOpen}
-      files={chatFiles}
-    />
+          <motion.div
+            layoutId="conversation-composer"
+            transition={{ type: "spring", stiffness: 300, damping: 30, mass: 0.8 }}
+            className={`${ctx.panel} sticky bottom-3 z-10 mt-4 p-3 shadow-lg sm:p-4`}
+          >
+            <div className={`${ctx.panelInner} p-3`}>
+              <InputBlock ctx={ctx} rows={2} onSubmit={onSubmit} />
+              <div className="mt-2">
+                <PrimaryRow ctx={ctx} onSubmit={onSubmit} />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </main>
+      <ConversationFilesDialog
+        ctx={ctx}
+        open={filesOpen}
+        onOpenChange={setFilesOpen}
+        files={chatFiles}
+      />
     </>
   );
 }
@@ -5592,12 +6644,10 @@ function FramedConsole({ ctx }: { ctx: Ctx }) {
   const [messagesByThread, setMessagesByThread] = useState<Record<string, ConversationMessage[]>>(
     {},
   );
-  const [agentProgressByThread, setAgentProgressByThread] = useState<
-    Record<string, AgentProgress>
-  >({});
-  const [pinnedChatIds, setPinnedChatIds] = useState<Set<string>>(
-    () => new Set(["navigation-ia"]),
+  const [agentProgressByThread, setAgentProgressByThread] = useState<Record<string, AgentProgress>>(
+    {},
   );
+  const [pinnedChatIds, setPinnedChatIds] = useState<Set<string>>(() => new Set(["navigation-ia"]));
   const [deletedChatIds, setDeletedChatIds] = useState<Set<string>>(() => new Set());
   const [chatPendingDelete, setChatPendingDelete] = useState<ChatThread | null>(null);
   const [launchingThreadId, setLaunchingThreadId] = useState<string | null>(null);
@@ -5651,7 +6701,7 @@ function FramedConsole({ ctx }: { ctx: Ctx }) {
           },
         ],
       }));
-      setLaunchingThreadId((current) => current === threadId ? null : current);
+      setLaunchingThreadId((current) => (current === threadId ? null : current));
       setAgentProgressByThread((current) => ({
         ...current,
         [threadId]: {
@@ -5712,11 +6762,7 @@ function FramedConsole({ ctx }: { ctx: Ctx }) {
     scheduleReply(chat.id, prompt);
   };
 
-  const editConversationMessage = (
-    chat: ChatThread,
-    messageId: string,
-    content: string,
-  ) => {
+  const editConversationMessage = (chat: ChatThread, messageId: string, content: string) => {
     setMessagesByThread((current) => ({
       ...current,
       [chat.id]: (current[chat.id] ?? seededConversation(chat)).map((message) =>
@@ -5901,7 +6947,13 @@ function TrayStrip({ ctx }: { ctx: Ctx }) {
     <div className="flex h-full">
       <SideMenu ctx={ctx} open={side} onToggle={() => setSide(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar ctx={ctx} sideOpen={side} onSide={() => setSide(!side)} onTemp={() => setTemp(!temp)} temp={temp} />
+        <TopBar
+          ctx={ctx}
+          sideOpen={side}
+          onSide={() => setSide(!side)}
+          onTemp={() => setTemp(!temp)}
+          temp={temp}
+        />
         <main className="flex flex-1 flex-col items-center justify-center px-6 py-10">
           <div className="w-full max-w-[760px]">
             <Greeting className="text-center" />
@@ -5911,19 +6963,31 @@ function TrayStrip({ ctx }: { ctx: Ctx }) {
               </div>
               <div className="mt-3 flex items-center justify-between gap-2 px-2">
                 <div className="flex items-center gap-1.5">
-                  <IconBtn ctx={ctx} size={8}><Paperclip className="h-3.5 w-3.5" /></IconBtn>
-                  <IconBtn ctx={ctx} size={8}><Wrench className="h-3.5 w-3.5" /></IconBtn>
+                  <IconBtn ctx={ctx} size={8}>
+                    <Paperclip className="h-3.5 w-3.5" />
+                  </IconBtn>
+                  <IconBtn ctx={ctx} size={8}>
+                    <Wrench className="h-3.5 w-3.5" />
+                  </IconBtn>
                   <DictateButton ctx={ctx} />
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Pill ctx={ctx}><Brain className="h-3.5 w-3.5" /> Memory</Pill>
-                  <Pill ctx={ctx}><Globe className="h-3.5 w-3.5" /> Web</Pill>
+                  <Pill ctx={ctx}>
+                    <Brain className="h-3.5 w-3.5" /> Memory
+                  </Pill>
+                  <Pill ctx={ctx}>
+                    <Globe className="h-3.5 w-3.5" /> Web
+                  </Pill>
                   <SendButton ctx={ctx} />
                 </div>
               </div>
             </div>
-            <div className="mt-3 flex justify-center"><SecondaryRow ctx={ctx} /></div>
-            <div className="mt-10 flex justify-center"><QuickChips ctx={ctx} limit={6} /></div>
+            <div className="mt-3 flex justify-center">
+              <SecondaryRow ctx={ctx} />
+            </div>
+            <div className="mt-10 flex justify-center">
+              <QuickChips ctx={ctx} limit={6} />
+            </div>
           </div>
         </main>
       </div>
@@ -5934,7 +6998,9 @@ function TrayStrip({ ctx }: { ctx: Ctx }) {
 /* ───────────────────────── gallery shell ───────────────────────── */
 
 function LayoutGallery() {
-  useEffect(() => { settingsStore.hydrate(); }, []);
+  useEffect(() => {
+    settingsStore.hydrate();
+  }, []);
   const settings = useSettings();
   const { light, themeId, hue, saturation, lightness, buttonStyleId } = settings;
 
@@ -5947,9 +7013,12 @@ function LayoutGallery() {
   // Tooltip) pick up the active theme — they render outside the page wrapper.
   useEffect(() => {
     const root = document.documentElement;
-    if (light) root.classList.remove("dark"); else root.classList.add("dark");
+    if (light) root.classList.remove("dark");
+    else root.classList.add("dark");
     for (const [k, v] of Object.entries(themeVars)) root.style.setProperty(k, v);
-    return () => { root.classList.remove("dark"); };
+    return () => {
+      root.classList.remove("dark");
+    };
   }, [light, themeVars]);
 
   const style = BUTTON_STYLES.find((s) => s.id === buttonStyleId) ?? BUTTON_STYLES[0];
@@ -5971,7 +7040,7 @@ function LayoutGallery() {
     <div className={wrap}>
       <div
         className="relative min-h-screen text-foreground transition-colors duration-500"
-        style={{ background: mode.bg, color: mode.fg, ...themeVars } as any}
+        style={{ background: mode.bg, color: mode.fg, ...themeVars } as React.CSSProperties}
       >
         {v12.render(ctx)}
       </div>

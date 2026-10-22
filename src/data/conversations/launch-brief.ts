@@ -68,8 +68,7 @@ export const launchBriefConversation: ConversationMessage[] = [
   {
     id: "launch-brief-9",
     role: "user",
-    content:
-      "We have a limited budget. Which channels deserve attention for the first two weeks?",
+    content: "We have a limited budget. Which channels deserve attention for the first two weeks?",
     timestamp: "10:26 AM",
   },
   {
@@ -82,8 +81,7 @@ export const launchBriefConversation: ConversationMessage[] = [
   {
     id: "launch-brief-11",
     role: "user",
-    content:
-      "Can you turn that into a realistic timeline? We want to launch in three weeks.",
+    content: "Can you turn that into a realistic timeline? We want to launch in three weeks.",
     timestamp: "10:31 AM",
   },
   {

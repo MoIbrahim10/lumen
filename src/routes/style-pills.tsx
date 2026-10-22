@@ -118,7 +118,9 @@ function VariantSpotlight() {
         return (
           <button
             key={s.id}
-            ref={(el) => { refs.current[s.id] = el; }}
+            ref={(el) => {
+              refs.current[s.id] = el;
+            }}
             onMouseEnter={() => setHover(s.id)}
             onClick={() => setActive(s.id)}
             className="relative z-10 flex items-center gap-1.5 px-4 py-2 text-[12px] font-medium transition-colors duration-200"
@@ -261,8 +263,8 @@ function StylePillsPage() {
           Pick a personality for the pills.
         </h1>
         <p className="mt-3 max-w-xl text-sm text-zinc-500">
-          Same 5 styles, five different interaction languages. Click around — each
-          one feels different. Tell me which to ship into the composer.
+          Same 5 styles, five different interaction languages. Click around — each one feels
+          different. Tell me which to ship into the composer.
         </p>
 
         <div className="mt-12 space-y-10">
