@@ -27,8 +27,7 @@ export const researchSynthesisConversation: ConversationMessage[] = [
     role: "assistant",
     variant: "steps",
     title: "Synthesis frame",
-    content:
-      "I’d organize the evidence around the point where work leaves the product.",
+    content: "I’d organize the evidence around the point where work leaves the product.",
     points: [
       "Map each participant’s workflow from project setup to weekly follow-through.",
       "Mark the trigger that caused them to switch tools.",
@@ -63,8 +62,7 @@ export const researchSynthesisConversation: ConversationMessage[] = [
     role: "assistant",
     variant: "table",
     title: "Emerging themes and evidence",
-    content:
-      "The behavior points to two related but distinct gaps.",
+    content: "The behavior points to two related but distinct gaps.",
     table: {
       headers: ["Theme", "Evidence", "Interpretation"],
       rows: [
@@ -163,8 +161,7 @@ export const researchSynthesisConversation: ConversationMessage[] = [
     role: "assistant",
     variant: "steps",
     title: "Next research round",
-    content:
-      "Use tasks and counterexamples to challenge the current interpretation.",
+    content: "Use tasks and counterexamples to challenge the current interpretation.",
     points: [
       "Observe leads returning after several days and ask what they need first.",
       "Compare a filtered change summary with an editable status view.",
@@ -191,8 +188,7 @@ export const researchSynthesisConversation: ConversationMessage[] = [
   {
     id: "research-synthesis-19",
     role: "user",
-    content:
-      "Add the main caveat and the decision we can responsibly make now.",
+    content: "Add the main caveat and the decision we can responsibly make now.",
     timestamp: "14:04",
   },
   {

@@ -45,9 +45,7 @@ export function Hint({
   className?: string;
 }) {
   const pos =
-    side === "top"
-      ? "-top-9 left-1/2 -translate-x-1/2"
-      : "-bottom-9 left-1/2 -translate-x-1/2";
+    side === "top" ? "-top-9 left-1/2 -translate-x-1/2" : "-bottom-9 left-1/2 -translate-x-1/2";
   return (
     <span className={`group/h relative inline-flex ${className}`}>
       {children}

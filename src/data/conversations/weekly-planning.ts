@@ -27,8 +27,7 @@ export const weeklyPlanningConversation: ConversationMessage[] = [
     role: "assistant",
     variant: "steps",
     title: "Fixed anchors",
-    content:
-      "These become the boundaries of the week before we schedule anything flexible.",
+    content: "These become the boundaries of the week before we schedule anything flexible.",
     points: [
       "Monday: team sync at 10 AM and client call at 2 PM.",
       "Wednesday: dentist at 3 PM.",

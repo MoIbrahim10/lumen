@@ -1,6 +1,19 @@
 import { Link } from "@tanstack/react-router";
 import { ReactNode, useState } from "react";
-import { Paperclip, Mic, Wrench, ArrowUp, Plus, ChevronDown, Check, Globe, Brain, EyeOff, Gauge, Ruler } from "lucide-react";
+import {
+  Paperclip,
+  Mic,
+  Wrench,
+  ArrowUp,
+  Plus,
+  ChevronDown,
+  Check,
+  Globe,
+  Brain,
+  EyeOff,
+  Gauge,
+  Ruler,
+} from "lucide-react";
 import { Hint, STYLES, LENGTHS, DEPTHS, QUICK_ACTIONS, SHORTCUTS } from "@/components/chat-kit";
 
 export type Variant =
@@ -86,8 +99,7 @@ const CFG: Record<Variant, Omit<Cfg, "name" | "number" | "variant">> = {
     sendClass: "btn-glass",
     chipClass: "btn-glass",
     bg: {
-      background:
-        "radial-gradient(1200px 600px at 30% 0%, #2a2a2a 0%, #0d0d0d 60%, #050505 100%)",
+      background: "radial-gradient(1200px 600px at 30% 0%, #2a2a2a 0%, #0d0d0d 60%, #050505 100%)",
     },
     headline: "font-light tracking-tight",
     micro: "Glass · ambient depth",
@@ -99,8 +111,7 @@ const CFG: Record<Variant, Omit<Cfg, "name" | "number" | "variant">> = {
     chipClass: "btn-dot",
     bg: {
       backgroundColor: "#0a0a0a",
-      backgroundImage:
-        "radial-gradient(rgba(255,255,255,0.06) 1.2px, transparent 1.2px)",
+      backgroundImage: "radial-gradient(rgba(255,255,255,0.06) 1.2px, transparent 1.2px)",
       backgroundSize: "8px 8px",
     },
     headline: "font-mono uppercase tracking-wider",
@@ -170,10 +181,7 @@ export function ChatHome({
 
   return (
     <div className={wrap}>
-      <div
-        className="flex min-h-screen flex-col text-foreground"
-        style={cfg.bg}
-      >
+      <div className="flex min-h-screen flex-col text-foreground" style={cfg.bg}>
         <nav className="flex items-center justify-between px-10 pt-7">
           <span className="text-sm tracking-tight">Lumen</span>
           <div className="flex items-center gap-7 text-sm text-muted-foreground">
@@ -200,8 +208,7 @@ export function ChatHome({
               <h1
                 className={`text-left text-[40px] leading-[1.05] tracking-tight md:text-[44px] ${cfg.headline ?? ""}`}
               >
-                What's on your mind,{" "}
-                <span className="uppercase">Emma?</span>
+                What's on your mind, <span className="uppercase">Emma?</span>
               </h1>
               <textarea
                 rows={3}
@@ -238,11 +245,11 @@ export function ChatHome({
                     </IconKey>
                   </Hint>
                   <Hint label="Send" keys={SHORTCUTS.send}>
-                    <button
-                      className={`${cfg.sendClass} flex h-9 w-9 items-center justify-center`}
-                    >
+                    <button className={`${cfg.sendClass} flex h-9 w-9 items-center justify-center`}>
                       {variant === "framed" ? (
-                        <span><ArrowUp className="h-4 w-4" /></span>
+                        <span>
+                          <ArrowUp className="h-4 w-4" />
+                        </span>
                       ) : (
                         <ArrowUp className="h-4 w-4" />
                       )}
@@ -297,7 +304,13 @@ export function ChatHome({
                     onClick={() => setWeb(!web)}
                     className={`${cfg.btnClass} flex h-9 w-9 items-center justify-center ${!web ? "opacity-40" : ""}`}
                   >
-                    {variant === "framed" ? <span><Globe className="h-4 w-4" /></span> : <Globe className="h-4 w-4" />}
+                    {variant === "framed" ? (
+                      <span>
+                        <Globe className="h-4 w-4" />
+                      </span>
+                    ) : (
+                      <Globe className="h-4 w-4" />
+                    )}
                   </button>
                 </Hint>
                 <Hint label={`Memory · ${memory ? "on" : "off"}`}>
@@ -305,7 +318,13 @@ export function ChatHome({
                     onClick={() => setMemory(!memory)}
                     className={`${cfg.btnClass} flex h-9 w-9 items-center justify-center ${!memory ? "opacity-40" : ""}`}
                   >
-                    {variant === "framed" ? <span><Brain className="h-4 w-4" /></span> : <Brain className="h-4 w-4" />}
+                    {variant === "framed" ? (
+                      <span>
+                        <Brain className="h-4 w-4" />
+                      </span>
+                    ) : (
+                      <Brain className="h-4 w-4" />
+                    )}
                   </button>
                 </Hint>
                 <Hint label={`Temporary · ${temp ? "on" : "off"}`}>
@@ -313,7 +332,13 @@ export function ChatHome({
                     onClick={() => setTemp(!temp)}
                     className={`${cfg.btnClass} flex h-9 w-9 items-center justify-center ${!temp ? "opacity-40" : ""}`}
                   >
-                    {variant === "framed" ? <span><EyeOff className="h-4 w-4" /></span> : <EyeOff className="h-4 w-4" />}
+                    {variant === "framed" ? (
+                      <span>
+                        <EyeOff className="h-4 w-4" />
+                      </span>
+                    ) : (
+                      <EyeOff className="h-4 w-4" />
+                    )}
                   </button>
                 </Hint>
               </div>

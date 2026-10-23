@@ -62,8 +62,7 @@ export const healthyRoutineConversation: ConversationMessage[] = [
     role: "assistant",
     variant: "table",
     title: "Low-friction meal options",
-    content:
-      "Use three levels so the plan still works when your available time changes.",
+    content: "Use three levels so the plan still works when your available time changes.",
     table: {
       headers: ["Time available", "Simple approach"],
       rows: [

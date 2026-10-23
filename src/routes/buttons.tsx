@@ -15,8 +15,6 @@ type Style = {
   /** optional inner-span wrapper (for nested-frame styles) */
   inner?: boolean;
   bg: string;
-  /** optional explicit route override (otherwise /v{idx+1}) */
-  route?: string;
   /** optional override classes for individual control slots */
   sendClass?: string;
   chipClass?: string;
@@ -32,7 +30,9 @@ const STYLES: Style[] = [
     tagline: "Carved aluminum",
     mood: "Calm · pharmaceutical · Braun",
     mode: "light",
-    btn: "btn-emboss", send: "btn-emboss", chip: "btn-emboss",
+    btn: "btn-emboss",
+    send: "btn-emboss",
+    chip: "btn-emboss",
     bg: "bg-[#e9e9e7]",
   },
   {
@@ -41,7 +41,9 @@ const STYLES: Style[] = [
     tagline: "Cherry switch energy",
     mood: "Heavy · machined · monospace",
     mode: "dark",
-    btn: "btn-mech", send: "btn-mech", chip: "btn-mech",
+    btn: "btn-mech",
+    send: "btn-mech",
+    chip: "btn-mech",
     bg: "bg-[#0e0e0e]",
   },
   {
@@ -50,7 +52,9 @@ const STYLES: Style[] = [
     tagline: "Depth without color",
     mood: "Pillowy · chunky · rounded",
     mode: "light",
-    btn: "btn-3d", send: "btn-3d", chip: "btn-3d",
+    btn: "btn-3d",
+    send: "btn-3d",
+    chip: "btn-3d",
     bg: "bg-[#ededeb]",
   },
   {
@@ -59,7 +63,9 @@ const STYLES: Style[] = [
     tagline: "72° aperiodic",
     mood: "Quasicrystal lean · five-fold symmetry",
     mode: "light",
-    btn: "btn-penrose", send: "btn-penrose", chip: "btn-penrose",
+    btn: "btn-penrose",
+    send: "btn-penrose",
+    chip: "btn-penrose",
     inner: true,
     bg: "bg-[#f3efe6]",
   },
@@ -69,7 +75,9 @@ const STYLES: Style[] = [
     tagline: "Superellipse chrome",
     mood: "iOS curvature · oil-on-water shimmer",
     mode: "light",
-    btn: "btn-squircle", send: "btn-squircle", chip: "btn-squircle",
+    btn: "btn-squircle",
+    send: "btn-squircle",
+    chip: "btn-squircle",
     inner: true,
     bg: "bg-[#e8e5dc]",
   },
@@ -79,7 +87,9 @@ const STYLES: Style[] = [
     tagline: "Acrylic with molded ripples",
     mood: "Glossy 3D · diagonal liquid corners · high-end",
     mode: "light",
-    btn: "btn-liquid", send: "btn-liquid", chip: "btn-liquid",
+    btn: "btn-liquid",
+    send: "btn-liquid",
+    chip: "btn-liquid",
     inner: true,
     bg: "bg-[#e6e8ec]",
   },
@@ -89,7 +99,9 @@ const STYLES: Style[] = [
     tagline: "Polished organic blob",
     mood: "Asymmetric radii · zen stone · morphing on hover",
     mode: "light",
-    btn: "btn-pebble", send: "btn-pebble", chip: "btn-pebble",
+    btn: "btn-pebble",
+    send: "btn-pebble",
+    chip: "btn-pebble",
     bg: "bg-[#e8e4db]",
   },
   {
@@ -98,7 +110,9 @@ const STYLES: Style[] = [
     tagline: "Pillow stack",
     mood: "Glossy bubble · tall depth stack · Y2K toy",
     mode: "light",
-    btn: "btn-inflated", send: "btn-inflated", chip: "btn-inflated",
+    btn: "btn-inflated",
+    send: "btn-inflated",
+    chip: "btn-inflated",
     inner: true,
     bg: "bg-[#ebe7dc]",
   },
@@ -114,7 +128,6 @@ const STYLES: Style[] = [
     sendClass: "btn-clean-primary",
     chipClass: "btn-clean-soft",
     bg: "bg-[#ebebed]",
-    route: "/v11",
     panel: "panel-clean",
     panelInner: "panel-inner-clean",
   },
@@ -134,14 +147,24 @@ function Btn({
   const pad =
     size === "sm" ? "h-8 px-3 text-xs" : size === "lg" ? "h-12 px-5 text-sm" : "h-10 px-4 text-sm";
   const cls = `${s.btn} ${pad} inline-flex items-center justify-center gap-2 ${className}`;
-  if (s.inner) return <button className={cls}><span>{children}</span></button>;
+  if (s.inner)
+    return (
+      <button className={cls}>
+        <span>{children}</span>
+      </button>
+    );
   return <button className={cls}>{children}</button>;
 }
 
 function IconBtn({ s, children }: { s: Style; children: React.ReactNode }) {
   const sizing = s.inner ? "h-10 min-w-10" : "h-10 w-10";
   const cls = `${s.btn} ${sizing} inline-flex items-center justify-center`;
-  if (s.inner) return <button className={cls}><span>{children}</span></button>;
+  if (s.inner)
+    return (
+      <button className={cls}>
+        <span>{children}</span>
+      </button>
+    );
   return <button className={cls}>{children}</button>;
 }
 
@@ -168,78 +191,102 @@ function StyleCard({ s, idx }: { s: Style; idx: number }) {
       {/* Showcase grid */}
       <div className={`px-6 py-8 ${s.panel ?? ""}`}>
         <div className={`${s.panelInner ?? ""} ${s.panelInner ? "p-6" : ""} space-y-6`}>
-        {/* Row 1 — icon buttons */}
-        <div>
-          <p className={`mb-3 font-mono text-[10px] uppercase tracking-[0.2em] ${muted}`}>
-            Icon controls
-          </p>
-          <div className="flex items-center gap-2">
-            <IconBtn s={s}><Paperclip className="h-4 w-4" /></IconBtn>
-            <IconBtn s={s}><Mic className="h-4 w-4" /></IconBtn>
-            <IconBtn s={s}><Wrench className="h-4 w-4" /></IconBtn>
-            <IconBtn s={s}><Globe className="h-4 w-4" /></IconBtn>
-            <IconBtn s={s}><Brain className="h-4 w-4" /></IconBtn>
+          {/* Row 1 — icon buttons */}
+          <div>
+            <p className={`mb-3 font-mono text-[10px] uppercase tracking-[0.2em] ${muted}`}>
+              Icon controls
+            </p>
+            <div className="flex items-center gap-2">
+              <IconBtn s={s}>
+                <Paperclip className="h-4 w-4" />
+              </IconBtn>
+              <IconBtn s={s}>
+                <Mic className="h-4 w-4" />
+              </IconBtn>
+              <IconBtn s={s}>
+                <Wrench className="h-4 w-4" />
+              </IconBtn>
+              <IconBtn s={s}>
+                <Globe className="h-4 w-4" />
+              </IconBtn>
+              <IconBtn s={s}>
+                <Brain className="h-4 w-4" />
+              </IconBtn>
+            </div>
           </div>
-        </div>
 
-        {/* Row 2 — labelled buttons + dropdown */}
-        <div>
-          <p className={`mb-3 font-mono text-[10px] uppercase tracking-[0.2em] ${muted}`}>
-            Selectors & actions
-          </p>
-          <div className="flex flex-wrap items-center gap-2">
-            <Btn s={s}>
-              GPT-5 <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-            </Btn>
-            <Btn s={s}>
-              Friendly <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-            </Btn>
-            <Btn s={s} size="sm">Balanced</Btn>
-            <Btn s={s} size="sm">Deep think</Btn>
+          {/* Row 2 — labelled buttons + dropdown */}
+          <div>
+            <p className={`mb-3 font-mono text-[10px] uppercase tracking-[0.2em] ${muted}`}>
+              Selectors & actions
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <Btn s={s}>
+                GPT-5 <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+              </Btn>
+              <Btn s={s}>
+                Friendly <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+              </Btn>
+              <Btn s={s} size="sm">
+                Balanced
+              </Btn>
+              <Btn s={s} size="sm">
+                Deep think
+              </Btn>
+            </div>
           </div>
-        </div>
 
-        {/* Row 3 — quick action chips */}
-        <div>
-          <p className={`mb-3 font-mono text-[10px] uppercase tracking-[0.2em] ${muted}`}>
-            Quick action chips
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {["Summarize doc", "Write email", "Generate UI", "Research", "Brainstorm"].map((q) => (
-              <button
-                key={q}
-                className={`${s.chip} h-8 px-3 text-xs inline-flex items-center justify-center gap-2`}
-              >
-                {s.inner ? <span>{q}</span> : q}
+          {/* Row 3 — quick action chips */}
+          <div>
+            <p className={`mb-3 font-mono text-[10px] uppercase tracking-[0.2em] ${muted}`}>
+              Quick action chips
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {["Summarize doc", "Write email", "Generate UI", "Research", "Brainstorm"].map(
+                (q) => (
+                  <button
+                    key={q}
+                    className={`${s.chip} h-8 px-3 text-xs inline-flex items-center justify-center gap-2`}
+                  >
+                    {s.inner ? <span>{q}</span> : q}
+                  </button>
+                ),
+              )}
+            </div>
+          </div>
+
+          {/* Row 4 — primary send */}
+          <div>
+            <p className={`mb-3 font-mono text-[10px] uppercase tracking-[0.2em] ${muted}`}>
+              Primary send
+            </p>
+            <div className="flex items-center gap-3">
+              <button className={`${s.send} h-12 w-12 inline-flex items-center justify-center`}>
+                {s.inner ? (
+                  <span>
+                    <ArrowUp className="h-5 w-5" />
+                  </span>
+                ) : (
+                  <ArrowUp className="h-5 w-5" />
+                )}
               </button>
-            ))}
+              <Btn s={s} size="lg" className="min-w-[160px]">
+                Send message
+              </Btn>
+            </div>
           </div>
-        </div>
-
-        {/* Row 4 — primary send */}
-        <div>
-          <p className={`mb-3 font-mono text-[10px] uppercase tracking-[0.2em] ${muted}`}>
-            Primary send
-          </p>
-          <div className="flex items-center gap-3">
-            <button
-              className={`${s.send} h-12 w-12 inline-flex items-center justify-center`}
-            >
-              {s.inner ? <span><ArrowUp className="h-5 w-5" /></span> : <ArrowUp className="h-5 w-5" />}
-            </button>
-            <Btn s={s} size="lg" className="min-w-[160px]">Send message</Btn>
-          </div>
-        </div>
         </div>
       </div>
 
       {/* Footer pick */}
-      <footer className={`flex items-center justify-between border-t ${isDark ? "border-white/10" : "border-black/10"} px-6 py-4`}>
+      <footer
+        className={`flex items-center justify-between border-t ${isDark ? "border-white/10" : "border-black/10"} px-6 py-4`}
+      >
         <span className={`font-mono text-[10px] uppercase tracking-[0.22em] ${muted}`}>
           Mode · {s.mode}
         </span>
         <Link
-          to={(s.route ?? `/v${idx + 1}`) as any}
+          to="/"
           className={`font-mono text-[10px] uppercase tracking-[0.22em] underline-offset-4 hover:underline ${text}`}
         >
           Open homepage →
@@ -272,10 +319,9 @@ function ButtonsLab() {
           </Link>
         </div>
         <p className="mt-6 max-w-2xl text-sm leading-relaxed text-neutral-600">
-          Ten button languages, monochrome only. Each card shows the same five
-          control families — icon, selector, chip, send — so you can compare
-          rhythm, weight, and personality at a glance. Choose one and the entire
-          homepage layout will be composed in its voice.
+          Ten button languages, monochrome only. Each card shows the same five control families —
+          icon, selector, chip, send — so you can compare rhythm, weight, and personality at a
+          glance. Choose one and the entire homepage layout will be composed in its voice.
         </p>
       </header>
 
