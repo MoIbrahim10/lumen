@@ -50,10 +50,36 @@ jobs:
           LOVABLE_DEV_SERVER: "true"
         run: bun run build
 
-      - name: Smoke-test Vite development integration
+  vite-smoke:
+    name: Vite smoke (${{ matrix.check }})
+    needs: validate
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [server, watcher]
+    steps:
+      - name: Check out pull request head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version-file: .bun-version
+
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile --ignore-scripts --registry=https://registry.npmjs.org
+
+      - name: Run Vite smoke check
         shell: bash
         env:
           LOVABLE_DEV_SERVER: "true"
+          SMOKE_CHECK: ${{ matrix.check }}
         run: |
           set -euo pipefail
           log_file="$RUNNER_TEMP/lumen-vite-dev.log"
@@ -75,48 +101,43 @@ jobs:
             fi
             if ! kill -0 "$server_pid" 2>/dev/null; then
               echo 'LUMEN_VITE_SMOKE=server_exited_before_ready' >&2
-              echo '- Vite server exited before the HTTP readiness check.' >> "$GITHUB_STEP_SUMMARY"
               exit 1
             fi
             if [[ "$attempt" -eq 30 ]]; then
               echo 'LUMEN_VITE_SMOKE=server_response_timeout' >&2
-              echo '- Vite did not answer the HTTP readiness check before timeout.' >> "$GITHUB_STEP_SUMMARY"
               exit 1
             fi
             sleep 1
           done
 
-          # The Lovable tagger regenerates the config when a watched source file changes.
-          touch src/styles.css
-          for attempt in $(seq 1 30); do
-            if [[ -s src/tailwind.config.lov.json ]]; then
-              echo 'LUMEN_VITE_SMOKE=tailwind_config_generated' >> "$GITHUB_STEP_SUMMARY"
-              break
-            fi
-            if ! kill -0 "$server_pid" 2>/dev/null; then
-              echo 'LUMEN_VITE_SMOKE=server_exited_before_config' >&2
-              echo '- Vite server exited before the watcher generated the Tailwind config.' >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$SMOKE_CHECK" == watcher ]]; then
+            # The Lovable tagger regenerates the config when a watched source file changes.
+            touch src/styles.css
+            for attempt in $(seq 1 30); do
+              if [[ -s src/tailwind.config.lov.json ]]; then
+                echo 'LUMEN_VITE_SMOKE=tailwind_config_generated' >> "$GITHUB_STEP_SUMMARY"
+                break
+              fi
+              if ! kill -0 "$server_pid" 2>/dev/null; then
+                echo 'LUMEN_VITE_SMOKE=server_exited_before_config' >&2
+                exit 1
+              fi
+              if [[ "$attempt" -eq 30 ]]; then
+                echo 'LUMEN_VITE_SMOKE=watcher_output_timeout' >&2
+                exit 1
+              fi
+              sleep 1
+            done
+
+            if ! bun -e 'try { const { theme } = await Bun.file("src/tailwind.config.lov.json").json(); const expected = ["colors", "screens", "spacing", "borderRadius", "fontFamily", "opacity"]; if (!theme || expected.some((key) => !theme[key])) process.exit(1); } catch { process.exit(1); }'; then
+              echo 'LUMEN_VITE_SMOKE=tailwind_theme_shape_invalid' >&2
               exit 1
             fi
-            if [[ "$attempt" -eq 30 ]]; then
-              echo 'LUMEN_VITE_SMOKE=watcher_output_timeout' >&2
-              echo '- Lovable watcher did not generate the Tailwind config before timeout.' >> "$GITHUB_STEP_SUMMARY"
+            echo 'LUMEN_VITE_SMOKE=tailwind_theme_shape_valid' >> "$GITHUB_STEP_SUMMARY"
+
+            if [[ "$source_hash" != "$(sha256sum src/styles.css | cut -d ' ' -f1)" ]]; then
+              echo 'LUMEN_VITE_SMOKE=css_content_changed' >&2
               exit 1
             fi
-            sleep 1
-          done
-
-          if ! bun -e 'try { const { theme } = await Bun.file("src/tailwind.config.lov.json").json(); const expected = ["colors", "screens", "spacing", "borderRadius", "fontFamily", "opacity"]; if (!theme || expected.some((key) => !theme[key])) process.exit(1); } catch { process.exit(1); }'; then
-            echo 'LUMEN_VITE_SMOKE=tailwind_theme_shape_invalid' >&2
-            echo '- Generated Tailwind config was missing an expected theme section.' >> "$GITHUB_STEP_SUMMARY"
-            exit 1
+            echo 'LUMEN_VITE_SMOKE=css_content_unchanged' >> "$GITHUB_STEP_SUMMARY"
           fi
-          echo 'LUMEN_VITE_SMOKE=tailwind_theme_shape_valid' >> "$GITHUB_STEP_SUMMARY"
-
-          if [[ "$source_hash" != "$(sha256sum src/styles.css | cut -d ' ' -f1)" ]]; then
-            echo 'LUMEN_VITE_SMOKE=css_content_changed' >&2
-            echo '- Watched CSS content changed during the smoke test.' >> "$GITHUB_STEP_SUMMARY"
-            exit 1
-          fi
-          echo 'LUMEN_VITE_SMOKE=css_content_unchanged' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Vite served the application; the Lovable watcher generated the expected Tailwind 4 configuration without changing CSS content.' >> "$GITHUB_STEP_SUMMARY"
