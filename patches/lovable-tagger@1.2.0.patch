@@ -1,0 +1,20 @@
+diff --git a/dist/index.js b/dist/index.js
+index 123046d626abadb29faf4c4b6d3e062339cfd146..1b701fd1baba9ada59b4c392aecae7789b646530 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -23,7 +23,6 @@ function createJsxTaggerFeature() {
+ import * as esbuild from "esbuild";
+ import fs from "fs/promises";
+ import path from "path";
+-import resolveConfig from "tailwindcss/resolveConfig.js";
+ var V4_CSS_CANDIDATES = ["src/styles.css", "src/index.css", "src/globals.css", "src/app.css"];
+ var V4_NAMESPACES = {
+   colors: "--color",
+@@ -106,6 +105,7 @@ function createTailwindConfigFeature() {
+   let projectRoot = "";
+   const generateV3Config = async (tailwindInputFile, tailwindIntermediateFile, tailwindJsonOutfile) => {
+     try {
++      const { default: resolveConfig } = await import("tailwindcss/resolveConfig.js");
+       await esbuild.build({
+         entryPoints: [tailwindInputFile],
+         outfile: tailwindIntermediateFile,
